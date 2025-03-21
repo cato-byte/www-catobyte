@@ -1,0 +1,506 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-display: swap; /* Check https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-display for other options. */
+  font-family: 'Orbitron';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.eot'); /* IE9 Compat Modes */
+  src: url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.woff2') format('woff2'), /* Chrome 36+, Opera 23+, Firefox 39+, Safari 12+, iOS 10+ */
+       url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.woff') format('woff'), /* Chrome 5+, Firefox 3.6+, IE 9+, Safari 5.1+, iOS 5+ */
+       url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.ttf') format('truetype'), /* Chrome 4+, Firefox 3.5+, IE 9+, Safari 3.1+, iOS 4.2+, Android Browser 2.2+ */
+       url('../fonts/orbitron-v31-latin/orbitron-v31-latin-regular.svg#Orbitron') format('svg'); /* Legacy iOS */
+}
+
+/* Body styling with a fun, tech-oriented font */
+body {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding: 20px;
+  background-color: #1a1a2e; /* Dark blue-black background */
+  color: #ececec; /* Light text for contrast */
+}
+
+/* Navigation bar styling with rounded corners */
+nav {
+  background-color: #0f3460; /* Dark blue */
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners */
+  text-align: center;
+}
+
+footer{
+  background-color: #0f3460; /* Dark blue */
+  padding: 15px;
+  border-radius: 10px; /* Rounded corners */
+  text-align: center;
+  font-size: 10px
+}
+
+.archive-container {
+  max-width: 800px; /* Maximum width of the container */
+  margin: 0 auto;   /* Center the container */
+  padding: 20px;    /* Padding around the container */
+}
+
+.post-item {
+  overflow: auto;   /* Clear floats */
+  padding: 10px 0; /* Vertical padding for post items */
+}
+
+.publication-date {
+  font-size: 0.9em; /* Smaller font size for the date */
+  color: #777;      /* Lighter color for the date */
+}
+
+.footer-links{
+  display:flex;
+  justify-content: space-between;
+  list-style: none;
+  padding:0;
+  margin:0;
+}
+
+.footer-links li{
+  margin: 0 15px;
+}
+/* Styling the navigation bar items */
+.navbar {
+  list-style-type: none;
+}
+
+.navbar li {
+  display: inline-block;
+  margin: 0 15px;
+  position: relative; /* Necessary for dropdown positioning */
+}
+
+/* Styling the links in the navigation */
+.navbar a {
+  color: #ececec; /* Light text */
+  text-decoration: none;
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 20px; /* Rounded buttons */
+  background-color: #16213e; /* Slightly darker blue */
+  transition: background-color 0.3s ease;
+}
+
+/* Change link color when hovered */
+.navbar a:hover {
+  background-color: #533483; /* Purple hover */
+}
+
+/* Dropdown menu for Old Posts */
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 35px;
+  left: 0;
+  background-color: #16213e;
+  border-radius: 10px;
+
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu li {
+  display: block;
+  margin: 8px 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 12px 20px; /* Adds padding inside each option */
+  text-decoration: none;
+  color: white;
+  line-height: 1.6; /* Increases vertical spacing */
+}
+
+/* Site Title styling */
+header h1 {
+  margin: 20px 0;
+  text-align: center;
+  font-size: 2.5em;
+  color: #e94560; /* Bright, fun red */
+}
+
+
+main h1 {
+  text-align: center;
+}
+
+main h2 {
+  text-align: center;
+  font-size: 2em;
+  color: #007FFF;  /* Bright, fun purple*/
+}
+
+main h3 {
+  text-align: center;
+  font-size: 1.75em;
+}
+
+.vertical-body-container{
+  display:flex;
+  flex-direction : column;
+  align-items:center;
+}
+
+/* Paragraph styling */
+main p {
+  margin: 15px 0;
+  font-size: 1.2em;
+  color: #ececec;
+  text-align: justify;
+  line-height: 1.8; /* Ensures clear line spacing between paragraphs */
+}
+
+
+main a {
+  display: inline; /* Ensures that links behave as inline elements */
+}
+
+
+main ul {
+  margin: 15px 0;
+  font-size: 1.2em;
+  color: #ececec;
+  text-align: left;
+  line-height: 1.8; /* Ensures clear line spacing between paragraphs */
+}
+
+/* Styling for tables */
+.styled-table {
+  width: 100%;
+  max-width: 75%; /* Adjust this to match your paragraph width */
+  margin: 1rem auto; /* Center the table with auto margins */
+  border-collapse: collapse;
+  overflow-x: auto; /* Enable horizontal scrolling if the table is too wide */
+  display: table; 
+  margin: 20px 0;
+  font-size: 1em;
+  color: #ececec;
+}
+
+.styled-table th,
+.styled-table td {
+  border: 1px solid #0f3460;
+  text-align: left;
+  padding: 12px;
+  word-wrap: break-word;
+}
+
+.styled-table th {
+  background-color: #0f3460; /* Dark blue for header */
+  color: #ececec; /* Light text for contrast */
+  text-align: center;
+}
+
+.styled-table tr:nth-child(even) {
+  background-color: #1a1a2e; /* Alternating row color */
+}
+
+.styled-table tr:hover {
+  background-color: #533483; /* Highlight row on hover */
+}
+
+
+pre.python-code .variable {
+  color: #9cdcfe; /* Light blue for variables */
+}
+
+.image-container {
+  text-align: center; /* Centers the image and text */
+  margin: 20px auto;
+  max-width: 100%;
+}
+
+.responsive-title-image {
+  max-width: 100%; /* Ensures the image never exceeds the container width */
+  height: auto; /* Maintains aspect ratio */
+  border-radius: 30px; /* Optional: Adds rounded corners to the image */
+}
+
+
+.responsive-image {
+  max-width: 75%; /* Ensures the image never exceeds the container width */
+  height: auto; /* Maintains aspect ratio */
+  border:5px solid #ececec;
+  padding: 50px;
+  border-radius: 10px; /* Optional: Adds rounded corners to the image */
+}
+
+.image-source {
+  font-size: 0.8rem; /* Small text for the citation */
+  color: #b9b6b6; /* A subtle grey color for the citation */
+  margin-top: 5px; /* Adds space between the image and the source text */
+}
+
+.post-publish-date {
+  font-size: 0.8rem; /* Small text for the citation */
+  color: #b9b6b6; /* A subtle grey color for the citation */
+  margin-top: 5px; /* Adds space between the image and the source text */
+  text-align: center;
+}
+
+
+.old-posts-section{
+  margin-top: 40px;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.old-posts-section h2 {
+  font-size: 2em;
+  color: #533483; /* Purple for headers */
+  text-align: center;
+  margin-bottom: 20px;
+}
+/* Old Posts container*/
+.old-posts {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
+
+.old-posts .post {
+  width: 23%;
+  margin: 0 10px;
+  text-align: center;
+  text-decoration:none;
+  opacity:0.5;
+}
+
+
+
+.old-posts .post:hover {
+  opacity:1.0;
+}
+
+.old-posts .post img {
+  width: 100%;
+  height: auto;
+  border-radius: 15px; /* Rounded thumbnail corners */
+  padding: 0; 
+  border: 5px solid #ececec;
+}
+
+.old-posts a {
+  text-decoration: none;
+}
+
+.old-posts a:visited,a:link, a:hover, a:active
+{
+  color: #ececec;
+}
+
+/* Hero section styles */
+.hero {
+  padding: 40px;
+  text-align: center;
+  color: white;
+  border-radius: 15px;
+}
+
+/* Hero section styles */
+.hero p{
+  text-align: center;
+}
+
+/* Latest articles section */
+.latest-articles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+
+.article {
+  border: 5px solid #ececec;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+}
+
+.article img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.article h3 {
+  font-size: 1.2rem;
+  margin-top: 15px;
+}
+
+.terms-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #16213e;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.privacy-container {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #16213e;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.about-section {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #16213e;
+  border-radius: 10px;
+}
+
+.contact-form {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #16213e;
+  border-radius: 10px;
+}
+.contact-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+.contact-form input, .contact-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #ececec;
+  background-color: #1a1a2e;
+  color: #ececec;
+}
+.contact-form button {
+  padding: 10px 20px;
+  background-color: #e94560;
+  color: #ececec;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.contact-form button:hover {
+  background-color: #d83450; /* Darker red on hover */
+}
+
+.featured-posts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
+}
+.why-blog ul {
+  list-style-type: disc;
+  margin-top: 20px;
+  text-align: left;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.why-blog ul li {
+  margin-bottom: 10px;
+}
+      /* Call to Action styles */
+      .cta {
+          color: white;
+          padding: 40px;
+          text-align: center;
+          max-width: 800 px;
+      }
+
+      .cta h2 {
+          font-size: 1.8rem;
+          margin-bottom: 20px;
+      }
+
+      .cta a {
+          color: #ececec;
+          background-color: #16213e;
+          padding: 10px 20px;
+          text-decoration: none;
+          font-size: 18px;
+          border-radius: 20px;
+      }
+
+      .cta a:hover {
+          background-color: #533483;
+      }
+
+.social-icons {
+  text-align:center;
+}
+
+/* Responsive design */
+/* For screens that are 768px wide or more (laptops, desktops) */
+@media (min-width: 768px) {
+  body {
+      padding: 40px;
+  }
+
+  header h1 {
+      font-size: 3em;
+  }
+
+  main p {
+      font-size: 1.4em;
+      max-width: 75%;
+      margin: 20px auto;
+  }
+
+  .image-container {
+    text-align: center; /* Centers the image and text */
+    margin: 20px auto;
+    max-width: 75%
+  }
+  .navbar li {
+      margin: 0 30px;
+  }
+
+  /* Old posts section width adjustment 
+  .old-posts .post {
+      width: 28%;
+  }*/
+}
+
+/* For screens that are smaller than 768px (mobile devices) */
+@media (max-width: 768px) {
+  header h1 {
+      font-size: 1.8em;
+  }
+
+  main p {
+      font-size: 1.1em;
+  }
+
+  .image-container {
+    text-align: center; 
+  }
+
+  .navbar li {
+      display: block;
+      margin: 10px 0;
+  }
+
+  /* Stack the old posts thumbnails vertically 
+  .old-posts .post {
+      width: 100%;
+      margin: 10px 0;
+  }*/
+}

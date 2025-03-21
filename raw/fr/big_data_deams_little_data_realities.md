@@ -1,0 +1,27 @@
+## Rêves de Big Data
+
+##### Publié le {{PUBLISH_DATE}}
+
+<!-- TITLE_IMAGE -->
+
+![Image créée par ChatGPT, OpenAI. 13 novembre 2024 ](../../images/big_data_dreams_little_data_realities_title_img.webp)
+
+## Attentes vs. Réalité
+
+Il s’agit d’une analyse subjective basée sur mon expérience personnelle. Dans ma vie professionnelle, j'ai travaillé dans plusieurs départements dits « Big Data » dans différentes entreprises. Ces entreprises disposaient souvent d’architectures de données élaborées pour gérer des données à grande échelle. Lorsque j’ai obtenu mon diplôme, le message officiel était que les données connaissaient une croissance exponentielle. L’Internet des objets (IoT) était censé prendre le contrôle de la société, nous inondant de données que nous devrions gérer, analyser et transformer en informations. Nous avons entendu dire que la plupart des données produites dans le monde étaient encore inexplorées et attendaient d’être analysées. Nous parlions de téraoctets, voire de pétaoctets, d’informations. La nécessité d’un traitement des données en temps réel a également été évoquée, les entreprises ayant besoin de tableaux de bord et d’applications dynamiques pour réagir rapidement aux problèmes.
+
+Pour faire face à ces supposés déluges de données, les entreprises ont investi massivement dans l’infrastructure de données. À l’époque, la plupart des traitements de données étaient effectués sur site, Hadoop était donc roi. Des outils tels qu’Apache Hive, Zeppelin et Zookeeper, ainsi que des plateformes telles qu’Oracle R3, étaient largement utilisés. Les conteneurs et les microservices émergeaient également, et les lacs de données étaient partout. Mais malgré tout cela, la réalité de ces entreprises était très différente de l’image vendue par les conférences technologiques et les livres blancs. Les données avec lesquelles nous travaillions ne représentaient souvent que quelques gigaoctets, parfois seulement une poignée. Ces « big data » ressemblaient davantage à des « small data », loin des torrents que nous avions imaginés.
+
+Je soupçonne que cette époque a marqué une sorte d’expérimentation motivée par la curiosité de la part des entreprises. Il semblait que disposer d’une infrastructure de Big Data était à la mode, mais une évaluation critique des besoins réels en données faisait souvent défaut. De ce fait, j’ai souvent rencontré des entreprises dotées d’architectures robustes dont les volumes de données ne justifiaient pas l’investissement. Dans de nombreux cas, des bases de données relationnelles classiques et des scripts simples de traitement de données auraient été suffisants.
+
+
+## Pourquoi le déluge de données n'est jamais arrivé
+
+Il y a plusieurs raisons pour lesquelles le flot de données n’est jamais arrivé. L’une d’elles est la politique de l’entreprise : les différents départements d’une même entreprise hésitent souvent (voire refusent) à partager les données nécessaires aux projets Big Data. Un autre facteur est la réglementation. Les données sensibles, telles que les informations médicales, doivent être protégées, ce qui rend leur accès ou leur utilisation difficiles dans de nombreux cas. Ensuite, il y a les données externes. Les entreprises s’appuient souvent sur des fournisseurs tiers pour certaines données, mais ces données ne sont pas gratuites. Chaque enregistrement a un coût, ce qui permet aux entreprises de limiter la quantité de données qu'elles achètent, et les fournisseurs rencontrent parfois des difficultés techniques ou des problèmes de qualité des données. Lorsque des contrats et des relations professionnelles sont en jeu, les choses peuvent se compliquer.
+
+Cependant, la raison la plus courante est le choix des cas d’utilisation. Une grande partie de mon travail s’est concentrée sur le traitement des données clients à des fins d’analyse marketing. Le nombre de clients, de transactions ou de produits peut être étonnamment faible pour certaines entreprises, en particulier lorsque leurs produits sont chers. Pensez à la fréquence à laquelle vous achetez des appareils électroménagers ou ouvrez un nouveau compte bancaire. Dans des cas comme la surveillance des infrastructures, où l'équipement génère des signaux toutes les quelques secondes, le volume de données est élevé, mais pour l'analyse du taux de désabonnement des clients, les campagnes de fidélisation ou la détection des fraudes, les ensembles de données sont souvent relativement petits : seulement quelques gigaoctets.
+## Travailler avec des « données minuscules »
+
+Dans ce contexte, je me suis souvent retrouvé à utiliser des outils et des infrastructures de Big Data pour des ensembles de données beaucoup plus petits que prévu. J'ai suivi les pratiques du Big Data, telles que la création de pipelines de traitement pour nettoyer, formater et consolider les données, la mise en place d'outils de surveillance et d'alerte et l'utilisation de planificateurs pour exécuter des tâches à des moments précis. Parfois, j'avais besoin d'ingérer des données plus anciennes dans un nouvel ensemble de données ou même de reconstruire des ensembles de données pour corriger des erreurs historiques.
+
+Une grande partie de mon travail consistait à lire les journaux pour comprendre pourquoi certains processus échouaient. Les problèmes de dépassement de mémoire étaient courants, en particulier lorsque l'infrastructure était limitée, ce qui entraînait le blocage ou le blocage indéfini des tâches.

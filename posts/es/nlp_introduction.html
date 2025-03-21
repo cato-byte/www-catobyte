@@ -1,0 +1,819 @@
+<html>
+<head>
+    <meta charset ="UTF-8">
+    <title> CatoByte</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">-->
+    <link rel="icon" type = "image/x-icon" href = "../../images/favicon_io/favicon.ico">
+    <script src="../../js/prism.js" defer></script>
+    <!-- Link to Prism CSS for code highlighting-->
+    <link  rel="stylesheet" href="../../css/prism.css"/>
+    <!-- Website stylesheet place after prism so it can override it-->
+    <link rel="stylesheet" href="../../css/styles.css">
+</head><body>
+<header>
+    <h1>
+    CatoByte
+    </h1>
+    <p style="text-align: center;">Explorando la IA, los datos y la tecnología</p>
+</header><nav>
+    <ul class="navbar">
+    <li><a href="../../pages/es/home.html">Inicio</a></li>
+    <li><a href="../../pages/es/about.html">Acerca de</a></li>
+    <li><a href="../../pages/es/contact.html">Contacto</a></li>
+    <li><a href="../../pages/es/archive.html">Archivo del blog</a></li>
+    <li class="dropdown">
+        <a href="#">Idioma</a>
+        <ul class="dropdown-menu">
+            <li><a href="../../pages/fr/home.html">Français</a></li>
+            <li><a href="../../pages/en/home.html">English</a></li>
+        </ul>
+    </li>
+    </ul>
+</nav>        <main>
+            <div class="vertical-body-container">          <h2>¿Cómo nos entienden las máquinas? Introducción al PLN o NLP(Procesamiento de lenguaje natural)</h2>
+          <h5>Publicado el 21 de marzo de 2025</h5>
+                    <div class="image-container">
+                <img src="../../images/nlp_introduction_title_img.webp" alt="Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024" class="responsive-title-image">
+                <h6 class="image-source"> Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024 </h6>
+            </div>
+          <p>
+              ¿Alguna vez te has preguntado como herramientas como los asistentes de IA
+              entienden tus preguntas y ordenes y producir una respuesta que a primera vista
+              al menos parece coherente? ¿Como puede una máquina que en su nivel más elemental
+              realiza cálculos sobre bytes lograr estos sorprendentes resultados?
+          </p>
+          <p>
+              Para completar esta hazaña, se utilizan técnicas de procesamiento del lenguage
+              natural (PLM), un subcampo de la informática que combina el estudio de la
+              gramática y el aprendizaje de máquina para permitir a los ordenadores comprender
+              el lenguaje humano y producir respuestas coherentes.
+          </p>
+          <p>
+              El PLN ha ganado mucha notoriedad en el último año gracias al surgimiento de los
+              LLMs o modelos de lenguaje de gran tamaño. Aunque el nombre LLM puede que no te
+              diga mucho a primera vista ya has interactuado probablemente con alguno de
+              ellos: ChatGPT, Gemini y DeepSeek entre otros son modelos de lenguaje de gran
+              tamaño.
+          </p>
+          <p>
+              También existen SLMs o modelos de lenguaje de temaño pequeño, estos suelen estar
+              entrenados con un grupo de datos más pequeño, menos parámetros y suelen
+              enfocarse en un dominio específico a diferencia de los LLMs que tratan de ser
+              más generalistas y producir respuestas en diferentes campos del conocimiento.
+          </p>
+          <p>
+              A continuación te voy a exponer algunas técnicas de PLN para que puedas
+              comprender que sucede detraś de escena.
+          </p>
+          <p>
+              En este artículo, exploraremos algunos conceptos básicos de PLN, incluida la
+              tokenización, el etiquetado de partes del discurso (POS) y el reconocimiento de
+              entidades nombradas (NER).
+          </p>
+          <p>
+              Aunque gracias al procesamiento del lenguaje natural hemos logrado una
+              interacción muy fluida entre las personas y las máquinas abriendo nuevas
+              oportunidades en diferentes campos, aún no se ha logrado que un modelo tenga un
+              razonamiento verdadero y autónomo y pase la prueba de Turing (Prueba que evalua
+              la capacidad de una máquina para exhibir un comportamiento inteligente similar
+              al de un  humano).
+          </p>
+          <p>
+              Ahora veamos más en detalle algunos de estos procesos básicos.
+          </p>
+          <h3>Tokenización</h3>
+          <p>
+              La tokenización es el primer paso básico para procesar el lenguaje, consiste en
+              dividir el texto en fragmentos más pequeños llamados tokens, que pueden ser
+              palabras o frases. Este paso permite a las máquinas trabajar de forma más
+              precisa los textos y extraer información relevante.
+          </p>
+          <p>
+              Veamos un ejemplo, tomando como base las siguientes frases:
+          </p>
+          <p>
+              <b>"Tengo ganas de salir del bosque e ir al campo hoy. El sol brilla, los
+              pájaros cantan y estoy de muy buen humor. ¿No te pasa lo mismo, Cato?"</b>
+          </p>
+          <p>
+              Los tokens de este texto serían cada palabra y signo de puntuación que se
+              encuentre en el mismo. Se pueden crear scripts que realicen esta tarea de forma
+              automática. Es importante recalcar que es importante conservar el orden de los
+              tokens, ya que es información valiosa que nos puede indicar el significado de
+              una palabra o a que familia gramatical pertenece. El resultado se vería algo
+              aśi.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-python line-numbers">['Tengo','ganas','de','salir','de','el','bosque','e','ir','a','el','campo','hoy','.','El','sol','brilla',',','los','pajaros','cantan','y','estoy','de','muy','buen','humor','.','¿','No','te','pasa','lo','mismo',',','Cato','?']</code>
+  </pre>
+</div>
+          <p>
+              Ahora tenemos una lista de tokens de palabras. Quizás te preguntes por qué
+              dividí la palabra "del" en los tokens "de" y "el" y al en los tokens "a. Esto se
+              debe a que "del" es una contracción de "de" y "el", y esta separación es
+              importante para ayudar a los sistemas de PLN a procesar sus componentes
+              gramaticales por separado. "de" es una preposición y "el" es un artículo. En
+              español solo existen oficialmente 2 contracciones del y al pero son más comunes
+              en otros idiomas.
+          </p>
+          <p>
+              También es usual la tokenización por oraciones. Al obtener tokens de frases
+              enteras se facilita la tarea de entender el contexto general de una discusión o
+              argumento, se suele usar en sistemas de traducción automática o resumen.
+          </p>
+          <p>
+              De nuestro ejemplo obtendríamos los siguientes tokens oracionales:
+          </p>
+          <p>
+              <b>['Tengo ganas de salir del bosque e ir al campo hoy','El sol brilla, los
+              pájaros cantan y estoy de muy buen humor','¿No te pasa lo mismo, Cato?']</b>
+          </p>
+          <p>
+              El resultado de la tokenización es un insumo para otros procesos como la
+              extracción de características, cuyo objetivo es obtener una representación
+              numérica de las palabras. Esta representación numérica luego puede usarse como
+              insumo para entrenar o consultar un modelo de aprendizaje profundo. Detallar el
+              proceso de extracción de características (feature extraction) puede ser un
+              artículo en sí mismo. Para simplificar diré que esta representación numérica
+              puede indicar el número de caracteres de una palabra, cuantas veces aparece en
+              una oración, empieza por mayúscula, qué tan rara es, etc.
+          </p>
+          <p>
+              En resumen la tokenización prepara el texto para un análisis posterior, lo que
+              facilita la comprensión de los significados de las palabras, la detección de
+              patrones y la realización de otras tareas, como la traducción o el análisis de
+              sentimientos.
+          </p>
+          <h3>Etiquetado de partes del discurso (POS)</h3>
+          <p>
+              Para permitir que una máquina procese lenguage natural es necesario que el
+              lenguaje haya sido modelado de alguna manera. Esto quiere decir que los
+              fenómenos que ocurren en un lenguaje estén organizados y capturados de tal
+              manera que puedan ser usados para predecir o reorganizar futuros usos del
+              lenguaje.
+          </p>
+          <p>
+              Una forma de llegar a este modelado es el etiquetado gramátical o etiquetado de
+              partes del discurso (POS), otra tarea básica en cualquier sistema de NLP. Para
+              realizar este paso existen herramientas que proveen la funcionalidad de
+              etiquetado automático y son usadas en el campo del PLN tales como spaCy y NLTK.
+              Estos etiquetadores hacen uso de corpus lingüísticos, que son colecciones de
+              frases con su estructura gramatical anotada.
+          </p>
+          <p>
+              La creación de estos corpus u colecciones de oraciones etiquetadas, han sido
+              proyectos que han tardado años. Se han hecho de forma semiatumática mezclando
+              etiquetado automático y correción manual. En sus inicios hicieron uso de un
+              algoritmo llamado PARTS() que hacía un primer etiquetado. Luego un lingüista
+              revisaba esta versión inicial y la corregía.
+          </p>
+          <p>
+              El proyecto Penn TreeBank desarrollado en la universidad de Pensilvania  entre
+              los años 1989 y 1996 es una implementación concreta de uno de estos conjuntos de
+              oraciones, específicamente para el idioma inglés. El producto final de este
+              proyecto es un conjunto de más de 7 millones de palabras con etiquetas de parte
+              del discurso (POS) y análisis sintáctico de alrededor de  3 millones de frases.
+          </p>
+          <p>
+              <a href="https://www.researchgate.net/publication/2873803_The_Penn_Treebank_An_o
+              verview#:~:text=The%20Penn%20Treebank%2C%20in%20its,spoken%20text%20annotated%20
+              for%20speech">Aqui puedes ver más información sobre el Proyecto  Penn
+              TreeBank</a>
+          </p>
+          <p>
+              Con el uso de etiquetadores automáticos basados en estos corpus podemos asignar
+              cada palabra dentro de una frase a una de las categorías gramáticales definidas
+              en el corpus. Esto es importante para la comprensión del contexto y significado
+              por parte de las máquinas.
+          </p>
+          <p>
+              Sin el etiquetado POS, podríamos malinterpretar oraciones como:
+          </p>
+          <p>
+              <b>Te cuento una historia interesante.</b> (Aquí, "cuento" es un verbo, que
+              significa contar algo). **Me gusta leer un buen cuento antes de dormir.** (En
+              este caso, "cuento" es un sustantivo).
+          </p>
+          <p>
+              El  conjunto de etiquetas de Penn Treebank es específico para el inglés, pero no
+              es adaptable a otros idiomas con palabras ,estructuras gramaticales y evolución
+              distintas.
+          </p>
+          <p>
+              Para abordar esta limitación, existe  el proyeto <a
+              href="https://universaldependencies.org/introduction.html">'Universal
+              Dependencies project'</a> (UPOS), que plantea crear un banco de estructuras
+              gramáticales que sea consistente para varios idiomas. Este enfoque es útil para
+              aplicaciones multilingües, debido a su compatibilidad con más de 100 idiomas.
+          </p>
+          <p>
+              También hay investigación y desarrollo para crear corpus específicos a otros
+              idiomas como este <a href="https://www.researchgate.net/publication/39436708_Ano
+              tacion_semiautomatica_con_papeles_tematicos_de_los_corpus_CESS-ECE">artículo</a>
+              donde se habla de la creación de un corpus para Español y Catalán.
+          </p>
+          <p>
+              A continuación se muestran dos tablas con algunas categorías de etiquetas
+              gramaticales de los corpus Penn TreeBank y UPOS.
+          </p>
+          <p>
+              <b>Penn Treebank</b>
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Etiqueta</th>
+      <th>Categoría gramatical</th>
+      <th>Definición</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NN</td>
+      <td>SUSTANTIVO</td>
+      <td>Nombres de personas, lugares, cosas o ideas</td>
+    </tr>
+    <tr>
+      <td>VB</td>
+      <td>VERBO</td>
+      <td>Palabras que describen acciones, estados o sucesos</td>
+    </tr>
+    <tr>
+      <td>JJ</td>
+      <td>ADJETIVO</td>
+      <td>Palabras que describen o modifican sustantivos</td>
+    </tr>
+    <tr>
+      <td>RB</td>
+      <td>ADVERBIO</td>
+      <td>Palabras que modifican verbos, adjetivos u otros adverbios</td>
+    </tr>
+    <tr>
+      <td>PRP</td>
+      <td>PRONOMBRE</td>
+      <td>Palabras que reemplazan sustantivos</td>
+    </tr>
+    <tr>
+      <td>DT</td>
+      <td>DETERMINADOR</td>
+      <td>Palabras que introducen sustantivos</td>
+    </tr>
+    <tr>
+      <td>IN</td>
+      <td>PREPOSICIÓN</td>
+      <td>Palabras que muestran relaciones entre sustantivos o pronombres y otras palabras en una oración.</td>
+    </tr>
+    <tr>
+      <td>CC</td>
+      <td>CONJUNCIÓN</td>
+      <td>Palabras que conectan cláusulas, oraciones o palabras.</td>
+    </tr>
+    <tr>
+      <td>AUX</td>
+      <td>VERBO AUXILIAR</td>
+      <td>Verbos utilizados para formar tiempos, modos o voces de otros verbos.</td>
+    </tr>
+    <tr>
+      <td>PP</td>
+      <td>PARTÍCULA</td>
+      <td>Palabras que forman parte de los verbos frasales</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              <b>Universal Dependencies Project UPOS</b>
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Etiqueta</th>
+      <th>Categoría gramatical</th>
+      <th>Definición</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ADJ</td>
+      <td>Adjetivo</td>
+      <td>Describe un sustantivo (p. ej., feliz, verde, pequeño).</td>
+    </tr>
+    <tr>
+      <td>ADP</td>
+      <td>Adposición</td>
+      <td>Preposiciones y posposiciones (p. ej., en, sobre, a).</td>
+    </tr>
+    <tr>
+      <td>ADV</td>
+      <td>Adverbio</td>
+      <td>Modifica verbos, adjetivos u otros adverbios (p. ej., rápidamente, muy, aquí).</td>
+    </tr>
+    <tr>
+      <td>AUX</td>
+      <td>Verbo auxiliar</td>
+      <td>Verbos que ayudan a formar tiempo, modo o voz (p. ej., es, tener, voluntad).</td>
+    </tr>
+    <tr>
+      <td>CCONJ</td>
+      <td>Conjunción coordinante</td>
+      <td>Une palabras, frases u oraciones como iguales (p. ej., y, pero, o).</td>
+    </tr>
+    <tr>
+      <td>DET</td>
+      <td>Determinante</td>
+      <td>Modifica un sustantivo (p. ej., el, un, algún, mi).</td>
+    </tr>
+    <tr>
+      <td>INTJ</td>
+      <td>Interjección</td>
+      <td>Expresa emoción o sonido (p. ej., wow, ay, uh-huh).</td>
+    </tr>
+    <tr>
+      <td>NOUN</td>
+      <td>Sustantivo</td>
+      <td>Nombra personas, lugares, cosas o ideas (p. ej., gato, ciudad, libertad).</td>
+    </tr>
+    <tr>
+      <td>NUM</td>
+      <td>Numeral</td>
+      <td>Indica números (p. ej., uno, dos, 42).</td>
+    </tr>
+    <tr>
+      <td>PART</td>
+      <td>Partícula</td>
+      <td>Palabras funcionales o morfemas (p. ej., not, to in not go o to go).</td>
+    </tr>
+    <tr>
+      <td>PRON</td>
+      <td>Pronombre</td>
+      <td>Sustituye a un sustantivo (p. ej., she, it, themselves).</td>
+    </tr>
+    <tr>
+      <td>PROPN</td>
+      <td>Nombre propio</td>
+      <td>Nombra entidades específicas (p. ej.,  John, Paris, Google).</td>
+    </tr>
+    <tr>
+      <td>PUNCT</td>
+      <td>Puntuación</td>
+      <td>Cualquier signo de puntuación (p. ej., ., ;, ?).</td>
+    </tr>
+    <tr>
+      <td>SCONJ</td>
+      <td>Conjunción subordinada</td>
+      <td>Vincula cláusulas con dependencia (p. ej., because, however, if).</td>
+    </tr>
+    <tr>
+      <td>SYM</td>
+      <td>Símbolo</td>
+      <td>Símbolos no alfanuméricos (p. ej., $, %, +, @).</td>
+    </tr>
+    <tr>
+      <td>VERB</td>
+      <td>Verbo</td>
+      <td>Acciones, eventos o estados (p. ej., ejecutar, convertirse, existir).</td>
+    </tr>
+    <tr>
+      <td>X</td>
+      <td>Otro</td>
+      <td>Categorización general para palabras no clasificadas (p. ej., frases extranjeras o errores tipográficos)</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              El etiquetado gramatical se puede realizar de diferentes maneras, algunas de
+              ellas son:
+          </p>
+          <p>
+              <b>Sistemas basados ​​en reglas</b>:  Utilizan reglas lingüísticas para
+              categorizar las palabras. Pueden haber reglas tan simples como Colombia es un
+              sustantivo (NOUN). Otras algo más complejas como reemplazar la categoría de
+              sustantivo (NOUN) por verbo (VERB) si va precedida por pronombre. Otro ejemplo
+              sería decir que todas las palabras terminadas en -mente son adverbios de modo
+              como tranquilamente, calladamente y serenamente. Pero esta regla no funcionaria
+              para las palabras demente, clemente, vehemente, lamente, aumente etc que son
+              adjetivos y verbos pero no adverbios de modo. Este modelado del lenguaje de
+              acuerdo a reglas es bastante rígido y presenta dificultades para manejar la
+              ambigüedad o etiquetar palabras desconocidas.
+          </p>
+          <p>
+              <b>Modelos estadísticos</b>:
+          </p>
+          <p>
+              Los enfoques estadísticos clasifican las probabilidades de que un token
+              pertenezca a las distintas categorías escogiendo la categoría más probable.
+          </p>
+          <p>
+              Uno de estos modelos estadísticos son las cadenas ocultas de Markov. Estos
+              modelos tienen algo llamado estados ocultos. Estas serían las categorías
+              gramaticales como determinante, verbo adjetivo etcétera. El modelo calcula dos
+              tipos de probabilidades las probabilidades de transición y las probabilidades de
+              emisión para una palabra.
+          </p>
+          <p>
+              Las probabilidades de transición calculan por ejemplo que tan probable que
+              después de un artículo siga un sustantivo. Las probabilidades de emisión
+              calculan que tan probable que el token que se esté analizando pertenezca a una
+              determianda categoría. Mirando este enfoque más amplio , que tiene en cuenta la
+              secuencia de palabras el modelo logra una aproximación más precisa que los
+              sistemas basados en reglas. Una ventaja de estos modelos es que son livianos y
+              pueden ejecutarse en recursos computacionales limitados y para datos pequeños,
+              como un conjunto de datos específico del dominio. Pero  pueden ser más propenso
+              a errores que los modelos apoyados en redes neuronales que describiré a
+              continuación.
+          </p>
+          <p>
+              <b>Modelos de aprendizaje automático</b>: Los etiquetadores gramaticales
+              modernos utilizan una mezcla de métodos estadísticos y redes neuronales para
+              etiquetar las palabras del lenguaje. Se entrenan redes neuronales con  bases de
+              datos del lenguaje tales como Penn TreeBank y Universal Dependencies para crear
+              etiquetadores que predigan las categorías gramaticales de los tokens de acuerdo
+              a una entrada de texto que el modelo no ha visto antes. Estos son los sistemas
+              que han demostrado ser más flexibles al manejar mejor la ambigüedad y el
+              etiquetado de palabras no conocidas.
+          </p>
+          <p>
+              Para más detalles, puede consultar mis publicaciones sobre <a
+              href="../post/a_simple_introduction_to_machine_learning.html">aprendizaje
+              automático</a> o <a
+              href="../post/understanding_neural_networks.html">aprendizaje profundo</a>.
+          </p>
+          <p>
+              Volviendo a nuestro ejemplo y teniendo una breve vista de los modelos  Después
+              de pasar los tokens a través del sistema de etiquetas upos, así es como podría
+              verse el resultado.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-python line-numbers">tokens_upos = [
+("Tengo", "VERB"),("ganas", "NOUN"),("de", "ADP"),("salir", "VERB"),("de", "ADP"),("el", "DET"),("bosque", "NOUN"),("e", "CCONJ"),("ir", "VERB"),("a", "ADP"),("el", "DET"),("campo", "NOUN"),("hoy", "ADV"),(".", "PUNCT"),("El", "DET"),("sol", "NOUN"),("brilla", "VERB"),(",", "PUNCT"),("los", "DET"),("pájaros", "NOUN"),("cantan", "VERB"),("y", "CCONJ"),("estoy", "VERB"),("de", "ADP"),("muy", "ADV"),("buen", "ADJ"),("humor", "NOUN"),(".", "PUNCT"),("¿", "PUNCT"),("No", "ADV"),("te", "PRON"),("pasa", "VERB"),("lo", "PRON"),("mismo", "ADJ"),(",", "PUNCT"),("Cato", "PROPN"),("?", "PUNCT")
+]</code>
+  </pre>
+</div>
+          <h3>Reconocimiento de entidades con nombre NER</h3>
+          <p>
+              El reconocimiento de entidades o NER (Named Entity Reognition) es un proceso
+              mediante el cual se procede a reconocer entidades dentro de un texto tales como
+              lugares, personas, productos, organizaciones, nacionalidades, fechas, valores
+              numéricos entre otros. .
+          </p>
+          <p>
+              Mediante el NER podemos extraer información relevante de un texto y
+              transformarla en información estructurada (como una tabla), que se puede usar
+              para análisis posteriores.
+          </p>
+          <p>
+              Tratas de extraer diferentes entidades de un texto.
+          </p>
+          <p>
+              Puedes encontrar más informacion sobre NER <a href="https://www.ibm.com/es-
+              es/think/topics/named-entity-recognition">aquí</a>
+          </p>
+          <p>
+              El reconocimiento de entidades con nombre (del inglés named entity recognition
+              |NER) ayuda a las máquinas a identificar y categorizar elementos clave en el
+              texto, como nombres, fechas y lugares. Por ejemplo, en la oración:
+          </p>
+          <p>
+              "Cato ganó el premio en Bogotá la semana pasada",
+          </p>
+          <p>
+              NER etiquetaría:
+          </p>
+          <p>
+              "Cato" como PERSONA,
+          </p>
+          <p>
+              "premio" como EVENTO y
+          </p>
+          <p>
+              "Bogotá" como LUGAR.
+          </p>
+          <p>
+              NER es útil para extraer información valiosa de textos extensos. Puede ayudar a
+              resumir texto, responder preguntas y mejorar las tareas de análisis de
+              sentimientos. Las etiquetas NER suelen determinarse en función de ontologías o
+              vocabularios creados por humanos.
+          </p>
+          <p>
+              A continuación, se incluye una lista de algunas categorías NER comunes:
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Categoría NER</th>
+      <th>Definición</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PER (Persona)</td>
+      <td>Nombres de personas</td>
+      <td>Isabel Allende, Mon Laferte</td>
+    </tr>
+    <tr>
+      <td>ORG (Organización)</td>
+      <td>Nombres de organizaciones o empresas</td>
+      <td>Umbrella Corporation, Nokia</td>
+    </tr>
+    <tr>
+      <td>LOC (Localización)</td>
+      <td>Nombres de lugares geográficos</td>
+      <td>Bogotá, Parque Tayrona, Sagrada Familia</td>
+    </tr>
+    <tr>
+      <td>GPE (Entidad Geopolítica)</td>
+      <td>Regiones políticas, como países, ciudades o estados</td>
+      <td>Colombia, Sucre</td>
+    </tr>
+    <tr>
+      <td>FECHA</td>
+      <td>Expresiones de fecha u hora específicas</td>
+      <td>1 de septiembre de 2024, mañana</td>
+    </tr>
+    <tr>
+      <td>HORA</td>
+      <td>Horas específicas</td>
+      <td>15:00, mediodía</td>
+    </tr>
+    <tr>
+      <td>DINERO</td>
+      <td>Montos monetarios</td>
+      <td>50.000 pesos, 10 euros</td>
+    </tr>
+    <tr>
+      <td>PORCENTAJE</td>
+      <td>Porcentajes</td>
+      <td>15 por ciento, 50%</td>
+    </tr>
+    <tr>
+      <td>FAC (Instalación)</td>
+      <td>Edificios, aeropuertos, carreteras</td>
+      <td>Casa de la Moneda, aeropuerto El Dorado, carretera Panamericana</td>
+    </tr>
+    <tr>
+      <td>NORP</td>
+      <td>Nacionalidades, religiones, grupos políticos</td>
+      <td>Colombia, catolicismo, partido verde</td>
+    </tr>
+    <tr>
+      <td>PROD</td>
+      <td>Producto</td>
+      <td>Café Juan Valdez, Flores, Renault</td>
+    </tr>
+    <tr>
+      <td>OBRA_DE_ARTE</td>
+      <td>Obras creativas</td>
+      <td>Relatos salvajes, Las meninas</td>
+    </tr>
+    <tr>
+      <td>IDIOMA</td>
+      <td>Idiomas</td>
+      <td>Español, Wayuu, Criollo, Inglés</td>
+    </tr>
+    <tr>
+      <td>EVENTO</td>
+      <td>Eventos con nombre</td>
+      <td>Reinado de la Panela, Juegos Panamericanos</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              Y volviendo a nuestra oración inicial podríamos esperar un resultado como el
+              siguiente.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-shellsession line-numbers">Reconocimiento de entidad con nombre:
+Entidad: hoy, Etiqueta: FECHA, Inicio: 22, Fin: 27
+Entidad: Cato, Etiqueta: ORG, Inicio: 123, Fin: 127</code>
+  </pre>
+</div>
+          <p>
+              NER es esencial para extraer información estructurada de texto no estructurado,
+              lo que es útil en tareas como la recuperación y el resumen de información.
+          </p>
+          <h3>Análisis de sentimientos</h3>
+          <p>
+              El análisis de sentimientos implica determinar el sentimiento o la emoción
+              detrás de un fragmento de texto. Esto puede ser complicado porque el sarcasmo,
+              la ironía o el contexto pueden cambiar drásticamente el significado. Por
+              ejemplo, la frase "¡Genial, justo lo que necesitaba!" puede parecer positiva,
+              pero es probable que sea negativa debido al tono.
+          </p>
+          <p>
+              El análisis de sentimientos clasifica una oración como positiva, neutral o
+              negativa y, a veces, incluso de manera más precisa, como fuertemente positiva o
+              fuertemente negativa. Esto es particularmente útil para procesar los comentarios
+              de los clientes o comprender la opinión pública. Los sistemas de PNL modernos
+              pueden ir más allá de lo positivo, lo neutral y lo negativo y detectar más
+              emociones en el texto.
+          </p>
+          <p>
+              Aquí hay una lista de algunas de las emociones que estos sistemas pueden
+              detectar.
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Emoción</th>
+      <th>Tono emocional</th>
+      <th>Ejemplo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Felicidad</td>
+      <td>Positivo</td>
+      <td>¡Finalmente logré mi objetivo y me siento muy feliz por eso!</td>
+    </tr>
+    <tr>
+      <td>Emoción</td>
+      <td>Positivo</td>
+      <td>No veo la hora de empezar mañana en mi nuevo trabajo. ¡Será increíble!</td>
+    </tr>
+    <tr>
+      <td>Gratitud</td>
+      <td>Positivo</td>
+      <td>Muchas gracias por ayudarme en este momento difícil. Significa mucho para mí.</td>
+    </tr>
+    <tr>
+      <td>Enojo</td>
+      <td>Negativo</td>
+      <td>No puedo creer que me hayan mentido. ¡Estoy furioso!</td>
+    </tr>
+    <tr>
+      <td>Tristeza</td>
+      <td>Negativo</td>
+      <td>Me siento muy deprimido hoy. Todo me recuerda lo que he perdido.</td>
+    </tr>
+    <tr>
+      <td>Miedo</td>
+      <td>Negativo</td>
+      <td>Caminar solo en este callejón oscuro me aterroriza.</td>
+    </tr>
+    <tr>
+      <td>Decepción</td>
+      <td>Negativo</td>
+      <td>Realmente esperaba un mejor resultado, pero creo que tendré que intentarlo de nuevo.</td>
+    </tr>
+    <tr>
+      <td>Indiferencia</td>
+      <td>Neutral</td>
+      <td>Realmente no tengo una opinión sobre este tema. No me afecta.</td>
+    </tr>
+    <tr>
+      <td>Curiosidad</td>
+      <td>Contexto específico</td>
+      <td>¡Tengo mucha curiosidad por saber cómo resultará este experimento! Tengo curiosidad por saber por qué me están evitando. Me parece sospechoso.</td>
+    </tr>
+    <tr>
+      <td>Confusión</td>
+      <td>Contexto específico</td>
+      <td>¡Este rompecabezas es confuso, pero me estoy divirtiendo resolviéndolo! Estoy confundida sobre lo que está pasando y me está poniendo ansiosa.</td>
+    </tr>
+    <tr>
+      <td>Esperanza</td>
+      <td>Contexto específico</td>
+      <td>Espero que esta nueva oportunidad traiga el cambio que he estado esperando. Espero que me perdonen, pero en el fondo, temo que no lo hagan.</td>
+    </tr>
+    <tr>
+      <td>Frustración</td>
+      <td>Contexto específico</td>
+      <td>Estoy frustrada con este proyecto, pero sé que me sentiré orgullosa una vez que lo termine. Este tráfico es tan frustrante que me está haciendo perder toda la tarde.</td>
+    </tr>
+    <tr>
+      <td>Amor</td>
+      <td>Contexto específico</td>
+      <td>Me encanta pasar tiempo con mi familia; es muy gratificante. Los amo, pero esta relación está destruyendo mi salud mental.</td>
+    </tr>
+    <tr>
+      <td>Culpa</td>
+      <td>Contexto específico</td>
+      <td>Me siento culpable por lo que dije, así que voy a disculparme y arreglar las cosas.</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              Sin embargo, las emociones son complicadas y el contexto es esencial. Por
+              ejemplo, "No soy infeliz" es técnicamente negativo, pero implica algo positivo.
+              El análisis de sentimientos utiliza modelos de aprendizaje automático para dar
+              cuenta de esas sutilezas, aunque incluso los mejores modelos pueden tener
+              problemas con el sarcasmo o la ambigüedad.
+          </p>
+          <h3>Resolución de correferencia</h3>
+          <p>
+              ¿Alguna vez has leído una historia en la que aparecen personajes como "él",
+              "ella" o "ellos" y te encuentras tratando de reconstruir de quién se está
+              hablando? Esa es la esencia de la resolución de correferencia: determinar cuándo
+              diferentes palabras o frases se refieren en realidad a la misma persona o cosa.
+          </p>
+          <p>
+              Veamos esto más de cerca con nuestra oración de ejemplo: "Tengo ganas de salir
+              hoy, el sol brilla, los pájaros cantan y estoy de muy buen humor. ¿No te pasa lo
+              mismo, Cato?". En esta alegre narración, "tú" está claramente dirigido a Cato,
+              mientras que "yo" pertenece al hablante. Para nosotros, esto es sencillo:
+              nuestras mentes conectan los puntos sin problemas. ¿Pero para una computadora?
+              Es como desenredar una red compleja. La resolución de correferencia les da a las
+              máquinas las herramientas para seguir estas conexiones, lo que garantiza que
+              puedan averiguar quién es quién, incluso en textos largos e intrincados.
+          </p>
+          <p>
+              Esta habilidad desempeña un papel fundamental en aplicaciones como la redacción
+              de resúmenes, donde es crucial comprender a quién o a qué se refiere cada
+              pronombre. Imagine un resumen en el que se utilice "él" o "ellos" de forma
+              ambigua y sin contexto: parecería inconexo y difícil de seguir. La resolución de
+              correferencias garantiza que los resúmenes y otras tareas con mucho texto
+              mantengan la claridad y la fluidez.
+          </p>
+          <p>
+              En nuestro ejemplo, utilizando herramientas como spaCy y neuralcoref, la
+              computadora identifica las siguientes correferencias: "Yo" se refiere al
+              hablante y aparece dos veces en el texto. "Tú" apunta directamente a Cato, la
+              persona a la que se dirige. Esta correlación puede parecernos trivial, pero para
+              una máquina es el resultado de sofisticados algoritmos que funcionan entre
+              bastidores para imitar nuestra comprensión natural.
+          </p>
+          <p>
+              Con estas conexiones establecidas, las máquinas pueden navegar por el texto de
+              forma más fluida, transformando los datos fragmentados en información coherente.
+          </p>
+          <p>
+              Un resultado esperado de este proceso sería algo como:
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-shellsession line-numbers">[I: [I, I], you: [you, Cato]]</code>
+  </pre>
+</div>
+          <h2>Conclusión: Uniendo todo</h2>
+          <p>
+              La PNL puede sonar intimidante al principio, pero cuando la desglosas
+              (tokenización, etiquetado POS, NER, análisis de sentimientos y resolución de
+              correferencia) se vuelve más accesible. Cada una de estas técnicas juega un
+              papel vital para ayudar a las máquinas a comprender el lenguaje humano. No hemos
+              cubierto todas las técnicas posibles en el campo, pero tal vez esta sea una
+              buena descripción general para que te hagas una idea de lo que ocurre detrás de
+              escena en el lenguaje de las máquinas.
+          </p>
+          <p>
+              La conclusión clave es que la PNL tiene que ver con permitir que las máquinas
+              procesen y comprendan el lenguaje humano de una manera significativa. Ya sea que
+              estés analizando sentimientos, etiquetando partes del discurso o identificando
+              entidades clave, estos bloques de construcción son esenciales para crear
+              sistemas de PNL efectivos.
+          </p>
+          <p>
+              Al desmitificar estos conceptos, espero que te sientas más conectado con la
+              tecnología que impulsa gran parte de nuestro mundo digital. Y tal vez esta nueva
+              comprensión te inspire a profundizar en la PNL o simplemente a obtener una mayor
+              apreciación por la belleza del lenguaje.
+          </p>
+         </div>
+        </main>
+<section class="old-posts-section">
+        <h2>Otros posts</h2>
+        <div class="old-posts">
+            
+            <div class="post">
+                <a href="../../post/es/dalle3_user_test.html">
+                    <img src="../../images/dalle3_user_test_title_img.webp" alt="Dall-e 3 prueba de usuario">
+                    <p>Dall-e 3 prueba de usuario</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/deploying_ai_models_in_the_cloud.html">
+                    <img src="../../images/deploying_ai_models_in_the_cloud_title_img.webp" alt="Comparación de implementación de modelos de IA en la nube">
+                    <p>Comparación de implementación de modelos de IA en la nube</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/understanding_neural_networks.html">
+                    <img src="../../images/understanding_neural_networks_title_img.webp" alt="Entendiendo las redes neuronales">
+                    <p>Entendiendo las redes neuronales</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/a_simple_introduction_to_machine_learning.html">
+                    <img src="../../images/a_simple_introduction_to_machine_learning_title_img.webp" alt="Una introducción sencilla al aprendizaje automático">
+                    <p>Una introducción sencilla al aprendizaje automático</p>
+                </a>
+            </div>
+            
+         </div>
+        </section><section class="contact-form">
+    <footer>
+    <div class="footer-content">
+    <p>© 2025 Catobyte. Todos los derechos reservados.</p>
+    <p>Contacto: {{CONTACT_EMAIL}}</p>
+    
+    <ul class="footer-links">
+    <li><a href="../../pages/es/about.html">Acerca de mí</a></li>
+    <li><a href="../../pages/es/archive.html">Archivo del blog</a></li>
+    <li><a href="../../pages/es/privacy_policy.html">Política de privacidad</a></li>
+    <li><a href="../../pages/es/terms_of_service.html">Condiciones del servicio</a></li>
+    <li><a href="../../pages/es/contact.html">Contacto</a></li>
+    </ul>
+    </div>
+    </footer>   </body>
+</html>

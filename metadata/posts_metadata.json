@@ -1,0 +1,262 @@
+[
+    {
+        "post_id": "a_simple_introduction_to_machine_learning",
+        "languages": {
+            "en": {
+                "file_name": "a_simple_introduction_to_machine_learning.md",
+                "title": "A simple introduction to machine learning",
+                "post_url": "../../post/en/a_simple_introduction_to_machine_learning.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 12 November 2024 "
+            },
+            "es": {
+                "file_name": "a_simple_introduction_to_machine_learning.md",
+                "title": "Una introducción sencilla al aprendizaje automático",
+                "post_url": "../../post/es/a_simple_introduction_to_machine_learning.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 12 de Noviembre de 2024 "
+            },
+            "fr": {
+                "file_name": "a_simple_introduction_to_machine_learning.md",
+                "title": "Une introduction simple à l'apprentissage automatique",
+                "post_url": "../../post/fr/a_simple_introduction_to_machine_learning.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 12 novembre 2024 "
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/a_simple_introduction_to_machine_learning_title_img.webp"
+    },
+    {
+        "post_id": "ai_in_mass_effect",
+        "languages": {
+            "en": {
+                "file_name": "ai_in_mass_effect.md",
+                "title": "Artificial Intelligence in Mass Effect",
+                "post_url": "../../post/en/ai_in_mass_effect.html",
+                "title_image_description": "Mass Effect Legendary Edition. BioWare, Electronic Arts, 2021. Personal screenshot showing the inside of the normandy 07th October 2024"
+            },
+            "es": {
+                "file_name": "ai_in_mass_effect.md",
+                "title": "Representación de Inteligencias Artificiales en el videojuego Mass Effect",
+                "post_url": "../../post/es/ai_in_mass_effect.html",
+                "title_image_description": "Mass Effect Legendary Edition. BioWare, Electronic Arts, 2021. Captura de pantalla mostrando el interior de la nave Normandy 07 de Octubre de 2024"
+            },
+            "fr": {
+                "file_name": "ai_in_mass_effect.md",
+                "title": "Représentation des Intelligences Artificielles dans le jeu vidéo Mass Effect",
+                "post_url": "../../post/fr/ai_in_mass_effect.html",
+                "title_image_description": ""
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/ai_in_mass_effect_title_img.png"
+    },
+    {
+        "post_id": "ai_not_taking_our_jobs_just_yet",
+        "languages": {
+            "en": {
+                "file_name": "ai_not_taking_our_jobs_just_yet.md",
+                "title": "AI is not taking our jobs just yet",
+                "post_url": "../../post/en/ai_not_taking_our_jobs_just_yet.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 7th October 2024"
+            },
+            "es": {
+                "file_name": "ai_not_taking_our_jobs_just_yet.md",
+                "title": "¿Realmente la IA nos quitará el empleo?",
+                "post_url": "../../post/es/ai_not_taking_our_jobs_just_yet.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024"
+            },
+            "fr": {
+                "file_name": "ai_not_taking_our_jobs_just_yet.md",
+                "title": "L’IA va-t-elle vraiment nous voler nos emplois ?",
+                "post_url": "../../post/fr/ai_not_taking_our_jobs_just_yet.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 7 octobre 2024"
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/ai_not_taking_our_jobs_just_yet_title_img.webp"
+    },
+    {
+        "post_id": "big_data_deams_little_data_realities",
+        "languages": {
+            "en": {
+                "file_name": "big_data_deams_little_data_realities.md",
+                "title": "Big Data Dreams Little Data Realities",
+                "post_url": "../../post/en/big_data_deams_little_data_realities.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 13 November 2024 "
+            },
+            "es": {
+                "file_name": "big_data_deams_little_data_realities.md",
+                "title": "Sueños de Big Data",
+                "post_url": "../../post/es/big_data_deams_little_data_realities.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 13 de Noviembre de 2024 "
+            },
+            "fr": {
+                "file_name": "big_data_deams_little_data_realities.md",
+                "title": "Rêves de Big Data",
+                "post_url": "../../post/fr/big_data_deams_little_data_realities.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 13 novembre 2024 "
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/big_data_dreams_little_data_realities_title_img.webp"
+    },
+    {
+        "post_id": "chat_gpt_store",
+        "languages": {
+            "en": {
+                "file_name": "chat_gpt_store.md",
+                "title": "Review of chat GPT store",
+                "post_url": "../../post/en/chat_gpt_store.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 1st February 2024 "
+            },
+            "es": {
+                "file_name": "chat_gpt_store.md",
+                "title": "Review de la GPT store",
+                "post_url": "../../post/es/chat_gpt_store.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 1 de Febrero de 2024 "
+            },
+            "fr": {
+                "file_name": "chat_gpt_store.md",
+                "title": "Review de la GPT store",
+                "post_url": "../../post/fr/chat_gpt_store.html",
+                "title_image_description": ""
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/chat_gpt_store_title_img.png"
+    },
+    {
+        "post_id": "chatgpt_in_other_languages",
+        "languages": {
+            "en": {
+                "file_name": "chatgpt_in_other_languages.md",
+                "title": "ChatGPT Language Proficiency  English vs Spanish vs French",
+                "post_url": "../../post/en/chatgpt_in_other_languages.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 7th October 2024"
+            },
+            "es": {
+                "file_name": "chatgpt_in_other_languages.md",
+                "title": "ChatGPT Language Proficiency  English vs Spanish vs French",
+                "post_url": "../../post/es/chatgpt_in_other_languages.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 7 de Octubre de 2024"
+            },
+            "fr": {
+                "file_name": "chatgpt_in_other_languages.md",
+                "title": "ChatGPT Compétences linguistiques Anglais vs Espagnol vs Français",
+                "post_url": "../../post/fr/chatgpt_in_other_languages.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 7 octobre 2024"
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/chatgpt_in_other_languages_title_img.webp"
+    },
+    {
+        "post_id": "dalle3_user_test",
+        "languages": {
+            "en": {
+                "file_name": "dalle3_user_test.md",
+                "title": "Dall-e 3 user's test",
+                "post_url": "../../post/en/dalle3_user_test.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 20th February 2024 "
+            },
+            "es": {
+                "file_name": "dalle3_user_test.md",
+                "title": "Dall-e 3 prueba de usuario",
+                "post_url": "../../post/es/dalle3_user_test.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI, 20 de Febrero de 2024 "
+            },
+            "fr": {
+                "file_name": "dalle3_user_test.md",
+                "title": "Test utilisateur Dall-e 3",
+                "post_url": "../../post/fr/dalle3_user_test.html",
+                "title_image_description": ""
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/dalle3_user_test_title_img.webp"
+    },
+    {
+        "post_id": "deploying_ai_models_in_the_cloud",
+        "languages": {
+            "en": {
+                "file_name": "deploying_ai_models_in_the_cloud.md",
+                "title": "Deploying AI Models in the Cloud Comparisson",
+                "post_url": "../../post/en/deploying_ai_models_in_the_cloud.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 7th October 2024 "
+            },
+            "es": {
+                "file_name": "deploying_ai_models_in_the_cloud.md",
+                "title": "Comparación de implementación de modelos de IA en la nube",
+                "post_url": "../../post/es/deploying_ai_models_in_the_cloud.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024"
+            },
+            "fr": {
+                "file_name": "deploying_ai_models_in_the_cloud.md",
+                "title": "Comparaison des déploiements de modèles d'IA dans le cloud",
+                "post_url": "../../post/fr/deploying_ai_models_in_the_cloud.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 7 octobre 2024"
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/deploying_ai_models_in_the_cloud_title_img.webp"
+    },
+    {
+        "post_id": "nlp_introduction",
+        "languages": {
+            "en": {
+                "file_name": "nlp_introduction.md",
+                "title": "NLP A detailed Intro",
+                "post_url": "../../post/en/nlp_introduction.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 7th October 2024 "
+            },
+            "es": {
+                "file_name": "nlp_introduction.md",
+                "title": "¿Cómo nos entienden las máquinas? Introducción al PLN o NLP(Procesamiento de lenguaje natural)",
+                "post_url": "../../post/es/nlp_introduction.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024"
+            },
+            "fr": {
+                "file_name": "nlp_introduction.md",
+                "title": "Comment les machines nous comprennent-elles ? Introduction au PNL (traitement du langage naturel)",
+                "post_url": "../../post/fr/nlp_introduction.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 7 octobre 2024"
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/nlp_introduction_title_img.webp"
+    },
+    {
+        "post_id": "understanding_neural_networks",
+        "languages": {
+            "en": {
+                "file_name": "understanding_neural_networks.md",
+                "title": "Understanding Neural Networks",
+                "post_url": "../../post/en/understanding_neural_networks.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 7th October 2024 "
+            },
+            "es": {
+                "file_name": "understanding_neural_networks.md",
+                "title": "Entendiendo las redes neuronales",
+                "post_url": "../../post/es/understanding_neural_networks.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024"
+            },
+            "fr": {
+                "file_name": "understanding_neural_networks.md",
+                "title": "Comprendre les réseaux neuronaux",
+                "post_url": "../../post/fr/understanding_neural_networks.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 7 octobre 2024"
+            }
+        },
+        "creation_date": "2025-03-21",
+        "publication_date": "2025-03-21",
+        "title_image_url": "../../images/understanding_neural_networks_title_img.webp"
+    }
+]

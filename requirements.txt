@@ -1,0 +1,16 @@
+beautifulsoup4==4.11.2
+css-parser==1.0.8
+cssselect==1.2.0
+h2==4.1.0
+html2text==2020.1.16
+html5-parser==0.4.10
+html5lib==1.1
+httpcore==0.16.3
+httplib2==0.20.4
+httpx==0.23.3
+Markdown==3.4.1
+markdown-it-py==2.1.0
+matplotlib==3.6.3
+matplotlib-inline==0.1.6
+PyYAML==6.0
+regex==2022.10.31

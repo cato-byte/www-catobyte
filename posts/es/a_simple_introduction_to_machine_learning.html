@@ -1,0 +1,293 @@
+<html>
+<head>
+    <meta charset ="UTF-8">
+    <title> CatoByte</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">-->
+    <link rel="icon" type = "image/x-icon" href = "../../images/favicon_io/favicon.ico">
+    <script src="../../js/prism.js" defer></script>
+    <!-- Link to Prism CSS for code highlighting-->
+    <link  rel="stylesheet" href="../../css/prism.css"/>
+    <!-- Website stylesheet place after prism so it can override it-->
+    <link rel="stylesheet" href="../../css/styles.css">
+</head><body>
+<header>
+    <h1>
+    CatoByte
+    </h1>
+    <p style="text-align: center;">Explorando la IA, los datos y la tecnología</p>
+</header><nav>
+    <ul class="navbar">
+    <li><a href="../../pages/es/home.html">Inicio</a></li>
+    <li><a href="../../pages/es/about.html">Acerca de</a></li>
+    <li><a href="../../pages/es/contact.html">Contacto</a></li>
+    <li><a href="../../pages/es/archive.html">Archivo del blog</a></li>
+    <li class="dropdown">
+        <a href="#">Idioma</a>
+        <ul class="dropdown-menu">
+            <li><a href="../../pages/fr/home.html">Français</a></li>
+            <li><a href="../../pages/en/home.html">English</a></li>
+        </ul>
+    </li>
+    </ul>
+</nav>        <main>
+            <div class="vertical-body-container">          <h2>Una introducción sencilla al aprendizaje automático</h2>
+          <h5>Publicado el 21 de marzo de 2025</h5>
+                    <div class="image-container">
+                <img src="../../images/a_simple_introduction_to_machine_learning_title_img.webp" alt="Imagen creada por ChatGPT, OpenAI. 12 de Noviembre de 2024 " class="responsive-title-image">
+                <h6 class="image-source"> Imagen creada por ChatGPT, OpenAI. 12 de Noviembre de 2024  </h6>
+            </div>
+          <h3>1. ¿Qué es el Machine Learning o Aprendizaje automático?</h3>
+          <p>
+              El aprendizaje automático es un campo de la informática que permite a las
+              computadoras aprender y adaptarse en función de los datos, sin necesidad de una
+              programación explícita para cada tarea específica. Como lo define Oxford
+              Languages, el aprendizaje automático es “el uso y desarrollo de sistemas
+              informáticos capaces de aprender y adaptarse sin seguir instrucciones
+              explícitas, mediante el uso de algoritmos y modelos estadísticos para analizar y
+              extraer inferencias de patrones en los datos”.
+          </p>
+          <p>
+              Un tipo de aprendizaje automático es una red neuronal. Pero antes de sumergirnos
+              en las redes neuronales, echemos un vistazo a un ejemplo más simple de
+              aprendizaje automático para construir una base sólida: predecir los precios de
+              las viviendas.
+          </p>
+          <p>
+              <b>Un ejemplo del mundo real: predicción de precios de viviendas</b>
+          </p>
+          <p>
+              Supongamos que desea predecir el precio de una casa en función de algunas
+              características, como la cantidad de habitaciones, el tamaño de la casa, la
+              ubicación y el año de construcción.
+          </p>
+          <p>
+              Primero, reuniría un conjunto de datos de casas cuyos precios ya conoce. Estos
+              datos se pueden representar en una tabla, donde cada fila es un registro de una
+              casa con columnas para diferentes características (conocidas como
+              características o predictores) como el tamaño, las habitaciones, la ubicación y
+              el año de construcción. La columna que contiene el precio es nuestra variable
+              objetivo o dependiente: es el valor que estamos tratando de predecir.
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Tamaño (sq mt)</th>
+      <th>Habitaciones</th>
+      <th>Codigo Postal</th>
+      <th>Año de construcción</th>
+      <th>Precio (Simoleons)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1500</td>
+      <td>3</td>
+      <td>94121</td>
+      <td>2005</td>
+      <td>§700,000</td>
+    </tr>
+    <tr>
+      <td>2500</td>
+      <td>4</td>
+      <td>94122</td>
+      <td>2010</td>
+      <td>§1,000,000</td>
+    </tr>
+    <tr>
+      <td>1200</td>
+      <td>2</td>
+      <td>94123</td>
+      <td>1998</td>
+      <td>§500,000</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              Usaremos estos datos para entrenar nuestro modelo.
+          </p>
+          <p>
+              <b>Regresión lineal: un modelo simple para la predicción</b>
+          </p>
+          <p>
+              Para hacer esta predicción, podemos comenzar con un modelo simple llamado
+              regresión lineal. En esencia, la regresión lineal busca una relación de línea
+              recta entre las características y el objetivo.
+          </p>
+          <p>
+              Imagina que cada fila de datos es un punto en un espacio dimensional. Por
+              ejemplo, si solo usamos el tamaño de la característica, podríamos trazar los
+              puntos de datos en un espacio 2D, donde el eje x representa el tamaño y el eje y
+              representa el precio.
+          </p>
+          <p>
+              En este escenario, la regresión lineal ajustaría una línea a los datos que mejor
+              expliquen la relación entre el tamaño de la casa y el precio.
+          </p>
+                    <div class="image-container">
+                <img src="../../images/a_simple_introduction_to_machine_learning_2d_linear_reg_example.png" alt="Precios de casas ficticios versus tamaño de la casa" class="responsive-image">
+                <h6 class="image-source"> Precios de casas ficticios versus tamaño de la casa </h6>
+            </div>
+          <p>
+              En este escenario, la regresión lineal ajustaría una línea a los datos que mejor
+              expliquen la relación entre las características de la casa y el precio.
+          </p>
+          <p>
+              Ahora, agreguemos complejidad. Imaginemos que usamos dos características en
+              lugar de una, por ejemplo, el tamaño y la cantidad de habitaciones. Ahora,
+              nuestros puntos de datos se distribuirían en un espacio 3D: el eje x podría
+              representar el tamaño, el eje y podría representar las habitaciones y el eje z
+              sería el precio de la casa. Aquí, en lugar de una línea, la regresión ajustaría
+              un plano a los datos.
+          </p>
+                    <div class="image-container">
+                <img src="../../images/a_simple_introduction_to_machine_learning_3d_linear_reg_example.png" alt="Precios de casas ficticios versus tamaño de la casa y cantidad de habitaciones " class="responsive-image">
+                <h6 class="image-source"> Precios de casas ficticios versus tamaño de la casa y cantidad de habitaciones  </h6>
+            </div>
+          <p>
+              A medida que agregamos aún más características, es difícil de visualizar. En un
+              ejemplo con n características, cada registro se convertiría en un punto en un
+              espacio (n+1)-dimensional. En este caso, nuestro modelo de regresión se ajusta a
+              un hiperplano (el término que se utiliza cuando nos movemos más allá de las tres
+              dimensiones) que mejor representa los puntos de datos.
+          </p>
+          <p>
+              Una vez que se crea este hiperplano, podemos usarlo para predecir valores
+              desconocidos. Cuando creamos este hiperplano, estamos entrenando el modelo. Para
+              evaluar nuestro modelo, podríamos conservar parte de los datos para realizar
+              pruebas, ingresar nuevos valores de características y ver qué tan cerca está el
+              precio predicho del precio real.
+          </p>
+          <p>
+              <b>Encontrar la línea, el plano o el hiperplano que mejor se ajusta: la
+              fórmula</b>
+          </p>
+          <p>
+              En la regresión lineal, la fórmula para el modelo es:
+          </p>
+          <p>
+              Precio = β₀ + β₁ * Característica_1 + β₂ * Característica_2 + ... + βₙ *
+              Característica_n
+          </p>
+          <p>
+              Cada característica tiene un coeficiente , que refleja cuánto impacto tiene en
+              el objetivo. β₀ es la intersección, o precio base, cuando todas las
+              características son cero.
+          </p>
+          <p>
+              En nuestro ejemplo del precio de la vivienda, esto podría verse así:
+          </p>
+          <p>
+              Precio = β₀ + β₁(Tamaño) + β₂(Habitaciones) + β₃*(Ubicación) + β₄*(Año de
+              construcción)
+          </p>
+          <p>
+              Nuestro objetivo es encontrar valores para estos coeficientes que se ajusten
+              mejor a los datos. Hay diferentes formas de calcular estos valores; veremos
+              brevemente dos de ellas: Mínimos cuadrados y Descenso de gradiente.
+          </p>
+          <p>
+              <b>Método 1: Mínimos cuadrados</b>
+          </p>
+          <p>
+              El método de Mínimos cuadrados nos brinda una solución exacta al resolver
+              ecuaciones matemáticas basadas en los datos. En los casos con una sola
+              característica, es bastante eficiente, ya que solo necesita revisar cada punto
+              de datos una vez. Pero cuando tiene múltiples características, requiere cálculos
+              más complejos (operaciones matriciales), que pueden volverse poco prácticas para
+              conjuntos de datos grandes.
+          </p>
+          <p>
+              <b>Método 2: Descenso de gradiente</b>
+          </p>
+          <p>
+              El descenso de gradiente es un método iterativo y suele preferirse cuando se
+              trabaja con múltiples características o grandes conjuntos de datos. Aquí hay una
+              versión simplificada de los pasos:
+          </p>
+          <p>
+              1. Comience con una suposición: comience con una línea aleatoria que no se
+              ajuste bien a los datos. Esta línea tiene una pendiente y una intersección
+              (posición).
+          </p>
+          <p>
+              2. Verifique qué tan lejos está: para cada casa en el conjunto de datos, mida
+              qué tan lejos está el precio predicho del precio real.
+          </p>
+          <p>
+              3. Ajuste la línea: ajuste la línea levemente en función de qué tan lejos
+              estaba. Si las predicciones de la línea fueron demasiado altas, ajústelas hacia
+              abajo; si son demasiado bajas, ajústelas hacia arriba. De manera similar,
+              modifique la pendiente si es demasiado pronunciada o demasiado plana.
+          </p>
+          <p>
+              4. Repita: continúe ajustando la línea poco a poco. Cada ajuste hace que la
+              línea se ajuste a los datos con mayor precisión.
+          </p>
+          <p>
+              5. Deténgase cuando esté lo suficientemente cerca: cuando la línea se ajuste a
+              los datos lo suficientemente bien, dejamos de ajustar.
+          </p>
+          <p>
+              ¿Por qué funciona esto? Piense en ello como si estuviera apuntando un dardo a un
+              objetivo. Cada lanzamiento (o ajuste) le ayuda a acercarse y, con el tiempo,
+              “aprende” a dar cerca del centro de la diana.
+          </p>
+          <p>
+              Así que ahí lo tiene: un ejemplo del mundo real de uso del aprendizaje
+              automático y la regresión lineal para predecir valores basados ​​en datos. Hay
+              muchos más métodos para hacer predicciones con aprendizaje automático.
+              Recomiendo visitar el <a href="https://scikit-learn.org/stable/">sitio web de
+              scikit-learn</a> para profundizar su comprensión de estos métodos. Con esta
+              base, ahora tiene una idea básica de cómo funciona el aprendizaje automático y
+              está listo para comenzar a explorar este fascinante campo con más profundidad.
+          </p>
+         </div>
+        </main>
+<section class="old-posts-section">
+        <h2>Otros posts</h2>
+        <div class="old-posts">
+            
+            <div class="post">
+                <a href="../../post/es/nlp_introduction.html">
+                    <img src="../../images/nlp_introduction_title_img.webp" alt="¿Cómo nos entienden las máquinas? Introducción al PLN o NLP(Procesamiento de lenguaje natural)">
+                    <p>¿Cómo nos entienden las máquinas? Introducción al PLN o NLP(Procesamiento de lenguaje natural)</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/understanding_neural_networks.html">
+                    <img src="../../images/understanding_neural_networks_title_img.webp" alt="Entendiendo las redes neuronales">
+                    <p>Entendiendo las redes neuronales</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/ai_in_mass_effect.html">
+                    <img src="../../images/ai_in_mass_effect_title_img.png" alt="Representación de Inteligencias Artificiales en el videojuego Mass Effect">
+                    <p>Representación de Inteligencias Artificiales en el videojuego Mass Effect</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/es/ai_not_taking_our_jobs_just_yet.html">
+                    <img src="../../images/ai_not_taking_our_jobs_just_yet_title_img.webp" alt="¿Realmente la IA nos quitará el empleo?">
+                    <p>¿Realmente la IA nos quitará el empleo?</p>
+                </a>
+            </div>
+            
+         </div>
+        </section><section class="contact-form">
+    <footer>
+    <div class="footer-content">
+    <p>© 2025 Catobyte. Todos los derechos reservados.</p>
+    <p>Contacto: {{CONTACT_EMAIL}}</p>
+    
+    <ul class="footer-links">
+    <li><a href="../../pages/es/about.html">Acerca de mí</a></li>
+    <li><a href="../../pages/es/archive.html">Archivo del blog</a></li>
+    <li><a href="../../pages/es/privacy_policy.html">Política de privacidad</a></li>
+    <li><a href="../../pages/es/terms_of_service.html">Condiciones del servicio</a></li>
+    <li><a href="../../pages/es/contact.html">Contacto</a></li>
+    </ul>
+    </div>
+    </footer>   </body>
+</html>

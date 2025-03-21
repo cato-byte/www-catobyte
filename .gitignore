@@ -1,0 +1,7 @@
+.env
+.vscode/
+kunturvenv/
+pages/
+post/
+util/__pycache__/
+util/config.py

@@ -1,0 +1,721 @@
+<html>
+<head>
+    <meta charset ="UTF-8">
+    <title> CatoByte</title>
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">-->
+    <link rel="icon" type = "image/x-icon" href = "../..images/favicon_io/favicon.ico">
+    <script src="../../js/prism.js" defer></script>
+    <!-- Link to Prism CSS for code highlighting-->
+    <link  rel="stylesheet" href="../../css/prism.css"/>
+    <!-- Website stylesheet place after prism so it can override it-->
+    <link rel="stylesheet" href="../../css/styles.css">
+</head><body>
+<header> 
+    <h1>
+        CatoByte
+    </h1>
+    <p style="text-align: center;">Exploring AI, Data, and Technology</p>
+</header><nav>
+    <ul class="navbar">
+        <li><a href="../../pages/en/home.html">Home</a></li>
+        <li><a href="../../pages/en/about.html">About</a></li>
+        <li><a href="../../pages/en/contact.html">Contact</a></li>
+        <li><a href="../../pages/en/archive.html">Blog Archive</a></li>
+        <li class="dropdown">
+            <a href="#">Language</a>
+            <ul class="dropdown-menu">
+                <li><a href="../../pages/es/home.html">Español</a></li>
+                <li><a href="../../pages/fr/home.html">Français</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>           <main>
+            <div class="vertical-body-container">          <h2>NLP A detailed Intro</h2>
+          <h5>Published on 21st of March 2025</h5>
+                    <div class="image-container">
+                <img src="../../images/nlp_introduction_title_img.webp" alt="Image created by ChatGPT, OpenAI. 7th October 2024 " class="responsive-title-image">
+                <h6 class="image-source"> Image created by ChatGPT, OpenAI. 7th October 2024  </h6>
+            </div>
+          <p>
+              Have you ever wondered how computers can understand and generate human language?
+              Let's explore this fascinating topic together. So, what does NLP stand for? It
+              stands for Natural Language Processing, which refers to the use of computational
+              techniques to derive meaning from text input and to create streams of text that
+              are comprehensible to humans. In this article, we’ll explore some core concepts
+              of NLP, including tokenization, part-of-speech (POS) tagging, and named entity
+              recognition (NER).
+          </p>
+          <p>
+              We use language so intuitively that we rarely stop to think about how complex
+              this process really is. For a machine, even at a high level, text is just a
+              sequence of characters contained in a file. But for the machine, these are all
+              the same: a sequence of bytes stored somewhere in its memory.
+          </p>
+          <p>
+              I must tell you that although NLP has made huge advances and is partly
+              responsible for the AI boom we’re experiencing today, there are still
+              improvements to be made, such as achieving true reasoning.
+          </p>
+          <p>
+              Without further ado, let's explore some techniques that machines can apply to
+              derive meaning from text.
+          </p>
+          <h3>Tokenization</h3>
+          <p>
+              Tokenization is the first step in NLP. It’s the process of splitting text into
+              smaller chunks called tokens, which are often words or phrases. This is crucial
+              because machines need these smaller chunks to analyze and process the text
+              effectively.
+          </p>
+          <p>
+              Let’s use the following sentences as an example:
+          </p>
+          <p>
+              <b>"I feel like going out today, the sun is shinning, the birds are singing and
+              I am in a great mood. Don't you feel the same Cato?"</b>
+          </p>
+          <p>
+              We  need a script or program to split this plain text into what are called
+              tokens ,usually words and punctuation marks. This is one of the most basic steps
+              in NLP and a necessary input for other NLP tasks. Without this step a machine
+              would only see a list of characters.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-python line-numbers">['I','feel','like','going','out','today',',','the','sun','is','shinning',',','the','birds','are','singing','and','I','am','in','a','great','mood','.','Do','n\'t','you','feel','the','same','Cato','?']</code>
+  </pre>
+</div>
+          <p>
+              Straightforward, right? There are exceptions of course but the process is
+              relatively simple. We now have a list of word tokens. You might be wondering why
+              I split the word "Don’t" into the tokens 'Do' and 'n't'. This is because "Don’t"
+              is a contraction of "Do" and "not," and this separation is important to help NLP
+              systems process its grammatical components separately. "Do" is a verb, and "not"
+              is a negation.
+          </p>
+          <p>
+              Next, we need a list of sentence tokens, which divides the text into different
+              sentences—this is important for translation.
+          </p>
+          <p>
+              <b>['I feel like going out today, the sun is shinning, the birds are singing and
+              I am in a great mood.','Don't you feel the same Cato?']</b>
+          </p>
+          <p>
+              Now you might be wondering: Why do we need a list of sentences if we already
+              have a list of words? Why is it important to make that distinction? Well, we can
+              use word tokens for understanding context, as each word carries a specific
+              meaning or function and is important to analyze separately. For grammatical
+              analysis, as we’ll see when we talk about POS tagging, this distinction is
+              essential.
+          </p>
+          <p>
+              We can use word tokens for undestanding context, each word carries a specific
+              meaning or function and is important to analize them separately. For grammatical
+              analysis that we will see below when we talk about POS tagging. For feature
+              extraction these are a series of techniques that allow to have numerical
+              representations of words, important for NLP modeling, going into full detail can
+              be an article in itself so I will basically say that there you can give numbers
+              to word for example counting their number of charactesrs, how many times they
+              appear in a sentence, wether they are capitalized or not how rare they are etc.
+          </p>
+          <p>
+              For sentence tokens, it’s more about context—words get meaning depending on
+              their position and the sentence they are found in. It’s also used for higher-
+              level analysis, such as sentiment analysis and translation, since sentences are
+              the natural translation units.
+          </p>
+          <p>
+              Tokenization is foundational because it prepares the text for further analysis,
+              making it easier to understand word meanings, detect patterns, and perform other
+              tasks like sentiment analysis.
+          </p>
+          <h3>Part-of-speech POS tagging</h3>
+          <p>
+              Next, let's dive into part-of-speech (POS) tagging. This process assigns each
+              word in a sentence a specific role, like noun, verb, or adjective. But why is it
+              important?
+          </p>
+          <p>
+              Without POS tagging, we might misunderstand sentences like:
+          </p>
+          <p>
+              <b>I booked a flight.</b> (Here, "booked" is a verb, meaning to reserve
+              something.) **I read a book.** (In this case, "read" is a verb, but "book" is a
+              noun!)
+          </p>
+          <p>
+              Tags for defining the categories to which words belong are mostly standardized.
+              A tag set commonly used in English is the Penn Treebank POS tag set, with over
+              36 categories. However, this tag set might not be ideal for other languages, as
+              it was conceived with English grammar in mind. For other languages, the
+              Universal POS (UPOS) tag system is often used, particularly for multilingual
+              applications, because of its support for over 100 languages and its consistency
+              across languages. There are special cases, such as Chinese, which uses its own
+              dataset. UPOS has fewer tags than Penn Treebank, which can simplify parsing.
+          </p>
+          <p>
+              Here are two tables with some common NLP tag categories for both of these
+              systems.
+          </p>
+          <p>
+              <b>Penn Treebank</b>
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Tag</th>
+      <th>Grammatical category</th>
+      <th>Definiton</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>NN</td>
+      <td>NOUN</td>
+      <td>Names of people, places, things, or ideas</td>
+    </tr>
+    <tr>
+      <td>VB</td>
+      <td>VERB</td>
+      <td>Words that describe actions, states, or occurrences</td>
+    </tr>
+    <tr>
+      <td>JJ</td>
+      <td>ADJECTIVE</td>
+      <td>Words that describe or modify nouns</td>
+    </tr>
+    <tr>
+      <td>RB</td>
+      <td>ADVERB</td>
+      <td>Words that modify verbs, adjectives, or other adverbs</td>
+    </tr>
+    <tr>
+      <td>PRP</td>
+      <td>PRONOUN</td>
+      <td>Words that replace noun</td>
+    </tr>
+    <tr>
+      <td>DT</td>
+      <td>DETERMINER</td>
+      <td>Words that introduce nouns</td>
+    </tr>
+    <tr>
+      <td>IN</td>
+      <td>PREPOSITION</td>
+      <td>Words that show relationships between nouns or pronouns and other words in a sentence.</td>
+    </tr>
+    <tr>
+      <td>CC</td>
+      <td>CONJUNCTION</td>
+      <td>Words that connect clauses, sentences, or words.</td>
+    </tr>
+    <tr>
+      <td>AUX</td>
+      <td>AUXILIARY  VERB</td>
+      <td>Verbs used to form tenses, moods, or voices of other verbs.</td>
+    </tr>
+    <tr>
+      <td>PP</td>
+      <td>PARTICLE</td>
+      <td>Words that form part of phrasal verbs</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              <b>UPOS Universal POS tag System</b>
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Tag</th>
+      <th>Grammatical categoty</th>
+      <th>Definiton</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ADJ</td>
+      <td>Adjective</td>
+      <td>Describes a noun (e.g., happy, green, small).</td>
+    </tr>
+    <tr>
+      <td>ADP</td>
+      <td>Adposition</td>
+      <td>Prepositions and postpositions (e.g., in, on, at).</td>
+    </tr>
+    <tr>
+      <td>ADV</td>
+      <td>Adverb</td>
+      <td>Modifies verbs, adjectives, or other adverbs (e.g., quickly, very, here).</td>
+    </tr>
+    <tr>
+      <td>AUX</td>
+      <td>Auxiliary Verb</td>
+      <td>Verbs that help form tense, mood, or voice (e.g., is, have, will).</td>
+    </tr>
+    <tr>
+      <td>CCONJ</td>
+      <td>Coordinating Conjunction</td>
+      <td>Links words, phrases, or clauses as equals (e.g., and, but, or).</td>
+    </tr>
+    <tr>
+      <td>DET</td>
+      <td>Determiner</td>
+      <td>Modifies a noun (e.g., the, a, some, my).</td>
+    </tr>
+    <tr>
+      <td>INTJ</td>
+      <td>Interjection</td>
+      <td>Expresses emotion or sound (e.g., wow, ouch, uh-huh).</td>
+    </tr>
+    <tr>
+      <td>NOUN</td>
+      <td>Noun</td>
+      <td>Names people, places, things, or ideas (e.g., cat, city, freedom).</td>
+    </tr>
+    <tr>
+      <td>NUM</td>
+      <td>Numeral</td>
+      <td>Indicates numbers (e.g., one, two, 42).</td>
+    </tr>
+    <tr>
+      <td>PART</td>
+      <td>Particle</td>
+      <td>Functional words or morphemes (e.g., not, to in not go or to go).</td>
+    </tr>
+    <tr>
+      <td>PRON</td>
+      <td>Pronoun</td>
+      <td>Substitutes for a noun (e.g., she, it, themselves).</td>
+    </tr>
+    <tr>
+      <td>PROPN</td>
+      <td>Proper Noun</td>
+      <td>Names specific entities (e.g., John, Paris, Google).</td>
+    </tr>
+    <tr>
+      <td>PUNCT</td>
+      <td>Punctuation</td>
+      <td>Any punctuation mark (e.g., ., ;, ?).</td>
+    </tr>
+    <tr>
+      <td>SCONJ</td>
+      <td>Subordinating Conjunction</td>
+      <td>Links clauses with dependency (e.g., because, although, if).</td>
+    </tr>
+    <tr>
+      <td>SYM</td>
+      <td>Symbol</td>
+      <td>Non-alphanumeric symbols (e.g., $, %, +, @).</td>
+    </tr>
+    <tr>
+      <td>VERB</td>
+      <td>Verb</td>
+      <td>Actions, events, or states (e.g., run, become, exist).</td>
+    </tr>
+    <tr>
+      <td>X</td>
+      <td>Other</td>
+      <td>Catch-all for unclassified words (e.g., foreign phrases or typos)</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              POS tagging can be done using various methods:
+          </p>
+          <p>
+              <b>Rules Based Systems</b> : These use predefined linguistic rules to assign a
+              category to a token. For example, words ending in "ing" are likely verbs. This
+              method is rigid and prone to ambiguity.
+          </p>
+          <p>
+              <b>Statistical Models</b> :These are mathematical frameworks used to understand
+              relationships between variables. They ususally make explicit assumptions that
+              explain the distribution of data points. they are interpretable and their goal
+              is to understand the relationships between variables. In NLP they can work for
+              simple cases. Hidden markov models is one of the statistical models used for
+              NLP. It calculates the probability that a word belongs to a category using the
+              following inputs. Annotated corpus of text, this is a set of sentences where
+              each word is already annotated as belonging to a specific category (done by
+              humans), and by using states. What do I mean by state is that the algorithm
+              calculates the probability that a token is a verb for example if the previous
+              token was a pronoun. It calcultes word by word only taking into account the
+              previous word. One advantage of these models is that they are lightweight and
+              they can run on limited computational resources and for small data such as a
+              domain specific dataset. But one of its limitations is that it only takes into
+              account the previous word which can be limiting as it does not take into account
+              the whole context and can be more prone to errors.
+          </p>
+          <p>
+              <b>Machine Learning Models</b>:  modern NLP systems rely on this technology to
+              deal with context and handle ambiguous cases. The model is exposed to a high
+              number of linguisting patterns already annotated to make its predictions. For
+              more details you can check my posts about <a
+              href="../post/a_simple_introduction_to_machine_learning.html">machine
+              learning</a> or <a href="../post/understanding_neural_networks.html">deep
+              learning</a>. They require a large amount of data to train and they need a lot
+              of computational resources to function properly, particularly access to GPUs.
+              What is good about these models is that they can learn from context.
+          </p>
+          <p>
+              Since the example we are doing today is in English, passing the tokens through a
+              machine learning model using treebank tags seems like an appropriate choice.
+              After passing the tokens through the pos tag system here's how the result could
+              look like.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-python line-numbers">[('I', 'PRP'), ('feel', 'VBP'), ('like', 'IN'), ('going', 'VBG'), ('out', 'RP'),
+('today', 'NN'), (',', ','), ('the', 'DT'), ('sun', 'NN'), ('is', 'VBZ'),
+('shining', 'VBG'), (',', ','), ('the', 'DT'), ('birds', 'NNS'), ('are', 'VBP'),
+('singing', 'VBG'), ('and', 'CC'), ('I', 'PRP'), ('am', 'VBP'), ('in', 'IN'),
+('a', 'DT'), ('great', 'JJ'), ('mood', 'NN'), ('.', '.'), ('Do', 'VB'), ("n't", 'RB'),
+('you', 'PRP'), ('feel', 'VB'), ('the', 'DT'), ('same', 'JJ'), ('Cato', 'NNP'), ('?', '.')]</code>
+  </pre>
+</div>
+          <p>
+              POS tagging helps machines understand not just individual words but also the
+              structure of sentences, which is essential for tasks like machine translation
+              and speech recognition.
+          </p>
+          <h3>Named Entity recognition</h3>
+          <p>
+              Named Entity Recognition (NER) helps machines identify and categorize key
+              elements in text, such as names, dates, and locations. For instance, in the
+              sentence.:
+          </p>
+          <p>
+              "Cato won the award in Bogota last week,"
+          </p>
+          <p>
+              NER would label:
+          </p>
+          <p>
+              "Cato" as a PERSON,
+          </p>
+          <p>
+              "award" as an EVENT, and
+          </p>
+          <p>
+              "Bogota" as a LOCATION.
+          </p>
+          <p>
+              NER is useful for extracting valuable information from large texts. It can help
+              summarize text, answer questions, and enhance sentiment analysis tasks.NER
+              labels are often determined based on human-created ontologies or vocabularies.
+          </p>
+          <p>
+              Here's a list of some common NER categories:
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>NER Category</th>
+      <th>Definition</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>PER (Person)</td>
+      <td>Names of people</td>
+      <td>Carlos Perez, Isabel Allende</td>
+    </tr>
+    <tr>
+      <td>ORG (Organization)</td>
+      <td>Names of organizations or companies</td>
+      <td>Umbrella Corporation, Nokia</td>
+    </tr>
+    <tr>
+      <td>LOC (Location)</td>
+      <td>Names of geographic locations</td>
+      <td>Bogota, Tayrona Park, Sagrada Familia</td>
+    </tr>
+    <tr>
+      <td>GPE (Geopolitical Entity)</td>
+      <td>Political regions, such as countries, cities, or states</td>
+      <td>Colombia, Sucre</td>
+    </tr>
+    <tr>
+      <td>DATE</td>
+      <td>Specific date or time expressions</td>
+      <td>September 1st, 2024, tomorrow</td>
+    </tr>
+    <tr>
+      <td>TIME</td>
+      <td>Specific times</td>
+      <td>3 PM, noon</td>
+    </tr>
+    <tr>
+      <td>MONEY</td>
+      <td>Monetary amounts</td>
+      <td>50.000 pesos, 10 euros</td>
+    </tr>
+    <tr>
+      <td>PERCENT</td>
+      <td>Percentages</td>
+      <td>15 per cent, 50%</td>
+    </tr>
+    <tr>
+      <td>FAC (Facility)</td>
+      <td>Buildings, airports, highways</td>
+      <td>Casa de la Moneda ,El Dorado airport, Pan American Highway</td>
+    </tr>
+    <tr>
+      <td>NORP</td>
+      <td>Nationalities, religions, political groupse</td>
+      <td>Colombian, catholicism, green party</td>
+    </tr>
+    <tr>
+      <td>PROD</td>
+      <td>Product</td>
+      <td>Juan Valdez Coffee, Flowers, Renault</td>
+    </tr>
+    <tr>
+      <td>WORK_OF_ART</td>
+      <td>Creative works</td>
+      <td>Relatos salvajes, Las meninas</td>
+    </tr>
+    <tr>
+      <td>LANGUAGE</td>
+      <td>Languages</td>
+      <td>Spanish, Wayuu, Creole, English</td>
+    </tr>
+    <tr>
+      <td>EVENT</td>
+      <td>Named events</td>
+      <td>Reinado de la Panela, Pan American Games</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              And going back to our initial sentence we could expect a result like the
+              following.
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-shellsession line-numbers">Named Entity Recognition:
+Entity: today, Label: DATE, Start: 22, End: 27
+Entity: Cato, Label: ORG, Start: 123, End: 127</code>
+  </pre>
+</div>
+          <p>
+              NER is essential for extracting structured information from unstructured text,
+              which is useful in tasks like information retrieval and summarization.
+          </p>
+          <h3>Sentiment Analysis</h3>
+          <p>
+              Sentiment analysis involves determining the sentiment or emotion behind a piece
+              of text. This can be tricky because sarcasm, irony, or context can drastically
+              change the meaning. For instance, the phrase "Great, just what I needed!" may
+              seem positive, but it’s likely negative due to tone.
+          </p>
+          <p>
+              Sentiment analysis categorizes a sentence as positive, neutral, or negative, and
+              sometimes even more finely, as strongly positive or strongly negative. This is
+              particularly useful for processing customer feedback or understanding public
+              opinion. Modern nlp systems can go beyond positive neutral and negative and
+              detect more emotions for text.
+          </p>
+          <p>
+              Here's a list of some of the emotions these systems are able to detect.
+          </p>
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>Emotion</th>
+      <th>Emotional Tone</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Happiness</td>
+      <td>Positive</td>
+      <td>I finally achieved my goal, and I feel so happy about it!</td>
+    </tr>
+    <tr>
+      <td>Excitement</td>
+      <td>Positive</td>
+      <td>I can’t wait to start my new job tomorrow—it’s going to be amazing!</td>
+    </tr>
+    <tr>
+      <td>Gratitude</td>
+      <td>Positive</td>
+      <td>Thank you so much for helping me through this tough time—it means the world to me.</td>
+    </tr>
+    <tr>
+      <td>Anger</td>
+      <td>Negative</td>
+      <td>I can’t believe they lied to me—I’m furious!</td>
+    </tr>
+    <tr>
+      <td>Sadness</td>
+      <td>Negative</td>
+      <td>I feel so down today; everything reminds me of what I’ve lost.</td>
+    </tr>
+    <tr>
+      <td>Fear</td>
+      <td>Negative</td>
+      <td>Walking alone in this dark alley is making me terrified.</td>
+    </tr>
+    <tr>
+      <td>Disappointment</td>
+      <td>Negative</td>
+      <td>I was really hoping for a better result, but I guess I’ll have to try again.</td>
+    </tr>
+    <tr>
+      <td>Indifference</td>
+      <td>Neutral</td>
+      <td>I don’t really have an opinion on this topic—it doesn’t affect me.</td>
+    </tr>
+    <tr>
+      <td>Curiosity</td>
+      <td>Context Specific</td>
+      <td>I’m so curious about how this experiment will turn out!  I’m curious why they’re avoiding me—it feels suspicious.</td>
+    </tr>
+    <tr>
+      <td>Confusion</td>
+      <td>Context Specific</td>
+      <td>This puzzle is confusing, but I’m having fun figuring it out!  I’m confused about what’s happening, and it’s making me anxious.</td>
+    </tr>
+    <tr>
+      <td>Hope</td>
+      <td>Context Specific</td>
+      <td>I hope this new opportunity brings the change I’ve been waiting for. I hope they’ll forgive me, but deep down, I’m afraid they won’t.</td>
+    </tr>
+    <tr>
+      <td>Frustration</td>
+      <td>Context Specific</td>
+      <td>I’m frustrated with this project, but I know I’ll feel proud once I finish it. This traffic is so frustrating—it’s wasting my entire afternoon.</td>
+    </tr>
+    <tr>
+      <td>Love</td>
+      <td>Context Specific</td>
+      <td>I love spending time with my family—it’s so fulfilling. I love them, but this relationship is destroying my mental health.</td>
+    </tr>
+    <tr>
+      <td>Guilt</td>
+      <td>Context Specific</td>
+      <td>I feel guilty for what I said, so I’m going to apologize and make things right.</td>
+    </tr>
+  </tbody>
+</table>          <p>
+              However, emotions are tricky, and context is essential. For example, "I’m not
+              unhappy" is technically negative but implies something positive. Sentiment
+              analysis uses machine learning models to account for such subtleties, though
+              even the best models can struggle with sarcasm or ambiguity.
+          </p>
+          <h3>Coreference Resolution</h3>
+          <p>
+              Ever read a story where characters like "he," "she," or "they" keep showing up,
+              and you find yourself piecing together who is being talked about? That’s the
+              essence of coreference resolution—pinpointing when different words or phrases
+              actually refer to the same person or thing.
+          </p>
+          <p>
+              Let’s take a closer look at this with our example sentence: “I feel like going
+              out today, the sun is shining, the birds are singing, and I am in a great mood.
+              Don’t you feel the same, Cato?” In this cheerful narrative, "you" is clearly
+              directed at Cato, while "I" belongs to the speaker. For us, this is
+              straightforward—our minds seamlessly connect the dots. But for a computer? It’s
+              like untangling a complex web. Coreference resolution gives machines the tools
+              to follow these connections, ensuring they can figure out who’s who, even in
+              lengthy and intricate texts.
+          </p>
+          <p>
+              This skill plays a key role in applications like summarizing articles, where
+              understanding who or what each pronoun refers to is crucial. Imagine a summary
+              where "he" or "they" is used ambiguously without context—it would feel
+              disjointed and hard to follow. Coreference resolution ensures that summaries,
+              and other text-heavy tasks, maintain clarity and flow.
+          </p>
+          <p>
+              In our example, using tools like spaCy and neuralcoref, the computer identifies
+              the following coreferences: “I” refers to the speaker, appearing twice in the
+              text. “You” points directly to Cato, the person being addressed. This mapping
+              might seem trivial to us, but for a machine, it’s the result of sophisticated
+              algorithms working behind the scenes to mimic our natural understanding.
+          </p>
+          <p>
+              With these connections in place, machines can navigate text more fluidly,
+              transforming fragmented data into coherent insights.
+          </p>
+          <p>
+              An expected output of this process would be something like:
+          </p>
+<div class="code-toolbar">
+  <pre>
+    <code class="language-shellsession line-numbers">[I: [I, I], you: [you, Cato]]</code>
+  </pre>
+</div>
+          <h2>Conclusion: Bringing It All Together</h2>
+          <p>
+              NLP may sound intimidating at first, but when you break it down—tokenization,
+              POS tagging, NER, sentiment analysis, and coreference resolution—it becomes more
+              approachable. Each of these techniques plays a vital role in helping machines
+              understand human language. We have not covered every possible technique in the
+              field but maybe this is a good overniew so you get a sense of behind the scenes
+              of machine language.
+          </p>
+          <p>
+              The key takeaway is that NLP is all about enabling machines to process and
+              understand human language in a meaningful way. Whether you're analyzing
+              sentiment, tagging parts of speech, or identifying key entities, these building
+              blocks are essential for creating effective NLP systems.
+          </p>
+          <p>
+              By demystifying these concepts, I hope you feel more connected to the technology
+              that powers much of our digital world. And maybe this newfound understanding
+              will inspire you to dive deeper into NLP or simply gain a greater appreciation
+              for the beauty of language.
+          </p>
+         </div>
+        </main>
+<section class="old-posts-section">
+        <h2>Other posts</h2>
+        <div class="old-posts">
+            
+            <div class="post">
+                <a href="../../post/en/dalle3_user_test.html">
+                    <img src="../../images/dalle3_user_test_title_img.webp" alt="Dall-e 3 user's test">
+                    <p>Dall-e 3 user's test</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/en/deploying_ai_models_in_the_cloud.html">
+                    <img src="../../images/deploying_ai_models_in_the_cloud_title_img.webp" alt="Deploying AI Models in the Cloud Comparisson">
+                    <p>Deploying AI Models in the Cloud Comparisson</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/en/understanding_neural_networks.html">
+                    <img src="../../images/understanding_neural_networks_title_img.webp" alt="Understanding Neural Networks">
+                    <p>Understanding Neural Networks</p>
+                </a>
+            </div>
+            
+            <div class="post">
+                <a href="../../post/en/a_simple_introduction_to_machine_learning.html">
+                    <img src="../../images/a_simple_introduction_to_machine_learning_title_img.webp" alt="A simple introduction to machine learning">
+                    <p>A simple introduction to machine learning</p>
+                </a>
+            </div>
+            
+         </div>
+        </section><footer>
+    <div class="footer-content">
+        <p>© 2025 Catobyte. All rights reserved.</p>
+        <p>Contact: {{CONTACT_EMAIL}}</p>
+        
+        <ul class="footer-links">
+            <li><a href="../../pages/en/about.html">About Me</a></li>
+            <li><a href="../../pages/en/archive.html">Blog Archive</a></li>
+            <li><a href="../../pages/en/privacy_policy.html">Privacy Policy</a></li>
+            <li><a href="../../pages/en/terms_of_service.html">Terms of Service</a></li>
+            <li><a href="../../pages/en/contact.html">Contact</a></li>
+        </ul>
+    </div>
+</footer>
+   </body>
+</html>
