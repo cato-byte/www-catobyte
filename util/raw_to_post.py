@@ -5,9 +5,8 @@ from datetime import datetime
 from create_other_posts_section import PostProcessor
 from metadata_utils import load_metadata_by_language
 from datetime import datetime
-from pathlib import Path
-from config import WEB_DIR,RAW_DIR,POSTS_DIR,TEMPLATES_DIR,METADATA_DIR,METADATA_FILE,LANGUAGES
-
+from config import RAW_DIR,POSTS_DIR,TEMPLATES_DIR,METADATA_FILE,LANGUAGES
+from template_manager import TemplateManager
 
 
 
@@ -176,12 +175,8 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
     else:
         os.makedirs(posts_dir)  # Create the posts directory if it doesn't exist
 
-    # Read the template sections
-    head_content = read_template('head.html', templates_dir)
-    header_content = read_template('header.html', templates_dir)
-    footer_content = read_template('footer.html', templates_dir)
-    navbar_content = read_template('navbar.html', templates_dir)
-
+     # Initialize the TemplateManager
+    template_manager = TemplateManager(templates_dir, language=lang)
 
     
     #circular relation between the posts for other posts section
@@ -206,11 +201,7 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
             # Read the .md file and write the corresponding .html file
             with open(md_file_path, 'r', encoding='utf-8') as md_file, open(html_file_path, 'w', encoding='utf-8') as html_file:
                 # Write the beginning of the HTML file with templates
-                html_file.write('<html>\n')
-                html_file.write(head_content)  # Include head section
-                html_file.write('<body>\n')
-                html_file.write(header_content)  # Include header section
-                html_file.write(navbar_content)   # Include navbar section
+                template_manager.write_header(html_file)
 
                 # Write the main content based on JSON metadata
                 html_file.write(f"""        <main>
@@ -226,7 +217,6 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
                 for line in md_file:
                     # Strip the line to remove extra whitespace
                     stripped_line = line.strip()
-                    # Replace {{PUBLISH_DATE}} with actual date
                     
 
                     # Detect the TITLE_IMAGE comment
@@ -308,8 +298,7 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
                 html_file.write("""         </div>
         </main>\n""")
                 html_file.write(post_neighborhood['other_posts_section'])
-                html_file.write(footer_content)  # Include footer section
-                html_file.write('   </body>\n</html>')
+                template_manager.write_footer(html_file)  # Include footer section
 
             print(f"Processed {filename} to {html_file_path}")
 
