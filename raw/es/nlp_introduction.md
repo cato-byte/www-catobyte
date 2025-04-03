@@ -143,17 +143,24 @@ tokens_upos = [
 
 ### Reconocimiento de entidades con nombre NER
 
-El reconocimiento de entidades o NER (Named Entity Reognition) es un proceso mediante el cual se procede a reconocer entidades dentro de un texto tales como lugares, personas, productos, organizaciones, nacionalidades, fechas, valores numéricos entre otros. . 
+[Para información más detallada sobre la construccion de corpus y el proceso de reconocimiento de entidades](https://www.researchgate.net/publication/374674771_COMPREHENSIVE_OVERVIEW_OF_NAMED_ENTITY_RECOGNITION_MODELS_DOMAIN-SPECIFIC_APPLICATIONS_AND_CHALLENGES)
+
+El reconocimiento de entidades o NER (Named entity recognition) es un proceso mediante el cual se procede a extraer información relevante de las cadenas de texto.
+
+Al igual que otras tareas de NLP se han utilizado métodos básados en reglas, mpetodos de aprendizaje no supervisado, supervisado y aprendizaje profundo para realizar esta clasificación de entidades. 
+
+ Dependiendo de la tarea en cuestion tambien hay bases de conocimiento especificas como  ViBert y BioBert especializadas en campos específicos como lasd finanzas y la biología.
+
+El reconocimiento de entidades o NER (Named Entity Reognition) es un proceso mediante el cual se procede a reconocer entidades dentro de un texto tales como lugares, personas, productos, organizaciones, nacionalidades, fechas, valores numéricos entre otros. 
+
+Para realizarlo se necesita una base de conocimiento que va a contener una lista de palabras y los posibles lugares a los que podría pertenecer. 
 
 Mediante el NER podemos extraer información relevante de un texto y transformarla en información estructurada (como una tabla), que se puede usar para análisis posteriores. 
 
 
-
-Tratas de extraer diferentes entidades de un texto. 
-
 Puedes encontrar más informacion sobre NER [aquí](https://www.ibm.com/es-es/think/topics/named-entity-recognition)
 
-El reconocimiento de entidades con nombre (del inglés named entity recognition  |NER) ayuda a las máquinas a identificar y categorizar elementos clave en el texto, como nombres, fechas y lugares. Por ejemplo, en la oración:
+Un ejemplo de NER, en una oración sería:
 
 "Cato ganó el premio en Bogotá la semana pasada",
 

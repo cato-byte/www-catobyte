@@ -69,14 +69,3 @@ class TemplateManager:
         html_file.write(footer_content)
         html_file.write('</body>\n</html>')
     
-    def get_combined_templates(self):
-        """
-        Returns the combined content of common templates.
-        :return: Tuple of (head_content, header_content, footer_content, navbar_content).
-        """
-        head_content = self.load_template('head.html')
-        header_content = self.load_template('header.html')
-        footer_content = self.load_template('footer.html')
-        navbar_content = self.load_template('navbar.html')
-        
-        return head_content, header_content, footer_content, navbar_content

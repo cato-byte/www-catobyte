@@ -37,7 +37,7 @@ def insert_latest_posts_in_homepage(homepage_content, language):
 
 def generate_misc_pages(language, template_manager):
     """Generates static pages for a specific language."""
-    misc_pages = ['about.html', 'contact.html', 'home.html', 'privacy_policy.html', 'terms_of_service.html']
+    misc_pages = ['about.html', 'contact.html','services.html', 'home.html', 'privacy_policy.html', 'terms_of_service.html']
 
     for misc_page in misc_pages:
         localized_page = f"{language}/{misc_page}"  # E.g., en/home.html, es/home.html

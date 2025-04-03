@@ -1,0 +1,18 @@
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#007BFF" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Central Node -->
+  <circle cx="128" cy="128" r="20" fill="#007BFF" stroke="none"/>  <!-- Connecting Lines -->  <line x1="128" y1="108" x2="128" y2="40" />
+  <line x1="128" y1="148" x2="128" y2="216" />
+  <line x1="148" y1="128" x2="216" y2="128" />
+  <line x1="108" y1="128" x2="40" y2="128" />
+  <line x1="148" y1="148" x2="192" y2="192" />
+  <line x1="108" y1="148" x2="64" y2="192" />
+  <line x1="148" y1="108" x2="192" y2="64" />
+  <line x1="108" y1="108" x2="64" y2="64" />  <!-- Outer Nodes -->  <circle cx="128" cy="40" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="128" cy="216" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="216" cy="128" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="40" cy="128" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="192" cy="192" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="64" cy="192" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="192" cy="64" r="12" fill="#007BFF" stroke="none"/>
+  <circle cx="64" cy="64" r="12" fill="#007BFF" stroke="none"/>
+</svg>
