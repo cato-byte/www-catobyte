@@ -145,11 +145,11 @@ tokens_upos = [
 
 [Para información más detallada sobre la construccion de corpus y el proceso de reconocimiento de entidades](https://www.researchgate.net/publication/374674771_COMPREHENSIVE_OVERVIEW_OF_NAMED_ENTITY_RECOGNITION_MODELS_DOMAIN-SPECIFIC_APPLICATIONS_AND_CHALLENGES)
 
-El reconocimiento de entidades o NER (Named entity recognition) es un proceso mediante el cual se procede a extraer información relevante de las cadenas de texto.
+En el reconocimiento de entidades o NER (Named entity recognition) intentamos reconocer las entidades que se puedan encontrar al interior de un texto, una entidad puede ser un país por ejemplo, una figura pública, una organización, un producto etcétera.  
 
-Al igual que otras tareas de NLP se han utilizado métodos básados en reglas, mpetodos de aprendizaje no supervisado, supervisado y aprendizaje profundo para realizar esta clasificación de entidades. 
+Existe un concepto llamado base de conocimiento 
 
- Dependiendo de la tarea en cuestion tambien hay bases de conocimiento especificas como  ViBert y BioBert especializadas en campos específicos como lasd finanzas y la biología.
+Dependiendo de la tarea en cuestion tambien hay bases de conocimiento específicas como  ViBert y BioBert especializadas en campos específicos como las finanzas y la biología.
 
 El reconocimiento de entidades o NER (Named Entity Reognition) es un proceso mediante el cual se procede a reconocer entidades dentro de un texto tales como lugares, personas, productos, organizaciones, nacionalidades, fechas, valores numéricos entre otros. 
 
@@ -248,9 +248,9 @@ Un resultado esperado de este proceso sería algo como:
 
 ## Conclusión: Uniendo todo
 
-La PNL puede sonar intimidante al principio, pero cuando la desglosas (tokenización, etiquetado POS, NER, análisis de sentimientos y resolución de correferencia) se vuelve más accesible. Cada una de estas técnicas juega un papel vital para ayudar a las máquinas a comprender el lenguaje humano. No hemos cubierto todas las técnicas posibles en el campo, pero tal vez esta sea una buena descripción general para que te hagas una idea de lo que ocurre detrás de escena en el lenguaje de las máquinas.
+El PLN puede sonar intimidante al principio, pero cuando lo desglosas (tokenización, etiquetado POS, NER, análisis de sentimientos y resolución de correferencia) se vuelve más accesible. Cada una de estas técnicas juega un papel vital para ayudar a las máquinas a comprender el lenguaje humano. No hemos cubierto todas las técnicas posibles, pero tal vez esta sea una buena descripción general para que te hagas una idea de lo que ocurre detrás de escena en el lenguaje de las máquinas.
 
-La conclusión clave es que la PNL tiene que ver con permitir que las máquinas procesen y comprendan el lenguaje humano de una manera significativa. Ya sea que estés analizando sentimientos, etiquetando partes del discurso o identificando entidades clave, estos bloques de construcción son esenciales para crear sistemas de PNL efectivos.
+La conclusión clave es que el PLN tiene que ver con permitir que las máquinas procesen y comprendan el lenguaje humano de una manera significativa. Ya sea que estés analizando sentimientos, etiquetando partes del discurso o identificando entidades clave, estos bloques de construcción son esenciales para crear sistemas de PNL efectivos.
 
-Al desmitificar estos conceptos, espero que te sientas más conectado con la tecnología que impulsa gran parte de nuestro mundo digital. Y tal vez esta nueva comprensión te inspire a profundizar en la PNL o simplemente a obtener una mayor apreciación por la belleza del lenguaje.
+Al desmitificar estos conceptos, espero que te sientas más conectado con la tecnología que impulsa gran parte de nuestro mundo digital. Y tal vez esta nueva comprensión te inspire a profundizar en el PLN o simplemente a obtener una mayor apreciación por la belleza del lenguaje.
 

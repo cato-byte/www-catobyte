@@ -1,7 +1,7 @@
 import os
 from create_other_posts_section import *
 from metadata_utils import load_metadata_by_language
-from config import TEMPLATES_DIR, PAGES_DIR, METADATA_FILE, LANGUAGES, CONTACT_EMAIL
+from config import TEMPLATES_DIR, PAGES_DIR, METADATA_FILE, LANGUAGES, CONTACT_EMAIL, WHATSAPP_NUMBER, LINKEDIN_PROFILE
 from template_manager import TemplateManager
 
 
@@ -32,12 +32,12 @@ def insert_latest_posts_in_homepage(homepage_content, language):
         ''' for post in sorted_posts
     )
 
-    return homepage_content.replace('<!-- Dynamic content will be inserted here by Python script -->', latest_post_html)
+    return homepage_content.replace('{{LATEST_ARTICLES}}', latest_post_html)
 
 
 def generate_misc_pages(language, template_manager):
     """Generates static pages for a specific language."""
-    misc_pages = ['about.html', 'contact.html','services.html', 'home.html', 'privacy_policy.html', 'terms_of_service.html']
+    misc_pages = ['about.html', 'contact.html', 'services.html', 'home.html', 'privacy_policy.html', 'terms_of_service.html']
 
     for misc_page in misc_pages:
         localized_page = f"{language}/{misc_page}"  # E.g., en/home.html, es/home.html
@@ -49,8 +49,15 @@ def generate_misc_pages(language, template_manager):
 
             # Load and process the page content
             page_content = template_manager.load_template(misc_page)
+
+            # Handle specific templates
             if misc_page == 'home.html':
                 page_content = insert_latest_posts_in_homepage(page_content, language)
+                page_content = page_content.replace("{{LINKEDIN_PROFILE}}", LINKEDIN_PROFILE)
+            elif misc_page == 'contact.html':
+                # Replace placeholders for contact.html
+                page_content = page_content.replace("{{EMAIL_ADDRESS}}", CONTACT_EMAIL)
+                page_content = page_content.replace("{{WHATSAPP_NUMBER}}", WHATSAPP_NUMBER)
 
             html_file.write(page_content)
 

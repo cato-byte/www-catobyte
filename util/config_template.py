@@ -1,8 +1,16 @@
 import os
 from pathlib import Path
 
+# Contact information
 #Your contract email for the footer and contact sections replace if needed. 
 CONTACT_EMAIL='yourcontact@email'
+
+
+# Replace with your WhatsApp number in international format (no + or 00)
+WHATSAPP_NUMBER = '1234567890'  
+
+# Replace with your LinkedIn profile URL
+LINKEDIN_PROFILE = 'https://www.linkedin.com/in/your-profile/'  # Replace with your LinkedIn profile URL
 
 # Base directory of the project (automatically calculated)
 # WEB_DIR points to the root directory of the project.

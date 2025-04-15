@@ -4,7 +4,7 @@ import os
 # Define the scripts to run in the specified order
 scripts = [
     "create_metadata.py",
-    "create_other_post_section.py",
+    "create_other_posts_section.py",
     "create_posts_archive.py",
     "create_default_img.py",
     "templates_to_pages.py",

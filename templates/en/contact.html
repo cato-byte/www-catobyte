@@ -1,6 +1,9 @@
-<section class="contact-form">
+<section class="contact-info">
     <h2>Get in Touch</h2>
-    <form action="your_form_processing_url" method="POST">
+
+    <!-- Commented out the form for future use -->
+    <!--
+    <form action="your_form_processing_url" method="POST" class="contact-form">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
 
@@ -12,4 +15,18 @@
 
         <button type="submit">Send Message</button>
     </form>
+    -->
+
+    <!-- Email and WhatsApp links styled like the contact form -->
+    <div class="contact-form">
+        <p>
+            <label><strong>Email:</strong></label>
+            <a href="mailto:{{EMAIL_ADDRESS}}" class="contact-link">{{EMAIL_ADDRESS}}</a>
+        </p>
+
+        <p>
+            <label><strong>WhatsApp:</strong></label>
+            <a href="https://wa.me/{{WHATSAPP_NUMBER}}" target="_blank" rel="noopener noreferrer" class="contact-link">Chat with me on WhatsApp</a>
+        </p>
+    </div>
 </section>
