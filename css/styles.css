@@ -158,6 +158,38 @@ footer{
   cursor: pointer;
 }
 
+/* ===== LAPTOPS DESKTOPS ===== */
+@media (min-width: 1350px) {
+  body {
+      padding: 40px;
+  }
+
+  header h1 {
+      text-align: left;
+      font-size: 3em;
+  }
+
+  main p {
+      font-size: 1.4em;
+      max-width: 75%;
+      margin: 20px auto;
+  }
+
+  .image-container {
+    text-align: center; /* Centers the image and text */
+    margin: 20px auto;
+    max-width: 75%
+  }
+  .navbar li {
+      margin: 0 30px;
+  }
+
+  /* Old posts section width adjustment 
+  .old-posts .post {
+      width: 28%;
+  }*/
+}
+
 /* ===== MOBILE STYLES ===== */
 @media (max-width: 1350px) {
   .navbar-container {
@@ -554,62 +586,4 @@ pre.python-code .variable {
   text-align:center;
 }
 
-/* Responsive design */
-/* For screens that are 768px wide or more (laptops, desktops) */
-@media (min-width: 768px) {
-  body {
-      padding: 40px;
-  }
 
-  header h1 {
-      text-align: left;
-      font-size: 3em;
-  }
-
-  main p {
-      font-size: 1.4em;
-      max-width: 75%;
-      margin: 20px auto;
-  }
-
-  .image-container {
-    text-align: center; /* Centers the image and text */
-    margin: 20px auto;
-    max-width: 75%
-  }
-  .navbar li {
-      margin: 0 30px;
-  }
-
-  /* Old posts section width adjustment 
-  .old-posts .post {
-      width: 28%;
-  }*/
-}
-
-/* For screens that are smaller than 768px (mobile devices) */
-@media (max-width: 768px) {
-  header h1 {
-    text-align: left;
-      font-size: 1.8em;
-  }
-
-  main p {
-      font-size: 1.1em;
-  }
-
-  .image-container {
-    text-align: center; 
-  }
-
-  .navbar li {
-      display: block;
-      margin: 10px 0;
-  }
-
-  /* Stack the old posts thumbnails vertically 
-  .old-posts .post {
-      width: 100%;
-      margin: 10px 0;
-  }*/
-}
