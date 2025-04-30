@@ -4,7 +4,7 @@
     <div class="contact-form">
       <p>
         <label><strong>{{ i18n.CONTACT.EMAIL_LABEL }}</strong></label>
-        <a href="mailto:{{ EMAIL_ADDRESS }}" class="contact-link">{{ EMAIL_ADDRESS }}</a>
+        <a href="mailto:{{ CONTACT_EMAIL }}" class="contact-link">{{ CONTACT_EMAIL }}</a>
       </p>
   
       <p>
@@ -12,6 +12,14 @@
         <a href="https://wa.me/{{ WHATSAPP_NUMBER }}" target="_blank" rel="noopener noreferrer" class="contact-link">
           {{ i18n.CONTACT.WHATSAPP_TEXT }}
         </a>
+      </p>
+
+      <p>
+        <label><strong>{{ i18n.CONTACT.LINKEDIN_LABEL }}</strong></label>
+        <a href="{{ LINKEDIN_PROFILE }}" target="_blank" rel="noopener noreferrer" class="contact-link">
+          {{ i18n.CONTACT.LINKEDIN_TEXT}}
+        </a>
+      </p>
       </p>
     </div>
 </section>

@@ -42,7 +42,9 @@
           "TITLE": "Contactez-moi",
           "EMAIL_LABEL": "Email :",
           "WHATSAPP_LABEL": "WhatsApp :",
-          "WHATSAPP_TEXT": "Discutez avec moi sur WhatsApp"
+          "WHATSAPP_TEXT": "Discutez avec moi sur WhatsApp",
+          "LINKEDIN_LABEL": "LinkedIn:",
+          "LINKEDIN_TEXT": "Profil LinkedIn"
   },
   "FOOTER": {
   "ALL_RIGHTS": "Tous droits réservés.",

@@ -39,7 +39,9 @@
       "TITLE": "Ponte en contacto",
       "EMAIL_LABEL": "Correo electrónico:",
       "WHATSAPP_LABEL": "WhatsApp:",
-      "WHATSAPP_TEXT": "Chatea conmigo en WhatsApp"
+      "WHATSAPP_TEXT": "Chatea conmigo en WhatsApp",
+      "LINKEDIN_LABEL": "LinkedIn:",
+      "LINKEDIN_TEXT": "Perfil LinkedIn"
     },
     "FOOTER": {
       "ALL_RIGHTS": "Todos los derechos reservados.",

@@ -42,7 +42,9 @@
             "TITLE": "Get in Touch",
             "EMAIL_LABEL": "Email:",
             "WHATSAPP_LABEL": "WhatsApp:",
-            "WHATSAPP_TEXT": "Chat with me on WhatsApp"
+            "WHATSAPP_TEXT": "Chat with me on WhatsApp",
+            "LINKEDIN_LABEL": "LinedIn:",
+            "LINKEDIN_TEXT": "LinkedIn Profile"
     },
     "FOOTER": {
     "ALL_RIGHTS": "All rights reserved.",
