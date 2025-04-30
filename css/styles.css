@@ -81,12 +81,29 @@ footer{
 .footer-links li{
   margin: 0 15px;
 }
-/* Styling the navigation bar items */
+
+/* ===== DESKTOP STYLES ===== */
+.navbar-container {
+  position: relative;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  color: white;
+  font-size: 30px;
+  border: none;
+  cursor: pointer;
+  margin: 10px;
+  z-index: 1001;
+  position: relative;
+}
+
 .navbar {
   list-style-type: none;
   display: flex;
-  justify-content: center; /* Center the navbar items */
-  flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
+  justify-content: center;
+  flex-wrap: wrap;
   padding: 0;
   margin: 0;
 }
@@ -94,48 +111,23 @@ footer{
 .navbar li {
   display: inline-block;
   margin: 0 15px;
-  position: relative; /* Necessary for dropdown positioning */
+  position: relative;
 }
 
 .navbar a {
-  color: #ececec; /* Light text */
+  color: #ececec;
   text-decoration: none;
-  font-size: 18px; /* Default font size */
-  padding: 10px 20px; /* Default padding */
-  border-radius: 20px; /* Rounded buttons */
-  background-color: #16213e; /* Slightly darker blue */
+  font-size: 18px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background-color: #16213e;
   transition: background-color 0.3s ease, font-size 0.3s ease, padding 0.3s ease;
 }
 
-/* Change link color when hovered */
 .navbar a:hover {
-  background-color: #533483; /* Purple hover */
+  background-color: #533483;
 }
 
-/* Responsive design for smaller screens */
-@media (max-width: 768px) {
-  .navbar a {
-    font-size: 14px; /* Reduce font size for smaller screens */
-    padding: 8px 15px; /* Reduce padding for smaller buttons */
-  }
-
-  .navbar li {
-    margin: 5px; /* Reduce spacing between buttons */
-  }
-}
-
-@media (max-width: 480px) {
-  .navbar a {
-    font-size: 12px; /* Further reduce font size for very small screens */
-    padding: 6px 10px; /* Further reduce padding */
-  }
-
-  .navbar li {
-    margin: 3px; /* Further reduce spacing between buttons */
-  }
-}
-
-/* Dropdown menu for Old Posts */
 .dropdown-menu {
   display: none;
   position: absolute;
@@ -143,25 +135,81 @@ footer{
   left: 0;
   background-color: #16213e;
   border-radius: 10px;
-
+  z-index: 1000;
 }
 
-.dropdown:hover .dropdown-menu {
+.dropdown.active .dropdown-menu {
   display: block;
 }
 
 .dropdown-menu li {
-  display: block;
   margin: 8px 0;
 }
 
 .dropdown-menu a {
   display: block;
-  padding: 12px 20px; /* Adds padding inside each option */
+  padding: 12px 20px;
   text-decoration: none;
   color: white;
-  line-height: 1.6; /* Increases vertical spacing */
+  line-height: 1.6;
 }
+
+.dropdown-toggle {
+  cursor: pointer;
+}
+
+/* ===== MOBILE STYLES ===== */
+@media (max-width: 1250px) {
+  .navbar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .hamburger {
+    display: block;
+    order: 0;
+  }
+
+  .navbar {
+    order: 1;
+    flex-direction: column;
+    align-items: stretch;
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    display: none;
+    background-color: #16213e;
+    padding: 10px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .navbar.active {
+    display: flex;
+  }
+
+  .navbar li {
+    margin: 0;
+  }
+
+  .navbar a {
+    font-size: 16px;
+    padding: 10px 20px;
+    width: 100%;
+    display: block;
+    border-radius: 0;
+  }
+
+  .dropdown-menu {
+    position: static;
+    background-color: transparent;
+  }
+}
+
 
 /* Site Title styling */
 header h1 {
@@ -510,6 +558,7 @@ pre.python-code .variable {
   }
 
   header h1 {
+      text-align: left;
       font-size: 3em;
   }
 
@@ -537,6 +586,7 @@ pre.python-code .variable {
 /* For screens that are smaller than 768px (mobile devices) */
 @media (max-width: 768px) {
   header h1 {
+    text-align: left;
       font-size: 1.8em;
   }
 
