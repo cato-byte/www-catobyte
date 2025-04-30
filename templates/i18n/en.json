@@ -1,0 +1,225 @@
+{
+    "LANG": "en",
+    "ABOUT": {
+      "WHO_AM_I_TITLE": "Who Am I?",
+      "WHO_AM_I_PARAGRAPHS": [
+        "I grew up in the ‘90s, witnessing firsthand the shift from an analog world to a digital one. This transition has shaped my perspective on technology and sparked many reflective thoughts. While I work in cloud computing and automation, I also see the value of ownership — owning media, owning knowledge, owning our digital presence. I’m the kind of person who still enjoys having a physical copy of a movie, not just for access but for the reassurance that it’s truly mine, free from subscriptions or external controls.",
+        "This mindset extends beyond media—it's about having control over our own digital and personal spaces. We live in a world of increasing automation, where data-driven decisions optimize efficiency, often at the cost of individuality and real connection."
+      ],
+  
+      "WHAT_I_BELIEVE_IN_TITLE": "What I Believe In",
+      "WHAT_I_BELIEVE_IN_PARAGRAPHS": [
+        "Despite working in an industry that thrives on data extraction and automation, I deeply value genuine human interactions. Technology should serve people, not the other way around. That’s why I believe in strong communities, where we support each other in real life, not just online. We are social creatures, and nothing replaces face-to-face connection.",
+        "I also value personal freedom, the pursuit of knowledge, and human connection. These principles led me to choose a remote, freelance, and nomadic lifestyle. It’s not just about work flexibility—it’s about having the time and space to explore what truly matters: spending time with my family, learning deeply about topics that interest me, and immersing myself in different cultures and experiences."
+      ],
+  
+      "MY_PASSIONS_TITLE": "My Passions",
+      "MY_PASSIONS_INTRO": "Beyond technology, I’m passionate about:",
+      "MY_PASSIONS_ITEMS": [
+        {
+          "title": "Music",
+          "text": "I’m a tenor, and singing is a profound source of joy for me. It’s a way to express emotion, connect with others, and feed the soul."
+        },
+        {
+          "title": "Fitness & Community",
+          "text": "I practice CrossFit regularly and appreciate its structured, communal spirit. It’s more than exercise; it’s a way to stay grounded."
+        },
+        {
+          "title": "Nature Conservation",
+          "text": "I find nature endlessly fascinating—the rivers, forests, and the unknown creatures in the ocean depths. But I also recognize that conservation is not always simple. Our economy and livelihoods sometimes clash with environmental preservation, and while I deeply believe in protecting what we can, I also think we need pragmatic solutions that consider both nature and people. There are no easy answers, but thoughtful, responsible choices can make a difference."
+        }
+      ],
+  
+      "WHY_THIS_MATTERS_TITLE": "Why Does This Matter?",
+      "WHY_THIS_MATTERS_PARAGRAPHS": [
+        "I created this blog because technology is shaping our world, and we should all understand it—not just engineers and corporations, but everyday people. I want to make tech concepts accessible, question trends that affect our digital lives, and explore the balance between automation and human connection.",
+        "At the end of the day, I believe sharing knowledge, fostering real communities, and maintaining personal freedom make us all happier. This blog is my way of contributing to that vision."
+      ],
+      "CONNECT_TEXT": "If you’d like to connect, feel free to reach out through my ",
+      "CONNECT_LINK_TEXT": "Contact page"
+    },
+    "CONTACT": {
+            "TITLE": "Get in Touch",
+            "EMAIL_LABEL": "Email:",
+            "WHATSAPP_LABEL": "WhatsApp:",
+            "WHATSAPP_TEXT": "Chat with me on WhatsApp"
+    },
+    "FOOTER": {
+    "ALL_RIGHTS": "All rights reserved.",
+    "CONTACT_LABEL": "Contact:",
+    "LINK_ABOUT": "About Me",
+    "LINK_ARCHIVE": "Blog Archive",
+    "LINK_PRIVACY": "Privacy Policy",
+    "LINK_TERMS": "Terms of Service",
+    "LINK_CONTACT": "Contact"
+    },
+    "HEADER": {
+        "COMPANY_NAME": "Catobyte",
+        "MOTTO": "Exploring AI, Data, and Technology"
+    },
+    "HOME": {
+    "HERO_TITLE": "Welcome to CatoByte",
+    "HERO_DESCRIPTION": "Stay updated with the latest trends in AI, Data, and technology.",
+    
+    "INTRODUCTION_TITLE": "What is CatoByte?",
+    "INTRODUCTION_PARAGRAPH_1": "Hello, Welcome to CatoByte. This digital space is a blog where I want to share knowledge and insights about Artificial Intelligence, Data Engineering, and NLP techniques with everyone.",
+    "INTRODUCTION_PARAGRAPH_2": "I am also a freelance data engineer and AI & NLP enthusiast. I provide remote data services for the European market. You can find more details in the services section.",
+    "INTRODUCTION_PARAGRAPH_3": "In this blog, I share my experiences and insights on various projects, workflows, and technologies that I encounter in my professional journey. The blog serves as a platform to document my learning process and provide valuable resources for anyone interested in these fields.",
+    "SERVICES_LINK": "../services.html",
+    "SERVICES_LINK_TEXT": "Services",
+
+    "WHY_BLOG_TITLE": "Why AI, Data, and Technology Matter",
+    "WHY_BLOG_DESCRIPTION": "The convergence of Artificial Intelligence, Data Science, and emerging technologies is shaping the future of industries, economies, and societies. Understanding these domains is critical for staying competitive and informed.",
+    "AI": "Artificial Intelligence",
+    "AI_DESCRIPTION": "AI is transforming how we interact with machines, automating complex tasks, and driving innovation in fields ranging from healthcare to finance.",
+    "DATA_SCIENCE": "Data Science",
+    "DATA_SCIENCE_DESCRIPTION": "In the age of Big Data, the ability to analyze and derive insights from data is an invaluable skill for making informed decisions and predicting future trends.",
+    "TECHNOLOGY": "Technology",
+    "TECHNOLOGY_DESCRIPTION": "Technology advances at a rapid pace, influencing everything from communication to transportation, making it essential to stay up to date with the latest tools, languages, and systems.",
+
+    "CTA_TITLE": "Stay Ahead with CatoByte",
+    "CTA_DESCRIPTION": "Don't miss out on the latest insights into AI, Data Science, and Technology.",
+    "CTA_LINK_TEXT": "Read More Articles",
+
+    "SOCIAL_FOLLOW_ME": "Follow Me",
+    "LINKEDIN": "LinkedIn"
+  },
+  "NAVBAR": {
+    "HOME": "Home",
+    "ABOUT": "About",
+    "SERVICES": "Services",
+    "CONTACT": "Contact",
+    "BLOG_ARCHIVE": "Blog Archive",
+    "LANGUAGE": "Language",
+    "OTHER_LANG_ONE": "es",
+    "OTHER_LANG_TWO": "fr",
+    "OTHER_LANG_ONE_TEXT": "Español",
+    "OTHER_LANG_TWO_TEXT": "Français"
+  },
+  "PRIVACY": {
+    "TITLE": "Catobyte Privacy Policy",
+    "EFFECTIVE_DATE_LABEL": "Effective Date:",
+    "EFFECTIVE_DATE": "October 7, 2024",
+
+    "SECTION_1_TITLE": "Introduction",
+    "SECTION_1_TEXT": "Welcome to Catobyte! I respect your privacy and want to be transparent about how this site works. This blog is a personal project where I publish articles on technology-related topics. Please note that I do not collect, store or process any personal data from visitors. By browsing this blog, you agree to the terms described in this privacy policy.",
+
+    "SECTION_2_TITLE": "Data Collected",
+    "SECTION_2_TEXT": "Catobyte does not collect any personal data from visitors. This includes names, email addresses or any other personal information typically collected through forms, comments or cookies.",
+
+    "SECTION_3_TITLE": "External Links",
+    "SECTION_3_TEXT": "Posts on this blog may contain links to external websites or resources. Once you leave Catobyte by clicking on an external link, I am not responsible for the privacy practices of these third-party sites. It is recommended that you review their privacy policies before navigating.",
+
+    "SECTION_4_TITLE": "Cookies",
+    "SECTION_4_TEXT": "This site does not use cookies for tracking or analytics purposes, as no personal data is collected. The use of cookies by third-party sites accessible via external links is beyond my control.",
+
+    "SECTION_5_TITLE": "Security",
+    "SECTION_5_TEXT": "While no personal data is collected on this site, security is a priority. The site is regularly maintained to ensure its integrity and prevent unauthorized access.",
+
+    "SECTION_6_TITLE": "Consent",
+    "SECTION_6_TEXT": "By using this blog, you acknowledge that I do not collect, store or share any personal data. If you access third-party sites via external links, the processing of your data will fall exclusively under their own privacy policies.",
+
+    "SECTION_7_TITLE": "Changes to this Privacy Policy",
+    "SECTION_7_TEXT": "This Privacy Policy may be updated to reflect possible changes in the operation of the site or in the external links offered. Any updates will be indicated on this page with a new revision date.",
+
+    "SECTION_8_TITLE": "Contact Me",
+    "SECTION_8_TEXT": "For any questions or concerns regarding this Privacy Policy, you can contact me through the",
+    
+    "CONTACT_PAGE_LINK_TEXT": "Contact page"
+  },
+  "SERVICES": {
+    "TITLE": "Data Engineering Services – Freelance",
+    "DESCRIPTION": "With over 5 years of experience in the data engineering field, I specialize in building, optimizing, and maintaining data pipelines and ETL workflows. My expertise spans across multiple technologies, cloud platforms, and tools that allow me to deliver robust, scalable solutions tailored to your business needs.",
+
+    "SKILLS_TITLE": "Key Skills & Technologies:",
+    "SKILLS": {
+      "DATABASES_LABEL": "Databases",
+      "DATABASES": "PostgreSQL, Hive, Impala, BigQuery (GCP)",
+      "ETL_LABEL": "ETL & Data Pipelines",
+      "ETL": "Azure Data Factory, AWS, Apache Spark, PySpark",
+      "CLOUD_LABEL": "Cloud Platforms",
+      "CLOUD": "Google Cloud Platform (GCP), Azure, AWS",
+      "MICROSERVICES_LABEL": "Microservices Architecture",
+      "MICROSERVICES": "Docker, Kubernetes",
+      "WORKFLOWS_LABEL": "Data Workflow Management",
+      "WORKFLOWS": "Apache Airflow (for scheduling and managing workflows)",
+      "ANALYSIS_LABEL": "Data Analysis & Reporting",
+      "ANALYSIS": "Jupyter Notebooks",
+      "API_LABEL": "API Development",
+      "API": "Design and implementation of REST APIs for seamless integration"
+    },
+
+    "OFFER_TITLE": "What I Offer:",
+    "OFFER": {
+      "PIPELINES_LABEL": "Data Pipeline Design & Optimization",
+      "PIPELINES": "Building reliable, efficient, and scalable data pipelines to ensure smooth data flow across your infrastructure.",
+      "ETL_LABEL": "ETL Process Management",
+      "ETL": "End-to-end management of ETL processes, including data extraction, transformation, and loading to databases or cloud storage.",
+      "CLOUD_LABEL": "Cloud Integration",
+      "CLOUD": "Seamless integration of your systems with cloud platforms such as GCP, AWS, and Azure for scalable and flexible data solutions.",
+      "MICROSERVICES_LABEL": "Microservices & Containerization",
+      "MICROSERVICES": "Designing and deploying microservices-based architectures using Docker to ensure flexibility and scalability.",
+      "API_LABEL": "API Development",
+      "API": "I build and manage robust APIs for smooth interaction between systems and real-time data consumption.",
+      "ANALYSIS_LABEL": "Data Analysis & Reporting",
+      "ANALYSIS": "Leveraging Jupyter Notebooks for data exploration, visualization, and reporting to derive actionable insights."
+    },
+
+    "APPROACH_TITLE": "My Approach:",
+    "APPROACH_TEXT": "I work closely with clients to understand their specific needs and deliver customized solutions. Whether you're looking for help with ongoing projects, or need a new data pipeline built from scratch, I’m here to support you in achieving your goals. I offer remote freelance services, and I am open to short-term, flexible engagements across Europe.",
+
+    "CTA_LABEL": "Let's work together!",
+    "CTA_TEXT": "If you need expert assistance in data engineering, cloud-based solutions, or ETL processes, feel free to reach out. I’m ready to help your business unlock the full potential of your data.",
+
+    "WHY_ME_TITLE": "Why Choose Me?",
+    "WHY_ME": {
+      "YEARS_EXPERIENCE": "5+ years of experience in data engineering and cloud technologies",
+      "EXPERTISE": "Expertise with the latest data tools and platforms",
+      "RESULTS": "Proven track record of delivering high-quality solutions on time",
+      "FLEXIBILITY": "Flexible working arrangements, with remote or on-site availability across Europe"
+        }
+  },
+  "TERMS_OF_SERVICE": {
+    "TITLE": "CatoByte Terms of Service",
+    "EFFECTIVE_DATE_LABEL": "Effective date:",
+    "EFFECTIVE_DATE": "October 7, 2024",
+
+    "SECTION1_TITLE": "1. Acceptance of Terms",
+    "SECTION1_TEXT": "By accessing or using CatoByte (the \"Site\"), you agree to comply with and be bound by these Terms of Service (the \"Terms\"). Please read these Terms carefully before using the Site. If you do not accept these Terms, do not use or access the Site.",
+
+    "SECTION2_TITLE": "2. Blog Content",
+    "SECTION2_TEXT1": "The content provided on CatoByte is for informational and educational purposes only. I, Cato, publish articles on various technology-related topics. While I strive to provide accurate and up-to-date information, I make no guarantees regarding the integrity, accuracy, or reliability of the information presented on this blog.",
+    "SECTION2_TEXT2": "The content represents my personal opinions and experiences and should not be construed as professional advice. I encourage you to conduct your own research or consult experts as necessary.",
+
+    "SECTION3_TITLE": "3. Intellectual Property",
+    "SECTION3_TEXT1": "All content on this site, including but not limited to articles, images, logos, and graphics, is the intellectual property of CatoByte unless otherwise noted. You may not reproduce, distribute, or otherwise use any content from the site without my prior written permission.",
+    "SECTION3_TEXT2": "You may share blog posts through social media or other platforms, provided that you give appropriate credit to CatoByte with a link to the original content.",
+
+    "SECTION4_TITLE": "4. External Links",
+    "SECTION4_TEXT": "The site may contain links to external websites that are not owned or controlled by CatoByte. I am not responsible for the content, privacy policies, or practices of these third-party websites. Please review the terms and conditions of third-party sites that you visit through the links provided on this Site.",
+
+    "SECTION5_TITLE": "5. User Conduct",
+    "SECTION5_INTRO": "By using CatoByte, you agree not to:",
+    "SECTION5_ITEM1": "Post, share, or transmit any content that is illegal, harmful, defamatory, or otherwise objectionable. [Note: The ability to post content is not yet enabled on the site but will be added in the future]",
+    "SECTION5_ITEM2": "Attempt to gain unauthorized access to the Site's servers or disrupt the functionality of the Site.",
+    "SECTION5_ITEM3": "Use the Site for any unlawful purpose or engage in any activity that violates these Terms.",
+
+    "SECTION6_TITLE": "6. Limitation of Liability",
+    "SECTION6_TEXT": "To the maximum extent permitted by law, CatoByte and its owner (Cato) will not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from your use or inability to use the Site. This includes, but is not limited to, any errors, omissions, or inaccuracies in the content provided.",
+
+    "SECTION7_TITLE": "7. Disclaimer",
+    "SECTION7_TEXT": "The content on CatoByte is provided \"as is\" without warranties of any kind, either express or implied. I do not guarantee that the Site is free from errors, viruses, or other harmful components. Use of the Site is at your own risk.",
+
+    "SECTION8_TITLE": "8. Changes to Terms",
+    "SECTION8_TEXT": "I reserve the right to modify or update these Terms at any time. Any changes will be posted on this page with an updated effective date. If you continue to use the Site after the changes are posted, you agree to be bound by the revised Terms.",
+
+    "SECTION9_TITLE": "9. Termination",
+    "SECTION9_TEXT": "I reserve the right to terminate or restrict your access to CatoByte at any time without notice, for any reason, including but not limited to failure to comply with these Terms.",
+
+    "SECTION10_TITLE": "10. Governing Law",
+    "SECTION10_TEXT": "These Terms will be governed by and construed in accordance with the laws of [your country/region], without regard to its conflict of law provisions.",
+
+    "SECTION11_TITLE": "11. Contact",
+    "SECTION11_TEXT": "If you have any questions or concerns regarding these Terms, please contact me at "
+  }
+}

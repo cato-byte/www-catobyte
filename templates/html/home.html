@@ -1,0 +1,44 @@
+<div class="hero">
+    <h2>{{ i18n.HOME.HERO_TITLE }}</h2>
+    <p>{{ i18n.HOME.HERO_DESCRIPTION }}</p>
+</div>
+
+<!-- Latest Articles Section -->
+<section class="latest-articles">
+    {{ LATEST_ARTICLES }}
+</section>
+
+<!-- Introduction to the Blog Section -->
+<section class="introduction">
+    <h2>{{ i18n.HOME.INTRODUCTION_TITLE }}</h2>
+    <p>
+        {{ i18n.HOME.INTRODUCTION_PARAGRAPH_1 }}
+        {{ i18n.HOME.INTRODUCTION_PARAGRAPH_2 }}
+        {{ i18n.HOME.INTRODUCTION_PARAGRAPH_3 }}
+        <a href="../services.html" class="service-link">{{ i18n.HOME.SERVICES_LINK_TEXT }}</a>
+    </p>
+</section>
+
+<!-- Why This Blog Matters Section -->
+<section class="why-blog">
+    <h2>{{ i18n.HOME.WHY_BLOG_TITLE }}</h2>
+    <p>{{ i18n.HOME.WHY_BLOG_DESCRIPTION }}</p>
+    <ul>
+        <li><strong>{{ i18n.HOME.AI }}</strong>: {{ i18n.HOME.AI_DESCRIPTION }}</li>
+        <li><strong>{{ i18n.HOME.DATA_SCIENCE }}</strong>: {{ i18n.HOME.DATA_SCIENCE_DESCRIPTION }}</li>
+        <li><strong>{{ i18n.HOME.TECHNOLOGY }}</strong>: {{ i18n.HOME.TECHNOLOGY_DESCRIPTION }}</li>
+    </ul>
+</section>
+
+<!-- Call to Action Section -->
+<section class="cta">
+    <h2>{{ i18n.HOME.CTA_TITLE }}</h2>
+    <p>{{ i18n.HOME.CTA_DESCRIPTION }}</p>
+    <a href="../../pages/{{ i18n.LANG}}/archive.html">{{ i18n.HOME.CTA_LINK_TEXT }}</a>
+</section>
+
+<!-- Social Icons -->
+<div class="social-icons">
+    <h2>{{ i18n.HOME.SOCIAL_FOLLOW_ME }}</h2>
+    <a href="{{ LINKEDIN_PROFILE }}">{{ i18n.HOME.LINKEDIN }}</a>
+</div>    

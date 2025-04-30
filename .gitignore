@@ -5,3 +5,4 @@ pages/
 post/
 util/__pycache__/
 util/config.py
+setup_Venv.sh

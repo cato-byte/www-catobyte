@@ -25,6 +25,14 @@ RAW_DIR = os.path.join(WEB_DIR, 'raw')
 # Replace 'templates' with the name of your templates folder if different.
 TEMPLATES_DIR = os.path.join(WEB_DIR, 'templates')
 
+# Templates html directory (relative to WEB_DIR)
+# Replace  if different.
+TEMPLATES_HTML_DIR = os.path.join(TEMPLATES_DIR, 'html')
+
+# Templates i 18n directory (relative to WEB_DIR)
+# Replace  if different.
+TEMPLATES_I18N_DIR = os.path.join(TEMPLATES_DIR, 'i18n')
+
 # Pages directory (relative to WEB_DIR)
 # Replace 'pages' with the name of your pages folder if different.
 PAGES_DIR = os.path.join(WEB_DIR, 'pages')

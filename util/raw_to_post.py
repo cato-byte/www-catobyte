@@ -164,8 +164,7 @@ def convert_code_block_to_html(code_lines, language):
         f'</div>\n'
     )
 
-def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
-    
+def txt_to_html(raw_dir, posts_dir, templates_dir, posts, lang):
     if os.path.exists(posts_dir):
         # Clear existing HTML files from posts directory
         for filename in os.listdir(posts_dir):
@@ -175,14 +174,13 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
     else:
         os.makedirs(posts_dir)  # Create the posts directory if it doesn't exist
 
-     # Initialize the TemplateManager
-    template_manager = TemplateManager(templates_dir, language=lang)
+    # Initialize the TemplateManager
+    template_manager = TemplateManager(language=lang)
 
-    
-    #circular relation between the posts for other posts section
-    post_processor = PostProcessor(language = lang)
+    # Circular relation between the posts for other posts section
+    post_processor = PostProcessor(language=lang)
     post_neighborhoods = post_processor.process_posts(posts)
-    
+
     for post_neighborhood in post_neighborhoods:
         post = post_neighborhood['post']
         filename = post['file_name']
@@ -192,7 +190,8 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
             # Change the file extension from .md to .html
             html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
             html_file_path = os.path.join(posts_dir, html_filename)
-            print(raw_dir, posts_dir, templates_dir,html_filename,html_file_path)
+            print(raw_dir, posts_dir, templates_dir, html_filename, html_file_path)
+
             # Check if the file has already been processed
             if os.path.exists(html_file_path):
                 print(f"{html_filename} already exists. Skipping...")
@@ -200,24 +199,20 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
 
             # Read the .md file and write the corresponding .html file
             with open(md_file_path, 'r', encoding='utf-8') as md_file, open(html_file_path, 'w', encoding='utf-8') as html_file:
-                # Write the beginning of the HTML file with templates
+                # Write the header using TemplateManager
                 template_manager.write_header(html_file)
 
-                # Write the main content based on JSON metadata
-                html_file.write(f"""        <main>
-            <div class="vertical-body-container">""")
-
+                # Write the main content
+                html_file.write("""<main>\n<div class="vertical-body-container">\n""")
                 is_title_image = False
                 table_lines = []
                 is_parsing_table = False
                 code_lines = []
                 is_code_block = False
                 code_language = ""
-                # Process each line in the markdown file
+
                 for line in md_file:
-                    # Strip the line to remove extra whitespace
                     stripped_line = line.strip()
-                    
 
                     # Detect the TITLE_IMAGE comment
                     if stripped_line == "<!-- TITLE_IMAGE -->":
@@ -227,7 +222,7 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
                     # Ignore empty lines
                     if not stripped_line:
                         continue
-                    
+
                     # Detect the start of a code block
                     if stripped_line.startswith("```"):
                         if not is_code_block:  # Beginning of a new code block
@@ -267,21 +262,19 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
                     if not is_parsing_table:
                         # Convert the markdown line to HTML
                         html_line = markdown_to_html(stripped_line, is_title_image)
-            
+
                         # Reset the title image flag after processing the image
-                        if is_title_image :
+                        if is_title_image:
                             is_title_image = False
-                        
+
                         if re.search(r'\{\{PUBLISH_DATE\}\}', html_line):
-                            html_line = html_line.replace("{{PUBLISH_DATE}}",format_date(post['publication_date'],lang = lang))
-                        ##stripped_line = replace_publish_date(stripped_line, publish_date)
+                            html_line = html_line.replace("{{PUBLISH_DATE}}", format_date(post['publication_date'], lang=lang))
 
                         if stripped_line == html_line:
-
                             stripped_line = fill_markdown_links(stripped_line)
                             # Split into wrapped lines less than 80 characters
                             wrapped_lines = textwrap.wrap(stripped_line, width=80)
-                        
+
                             # Embed each wrapped line in <p> tags and write to the HTML file
                             html_file.write(f'          <p>\n')
                             for wrapped_line in wrapped_lines:
@@ -290,27 +283,38 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts,lang):
                         else:
                             # Write the processed HTML line
                             html_file.write(f'          {html_line}\n')
-                        
+
                         if is_parsing_table and table_lines:
                             html_file.write(markdown_table_to_html(table_lines))
 
-                # Write the end of the HTML file
-                html_file.write("""         </div>
-        </main>\n""")
+                # Write the end of the main content
+                html_file.write("</div>\n</main>\n")
                 html_file.write(post_neighborhood['other_posts_section'])
-                template_manager.write_footer(html_file)  # Include footer section
+
+                # Write the footer using TemplateManager
+                template_manager.write_footer(html_file)
 
             print(f"Processed {filename} to {html_file_path}")
 
 
+def main():
+    """Procesa todos los idiomas y genera los archivos HTML correspondientes."""
+    if not LANGUAGES:
+        raise ValueError("LANGUAGES list is empty. Please define at least one language.")
+
+    for lang in LANGUAGES:
+        if not lang:
+            print("Warning: Skipping an empty language entry.")
+            continue
+
+        RAW_DIR_LANG = os.path.join(RAW_DIR, lang)
+        POSTS_DIR_LANG = os.path.join(POSTS_DIR, lang)
+        TEMPLATES_DIR_LANG = os.path.join(TEMPLATES_DIR, lang)
+
+        lang_posts = load_metadata_by_language(METADATA_FILE, lang)
+        txt_to_html(RAW_DIR_LANG, POSTS_DIR_LANG, TEMPLATES_DIR_LANG, lang_posts, lang)
 
 
-
-
-for lang in LANGUAGES:
-    RAW_DIR_LANG = os.path.join(RAW_DIR,lang)
-    POSTS_DIR_LANG = os.path.join(POSTS_DIR,lang)
-    TEMPLATES_DIR_LANG = os.path.join(TEMPLATES_DIR,lang)
-   
-    lang_posts = load_metadata_by_language(METADATA_FILE,lang)
-    txt_to_html(RAW_DIR_LANG, POSTS_DIR_LANG, TEMPLATES_DIR_LANG , lang_posts,lang)
+# Ejecuta el método principal
+if __name__ == "__main__":
+    main()

@@ -1,9 +1,16 @@
 import os
+import json
+from jinja2 import Environment, FileSystemLoader
 from create_other_posts_section import *
 from metadata_utils import load_metadata_by_language
-from config import TEMPLATES_DIR, PAGES_DIR, METADATA_FILE, LANGUAGES, CONTACT_EMAIL, WHATSAPP_NUMBER, LINKEDIN_PROFILE
+from config import TEMPLATES_DIR, PAGES_DIR, METADATA_FILE, LANGUAGES, CONTACT_EMAIL, WHATSAPP_NUMBER, LINKEDIN_PROFILE, TEMPLATES_HTML_DIR, TEMPLATES_I18N_DIR
 from template_manager import TemplateManager
 
+def load_i18n(language):
+    """Load the internationalization file for the given language."""
+    i18n_file = os.path.join(TEMPLATES_I18N_DIR, f"{language}.json")
+    with open(i18n_file, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 def read_template(template_name, language):
     """Lee el contenido de una plantilla desde el directorio de templates."""
@@ -15,7 +22,7 @@ def read_template(template_name, language):
     return ""
 
 
-def insert_latest_posts_in_homepage(homepage_content, language):
+def get_latest_posts_for_homepage( language):
     """Inserts the latest posts into the homepage based on the language."""
     posts = load_metadata_by_language(METADATA_FILE, language)
     post_processor = PostProcessor(language)
@@ -32,43 +39,24 @@ def insert_latest_posts_in_homepage(homepage_content, language):
         ''' for post in sorted_posts
     )
 
-    return homepage_content.replace('{{LATEST_ARTICLES}}', latest_post_html)
+    return latest_post_html
 
 
-def generate_misc_pages(language, template_manager):
-    """Generates static pages for a specific language."""
-    misc_pages = ['about.html', 'contact.html', 'services.html', 'home.html', 'privacy_policy.html', 'terms_of_service.html']
+def generate_pages():
+    """Generate static pages for all languages."""
+    templates = ["about.html", "contact.html", "services.html", "home.html", "privacy_policy.html", "terms_of_service.html"]
 
-    for misc_page in misc_pages:
-        localized_page = f"{language}/{misc_page}"  # E.g., en/home.html, es/home.html
-        os.makedirs(os.path.join(PAGES_DIR, language), exist_ok=True)
+    for language in LANGUAGES:
+        # Initialize TemplateManager for the current language
+        template_manager = TemplateManager(language)
 
-        with open(os.path.join(PAGES_DIR, localized_page), 'w', encoding='utf-8') as html_file:
-            # Use TemplateManager to write the header
-            template_manager.write_header(html_file)
+        # Render templates and store them in memory
+        template_manager.render_templates(templates)
 
-            # Load and process the page content
-            page_content = template_manager.load_template(misc_page)
-
-            # Handle specific templates
-            if misc_page == 'home.html':
-                page_content = insert_latest_posts_in_homepage(page_content, language)
-                page_content = page_content.replace("{{LINKEDIN_PROFILE}}", LINKEDIN_PROFILE)
-            elif misc_page == 'contact.html':
-                # Replace placeholders for contact.html
-                page_content = page_content.replace("{{EMAIL_ADDRESS}}", CONTACT_EMAIL)
-                page_content = page_content.replace("{{WHATSAPP_NUMBER}}", WHATSAPP_NUMBER)
-
-            html_file.write(page_content)
-
-            # Use TemplateManager to write the footer
-            template_manager.write_footer(html_file, contact_email=CONTACT_EMAIL)
-
+        # Write rendered templates to the output directory
+        output_dir = os.path.join(PAGES_DIR, language)
+        template_manager.write_templates_to_files(output_dir)
 
 if __name__ == "__main__":
-    for lang in LANGUAGES:
-        # Initialize TemplateManager for the current language
-        template_manager = TemplateManager(TEMPLATES_DIR, language=lang)
-        generate_misc_pages(lang, template_manager)
-
-    print("Pages successfully generated for all languages.")
+    generate_pages()
+    print("Pages successfully generated.")

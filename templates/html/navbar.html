@@ -1,0 +1,18 @@
+<nav class="navbar-container">
+    <button class="hamburger" aria-label="Toggle navigation">☰</button>
+
+    <ul class="navbar">
+        <li><a href="../../pages/{{ i18n.LANG }}/home.html">{{ i18n.NAVBAR.HOME }}</a></li>
+        <li><a href="../../pages/{{ i18n.LANG }}/about.html">{{ i18n.NAVBAR.ABOUT }}</a></li>
+        <li><a href="../../pages/{{ i18n.LANG }}/services.html">{{ i18n.NAVBAR.SERVICES }}</a></li>
+        <li><a href="../../pages/{{ i18n.LANG }}/contact.html">{{ i18n.NAVBAR.CONTACT }}</a></li>
+        <li><a href="../../pages/{{ i18n.LANG }}/archive.html">{{ i18n.NAVBAR.BLOG_ARCHIVE }}</a></li>
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle">{{ i18n.NAVBAR.LANGUAGE }} ▼</a>
+            <ul class="dropdown-menu">
+                <li><a href="../../pages/{{ i18n.NAVBAR.OTHER_LANG_ONE }}/home.html">{{ i18n.NAVBAR.OTHER_LANG_ONE_TEXT }}</a></li>
+                <li><a href="../../pages/{{ i18n.NAVBAR.OTHER_LANG_TWO }}/home.html">{{ i18n.NAVBAR.OTHER_LANG_TWO_TEXT }}</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>

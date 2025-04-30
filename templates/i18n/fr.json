@@ -1,0 +1,225 @@
+{
+  "LANG": "fr",
+  "ABOUT": {
+    "WHO_AM_I_TITLE": "Qui suis-je ?",
+    "WHO_AM_I_PARAGRAPHS": [
+      "J'ai grandi dans les années 90, en étant témoin de la transition d'un monde analogique à un monde numérique. Cette transformation a façonné ma vision de la technologie et a suscité de nombreuses réflexions. Bien que je travaille dans l'informatique en nuage et l'automatisation, je vois également la valeur de la propriété — posséder des médias, des connaissances, et notre présence numérique. Je suis le genre de personne qui apprécie encore d'avoir une copie physique d'un film, non seulement pour y accéder, mais aussi pour avoir l'assurance qu'il m'appartient vraiment, sans dépendre d'abonnements ou de contrôles externes.",
+      "Cette mentalité va au-delà des médias — il s'agit de garder le contrôle sur nos espaces numériques et personnels. Nous vivons dans un monde où l'automatisation croissante et les décisions basées sur les données optimisent l'efficacité, souvent au détriment de l'individualité et des connexions réelles."
+    ],
+
+    "WHAT_I_BELIEVE_IN_TITLE": "Ce en quoi je crois",
+    "WHAT_I_BELIEVE_IN_PARAGRAPHS": [
+      "Bien que je travaille dans une industrie qui prospère grâce à l'extraction de données et à l'automatisation, j'accorde une grande valeur aux interactions humaines authentiques. La technologie doit être au service des gens, et non l'inverse. C'est pourquoi je crois en des communautés fortes, où nous nous soutenons mutuellement dans la vie réelle, et pas seulement en ligne. Nous sommes des êtres sociaux, et rien ne remplace les connexions en face à face.",
+      "Je valorise également la liberté personnelle, la quête de connaissances et les relations humaines. Ces principes m'ont conduit à choisir un mode de vie à distance, freelance et nomade. Ce n'est pas seulement une question de flexibilité au travail — c'est aussi avoir le temps et l'espace pour explorer ce qui compte vraiment : passer du temps avec ma famille, approfondir des sujets qui m'intéressent et m'immerger dans différentes cultures et expériences."
+    ],
+
+    "MY_PASSIONS_TITLE": "Mes passions",
+    "MY_PASSIONS_INTRO": "Au-delà de la technologie, je suis passionné par :",
+    "MY_PASSIONS_ITEMS": [
+      {
+        "title": "Musique",
+        "text": "Je suis ténor, et chanter est une source profonde de joie pour moi. C'est un moyen d'exprimer des émotions, de se connecter aux autres et de nourrir l'âme."
+      },
+      {
+        "title": "Fitness & Communauté",
+        "text": "Je pratique régulièrement le CrossFit et j'apprécie son esprit structuré et communautaire. Ce n'est pas seulement de l'exercice ; c'est une façon de rester ancré."
+      },
+      {
+        "title": "Conservation de la nature",
+        "text": "Je trouve la nature infiniment fascinante — les rivières, les forêts, et les créatures inconnues dans les profondeurs de l'océan. Mais je reconnais également que la conservation n'est pas toujours simple. Notre économie et nos moyens de subsistance entrent parfois en conflit avec la préservation de l'environnement, et bien que je croie profondément en la protection de ce que nous pouvons, je pense aussi que nous avons besoin de solutions pragmatiques qui prennent en compte à la fois la nature et les gens. Il n'y a pas de réponses faciles, mais des choix réfléchis et responsables peuvent faire la différence."
+      }
+    ],
+
+    "WHY_THIS_MATTERS_TITLE": "Pourquoi est-ce important ?",
+    "WHY_THIS_MATTERS_PARAGRAPHS": [
+      "J'ai créé ce blog parce que la technologie façonne notre monde, et nous devrions tous la comprendre — pas seulement les ingénieurs et les entreprises, mais aussi les gens ordinaires. Je veux rendre les concepts technologiques accessibles, questionner les tendances qui affectent nos vies numériques, et explorer l'équilibre entre l'automatisation et les connexions humaines.",
+      "Au final, je crois que partager des connaissances, favoriser de vraies communautés et préserver la liberté personnelle nous rendent tous plus heureux. Ce blog est ma façon de contribuer à cette vision."
+    ],
+    "CONNECT_TEXT": "Si vous souhaitez entrer en contact, n'hésitez pas à me joindre via ma ",
+    "CONNECT_LINK_TEXT": "page de contact"
+  },
+  "CONTACT": {
+          "TITLE": "Contactez-moi",
+          "EMAIL_LABEL": "Email :",
+          "WHATSAPP_LABEL": "WhatsApp :",
+          "WHATSAPP_TEXT": "Discutez avec moi sur WhatsApp"
+  },
+  "FOOTER": {
+  "ALL_RIGHTS": "Tous droits réservés.",
+  "CONTACT_LABEL": "Contact :",
+  "LINK_ABOUT": "À propos de moi",
+  "LINK_ARCHIVE": "Archives du blog",
+  "LINK_PRIVACY": "Politique de confidentialité",
+  "LINK_TERMS": "Conditions d'utilisation",
+  "LINK_CONTACT": "Contact"
+  },
+  "HEADER": {
+      "COMPANY_NAME": "Catobyte",
+      "MOTTO": "Explorer l'IA, les données et la technologie"
+  },
+  "HOME": {
+  "HERO_TITLE": "Bienvenue sur Catobyte",
+  "HERO_DESCRIPTION": "Restez informé des dernières tendances en IA, données et technologie.",
+  
+  "INTRODUCTION_TITLE": "Qu'est-ce que Catobyte ?",
+  "INTRODUCTION_PARAGRAPH_1": "Bonjour, bienvenue sur Catobyte. Cet espace numérique est un blog où je souhaite partager des connaissances et des idées sur l'intelligence artificielle, l'ingénierie des données et les techniques NLP avec tout le monde.",
+  "INTRODUCTION_PARAGRAPH_2": "Je suis également un ingénieur en données freelance passionné par l'IA et le NLP. Je propose des services de données à distance pour le marché européen. Vous pouvez trouver plus de détails dans la section services.",
+  "INTRODUCTION_PARAGRAPH_3": "Dans ce blog, je partage mes expériences et mes idées sur divers projets, flux de travail et technologies que je rencontre dans mon parcours professionnel. Le blog sert de plateforme pour documenter mon processus d'apprentissage et fournir des ressources précieuses à tous ceux qui s'intéressent à ces domaines.",
+  "SERVICES_LINK": "../services.html",
+  "SERVICES_LINK_TEXT": "Services",
+
+  "WHY_BLOG_TITLE": "Pourquoi l'IA, les données et la technologie sont importantes",
+  "WHY_BLOG_DESCRIPTION": "La convergence de l'intelligence artificielle, de la science des données et des technologies émergentes façonne l'avenir des industries, des économies et des sociétés. Comprendre ces domaines est essentiel pour rester compétitif et informé.",
+  "AI": "Intelligence Artificielle",
+  "AI_DESCRIPTION": "L'IA transforme notre interaction avec les machines, automatise des tâches complexes et stimule l'innovation dans des domaines allant de la santé à la finance.",
+  "DATA_SCIENCE": "Science des Données",
+  "DATA_SCIENCE_DESCRIPTION": "À l'ère du Big Data, la capacité d'analyser et de tirer des enseignements des données est une compétence inestimable pour prendre des décisions éclairées et prédire les tendances futures.",
+  "TECHNOLOGY": "Technologie",
+  "TECHNOLOGY_DESCRIPTION": "La technologie évolue à un rythme rapide, influençant tout, de la communication au transport, ce qui rend essentiel de rester à jour avec les derniers outils, langages et systèmes.",
+
+  "CTA_TITLE": "Prenez de l'avance avec Catobyte",
+  "CTA_DESCRIPTION": "Ne manquez pas les dernières idées sur l'IA, la science des données et la technologie.",
+  "CTA_LINK_TEXT": "Lire plus d'articles",
+
+  "SOCIAL_FOLLOW_ME": "Suivez-moi",
+  "LINKEDIN": "LinkedIn"
+},
+"NAVBAR": {
+    "HOME": "Accueil",
+    "ABOUT": "À propos",
+    "SERVICES": "Services",
+    "CONTACT": "Contact",
+    "BLOG_ARCHIVE": "Archives du blog",
+    "LANGUAGE": "Langue",
+    "OTHER_LANG_ONE": "es",
+    "OTHER_LANG_TWO": "en",
+    "OTHER_LANG_ONE_TEXT": "Español",
+    "OTHER_LANG_TWO_TEXT": "English"
+},
+"PRIVACY": {
+    "TITLE": "Politique de Confidentialité de Catobyte",
+    "EFFECTIVE_DATE_LABEL": "Date d'entrée en vigueur :",
+    "EFFECTIVE_DATE": "7 octobre 2024",
+
+    "SECTION_1_TITLE": "Introduction",
+    "SECTION_1_TEXT": "Bienvenue sur Catobyte ! Je respecte votre vie privée et souhaite être transparent sur le fonctionnement de ce site. Ce blog est un projet personnel où je publie des articles sur des sujets liés à la technologie. Veuillez noter que je ne collecte, ne stocke ni ne traite aucune donnée personnelle des visiteurs. En naviguant sur ce blog, vous acceptez les termes décrits dans cette politique de confidentialité.",
+
+    "SECTION_2_TITLE": "Données Collectées",
+    "SECTION_2_TEXT": "Catobyte ne collecte aucune donnée personnelle des visiteurs. Cela inclut les noms, adresses e-mail ou toute autre information personnelle généralement collectée via des formulaires, des commentaires ou des cookies.",
+
+    "SECTION_3_TITLE": "Liens Externes",
+    "SECTION_3_TEXT": "Les articles de ce blog peuvent contenir des liens vers des sites ou ressources externes. Une fois que vous quittez Catobyte en cliquant sur un lien externe, je ne suis pas responsable des pratiques de confidentialité de ces sites tiers. Il est recommandé de consulter leurs politiques de confidentialité avant de naviguer.",
+
+    "SECTION_4_TITLE": "Cookies",
+    "SECTION_4_TEXT": "Ce site n'utilise pas de cookies à des fins de suivi ou d'analyse, car aucune donnée personnelle n'est collectée. L'utilisation de cookies par des sites tiers accessibles via des liens externes échappe à mon contrôle.",
+
+    "SECTION_5_TITLE": "Sécurité",
+    "SECTION_5_TEXT": "Bien qu'aucune donnée personnelle ne soit collectée sur ce site, la sécurité est une priorité. Le site est régulièrement maintenu pour garantir son intégrité et prévenir tout accès non autorisé.",
+
+    "SECTION_6_TITLE": "Consentement",
+    "SECTION_6_TEXT": "En utilisant ce blog, vous reconnaissez que je ne collecte, ne stocke ni ne partage aucune donnée personnelle. Si vous accédez à des sites tiers via des liens externes, le traitement de vos données relèvera exclusivement de leurs propres politiques de confidentialité.",
+
+    "SECTION_7_TITLE": "Modifications de cette Politique de Confidentialité",
+    "SECTION_7_TEXT": "Cette Politique de Confidentialité peut être mise à jour pour refléter d'éventuels changements dans le fonctionnement du site ou dans les liens externes proposés. Toute mise à jour sera indiquée sur cette page avec une nouvelle date de révision.",
+
+    "SECTION_8_TITLE": "Contactez-moi",
+    "SECTION_8_TEXT": "Pour toute question ou préoccupation concernant cette Politique de Confidentialité, vous pouvez me contacter via la",
+    
+    "CONTACT_PAGE_LINK_TEXT": "page de contact"
+},
+"SERVICES": {
+    "TITLE": "Services d'Ingénierie des Données – Freelance",
+    "DESCRIPTION": "Avec plus de 5 ans d'expérience dans le domaine de l'ingénierie des données, je me spécialise dans la création, l'optimisation et la maintenance de pipelines de données et de flux de travail ETL. Mon expertise couvre de nombreuses technologies, plateformes cloud et outils, ce qui me permet de fournir des solutions robustes et évolutives adaptées aux besoins de votre entreprise.",
+
+    "SKILLS_TITLE": "Compétences et Technologies Clés :",
+    "SKILLS": {
+      "DATABASES_LABEL": "Bases de Données",
+      "DATABASES": "PostgreSQL, Hive, Impala, BigQuery (GCP)",
+      "ETL_LABEL": "ETL et Pipelines de Données",
+      "ETL": "Azure Data Factory, AWS, Apache Spark, PySpark",
+      "CLOUD_LABEL": "Plateformes Cloud",
+      "CLOUD": "Google Cloud Platform (GCP), Azure, AWS",
+      "MICROSERVICES_LABEL": "Architecture Microservices",
+      "MICROSERVICES": "Docker, Kubernetes",
+      "WORKFLOWS_LABEL": "Gestion des Flux de Données",
+      "WORKFLOWS": "Apache Airflow (pour la planification et la gestion des flux de travail)",
+      "ANALYSIS_LABEL": "Analyse de Données et Reporting",
+      "ANALYSIS": "Jupyter Notebooks",
+      "API_LABEL": "Développement d'APIs",
+      "API": "Conception et implémentation d'APIs REST pour une intégration fluide"
+    },
+
+    "OFFER_TITLE": "Ce que je propose :",
+    "OFFER": {
+      "PIPELINES_LABEL": "Conception et Optimisation de Pipelines de Données",
+      "PIPELINES": "Création de pipelines de données fiables, efficaces et évolutifs pour garantir un flux de données fluide dans votre infrastructure.",
+      "ETL_LABEL": "Gestion des Processus ETL",
+      "ETL": "Gestion complète des processus ETL, y compris l'extraction, la transformation et le chargement des données dans des bases de données ou des stockages cloud.",
+      "CLOUD_LABEL": "Intégration Cloud",
+      "CLOUD": "Intégration fluide de vos systèmes avec des plateformes cloud telles que GCP, AWS et Azure pour des solutions de données évolutives et flexibles.",
+      "MICROSERVICES_LABEL": "Microservices et Conteneurisation",
+      "MICROSERVICES": "Conception et déploiement d'architectures basées sur des microservices en utilisant Docker pour garantir flexibilité et évolutivité.",
+      "API_LABEL": "Développement d'APIs",
+      "API": "Je conçois et gère des APIs robustes pour une interaction fluide entre les systèmes et une consommation de données en temps réel.",
+      "ANALYSIS_LABEL": "Analyse de Données et Reporting",
+      "ANALYSIS": "Utilisation de Jupyter Notebooks pour l'exploration des données, la visualisation et la création de rapports exploitables."
+    },
+
+    "APPROACH_TITLE": "Mon Approche :",
+    "APPROACH_TEXT": "Je travaille en étroite collaboration avec mes clients pour comprendre leurs besoins spécifiques et fournir des solutions personnalisées. Que vous ayez besoin d'aide pour des projets en cours ou de construire un nouveau pipeline de données à partir de zéro, je suis là pour vous accompagner dans l'atteinte de vos objectifs. J'offre des services freelance à distance et je suis ouvert à des engagements flexibles à court terme à travers l'Europe.",
+
+    "CTA_LABEL": "Travaillons ensemble !",
+    "CTA_TEXT": "Si vous avez besoin d'une assistance experte en ingénierie des données, solutions cloud ou processus ETL, n'hésitez pas à me contacter. Je suis prêt à vous aider à exploiter tout le potentiel de vos données.",
+
+    "WHY_ME_TITLE": "Pourquoi me choisir ?",
+    "WHY_ME": {
+      "YEARS_EXPERIENCE": "Plus de 5 ans d'expérience en ingénierie des données et technologies cloud",
+      "EXPERTISE": "Expertise avec les outils et plateformes de données les plus avancés",
+      "RESULTS": "Un historique prouvé de livraison de solutions de haute qualité dans les délais",
+      "FLEXIBILITY": "Des arrangements de travail flexibles, avec disponibilité à distance ou sur site à travers l'Europe"
+    }
+},
+"TERMS_OF_SERVICE": {
+    "TITLE": "Conditions Générales d'Utilisation de Catobyte",
+    "EFFECTIVE_DATE_LABEL": "Date d'entrée en vigueur :",
+    "EFFECTIVE_DATE": "7 octobre 2024",
+
+    "SECTION1_TITLE": "1. Acceptation des Conditions",
+    "SECTION1_TEXT": "En accédant ou en utilisant Catobyte (le \"Site\"), vous acceptez de respecter et d'être lié par ces Conditions Générales d'Utilisation (les \"Conditions\"). Veuillez lire attentivement ces Conditions avant d'utiliser le Site. Si vous n'acceptez pas ces Conditions, veuillez ne pas utiliser ou accéder au Site.",
+
+    "SECTION2_TITLE": "2. Contenu du Blog",
+    "SECTION2_TEXT1": "Le contenu publié sur Catobyte est fourni à titre informatif et éducatif uniquement. Moi, Cato, je publie des articles sur divers sujets liés à la technologie. Bien que je m'efforce de fournir des informations précises et à jour, je ne garantis pas l'intégrité, l'exactitude ou la fiabilité des informations présentées sur ce blog.",
+    "SECTION2_TEXT2": "Le contenu reflète mes opinions et expériences personnelles et ne doit pas être interprété comme un conseil professionnel. Je vous encourage à effectuer vos propres recherches ou à consulter des experts si nécessaire.",
+
+    "SECTION3_TITLE": "3. Propriété Intellectuelle",
+    "SECTION3_TEXT1": "Tout le contenu de ce site, y compris mais sans s'y limiter les articles, images, logos et graphiques, est la propriété intellectuelle de Catobyte, sauf indication contraire. Vous ne pouvez pas reproduire, distribuer ou utiliser autrement tout contenu du site sans mon autorisation écrite préalable.",
+    "SECTION3_TEXT2": "Vous pouvez partager les articles du blog sur les réseaux sociaux ou d'autres plateformes, à condition de créditer correctement Catobyte avec un lien vers le contenu original.",
+
+    "SECTION4_TITLE": "4. Liens Externes",
+    "SECTION4_TEXT": "Le site peut contenir des liens vers des sites externes qui ne sont pas détenus ou contrôlés par Catobyte. Je ne suis pas responsable du contenu, des politiques de confidentialité ou des pratiques de ces sites tiers. Veuillez consulter les conditions générales des sites tiers que vous visitez via les liens fournis sur ce Site.",
+
+    "SECTION5_TITLE": "5. Comportement des Utilisateurs",
+    "SECTION5_INTRO": "En utilisant Catobyte, vous acceptez de ne pas :",
+    "SECTION5_ITEM1": "Publier, partager ou transmettre tout contenu illégal, nuisible, diffamatoire ou autrement inapproprié. [Remarque : La possibilité de publier du contenu n'est pas encore activée sur le site mais sera ajoutée à l'avenir.]",
+    "SECTION5_ITEM2": "Tenter d'accéder de manière non autorisée aux serveurs du Site ou perturber le fonctionnement du Site.",
+    "SECTION5_ITEM3": "Utiliser le Site à des fins illégales ou participer à toute activité qui viole ces Conditions.",
+
+    "SECTION6_TITLE": "6. Limitation de Responsabilité",
+    "SECTION6_TEXT": "Dans les limites maximales permises par la loi, Catobyte et son propriétaire (Cato) ne seront pas responsables des dommages directs, indirects, accessoires, consécutifs ou punitifs résultant de votre utilisation ou incapacité à utiliser le Site. Cela inclut, mais sans s'y limiter, les erreurs, omissions ou inexactitudes dans le contenu fourni.",
+
+    "SECTION7_TITLE": "7. Clause de Non-Responsabilité",
+    "SECTION7_TEXT": "Le contenu de Catobyte est fourni \"en l'état\" sans aucune garantie, expresse ou implicite. Je ne garantis pas que le Site est exempt d'erreurs, de virus ou d'autres composants nuisibles. L'utilisation du Site se fait à vos propres risques.",
+
+    "SECTION8_TITLE": "8. Modifications des Conditions",
+    "SECTION8_TEXT": "Je me réserve le droit de modifier ou de mettre à jour ces Conditions à tout moment. Toute modification sera publiée sur cette page avec une date d'entrée en vigueur mise à jour. Si vous continuez à utiliser le Site après la publication des modifications, vous acceptez d'être lié par les Conditions révisées.",
+
+    "SECTION9_TITLE": "9. Résiliation",
+    "SECTION9_TEXT": "Je me réserve le droit de résilier ou de restreindre votre accès à Catobyte à tout moment, sans préavis, pour quelque raison que ce soit, y compris mais sans s'y limiter, le non-respect de ces Conditions.",
+
+    "SECTION10_TITLE": "10. Droit Applicable",
+    "SECTION10_TEXT": "Ces Conditions seront régies et interprétées conformément aux lois de [votre pays/région], sans tenir compte des dispositions relatives aux conflits de lois.",
+
+    "SECTION11_TITLE": "11. Contact",
+    "SECTION11_TEXT": "Si vous avez des questions ou des préoccupations concernant ces Conditions, veuillez me contacter à "
+}
+  }
