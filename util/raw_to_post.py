@@ -202,8 +202,8 @@ def txt_to_html(raw_dir, posts_dir, templates_dir, posts, lang):
                 # Write the header using TemplateManager
                 template_manager.write_header(html_file)
 
-                # Write the main content
-                html_file.write("""<main>\n<div class="vertical-body-container">\n""")
+                # Write the main content main tag alreaddy added by template manager
+                html_file.write("""\n<div class="vertical-body-container">\n""")
                 is_title_image = False
                 table_lines = []
                 is_parsing_table = False

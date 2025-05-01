@@ -45,9 +45,9 @@ def generate_archive(language):
         # Write the header using TemplateManager
         template_manager.write_header(html_file)
 
-        # Write the main content
+        # Write the main content main tag added by template manager
         html_file.write(f"""
-        <main>
+                        
             <h2> Blog Archive ({language.upper()}) </h2>
             <div class="archive-container">
         """)
