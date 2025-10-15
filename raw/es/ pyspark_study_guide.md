@@ -3,7 +3,7 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Imagen creada por ChatGPT, OpenAI. 21 de Octubre de 2025 ](../../images/pyspark_study_guide_title_img.webp)
+![Imagen creada por ChatGPT, OpenAI. 21 de Octubre de 2025 ](../../images/pyspark_study_guide_title_img.png)
 
 ### Índice
 [Uniones de difusión vs. Uniones sesgadas](#what-are-broadcast-joins)

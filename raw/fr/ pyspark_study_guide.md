@@ -3,7 +3,7 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Image créée par ChatGPT, OpenAI. 11 octobre 2025 ](../../images/pyspark_study_guide_title_img.webp)
+![Image créée par ChatGPT, OpenAI. 11 octobre 2025 ](../../images/pyspark_study_guide_title_img.png)
 
 
 ### Index
