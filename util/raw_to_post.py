@@ -10,7 +10,7 @@ from template_manager import TemplateManager
 
 
 
-# Function to add the correct suffix for the day
+
 def get_day_with_suffix(day, lang="en"):
     if lang == "en":
         if 11 <= day <= 13:  # Special case for 11th, 12th, 13th
@@ -29,13 +29,8 @@ def get_day_with_suffix(day, lang="en"):
 
 # Function to format the date correctly for each language
 def format_date(date_str, lang="en"):
-    # Parse the date from the string
     date_obj = datetime.strptime(date_str, '%Y-%m-%d')
-
-    # Extract day, month, and year
     day_with_suffix = get_day_with_suffix(date_obj.day, lang)
-
-    # Define month names in different languages
     months = {
         "en": {
             "January": "January", "February": "February", "March": "March", "April": "April",
@@ -164,140 +159,203 @@ def convert_code_block_to_html(code_lines, language):
         f'</div>\n'
     )
 
-def txt_to_html(raw_dir, posts_dir, templates_dir, posts, lang):
+def prepare_output_directory(posts_dir):
+    """Ensure posts_dir exists and remove old HTML files."""
     if os.path.exists(posts_dir):
-        # Clear existing HTML files from posts directory
         for filename in os.listdir(posts_dir):
             if filename.endswith('.html'):
                 os.remove(os.path.join(posts_dir, filename))
         print("All existing HTML files in the posts directory have been deleted.")
     else:
-        os.makedirs(posts_dir)  # Create the posts directory if it doesn't exist
+        os.makedirs(posts_dir)
 
-    # Initialize the TemplateManager
+def unordered_list_to_html(unordered_list_lines):
+    """Convert a list of unordered list items to HTML."""
+    html = '          <ul>\n'
+    for item in unordered_list_lines:
+        html += f'              <li>{item}</li>\n'
+    html += '          </ul>\n'
+    return html   
+
+def handle_code_block(stripped_line, is_code_block, code_language, code_lines):
+    if stripped_line.startswith("```"):
+        if not is_code_block:
+            return None,True, stripped_line[3:]
+        else:
+            html_block = convert_code_block_to_html(code_lines, code_language)
+            code_lines.clear()
+            return html_block, False, ""
+    elif is_code_block:
+            code_lines.append(stripped_line)    
+    return None, is_code_block, code_language
+
+def handle_table_lines(line, is_parsing_table, table_lines):
+    """Manage table parsing and write HTML when table ends."""
+    if re.match(r'^\|.*\|$', line) and not is_parsing_table:
+        table_lines.append(line)
+        return None,True
+
+    if is_parsing_table:
+        if re.match(r'^\|[-\s|]+\|$', line) or re.match(r'^\|.*\|$', line):
+            table_lines.append(line)
+            return None,True
+        else:
+            html_table = markdown_table_to_html(table_lines)
+            table_lines.clear()
+            return html_table,False
+    return None,False
+
+def handle_unordered_list(line, is_unordered_list, unordered_list_lines):
+    """Manage unordered list parsing and write HTML when list ends."""
+    if line.startswith('- '):
+        unordered_list_lines.append(line[2:].strip())
+        return None,True
+    elif is_unordered_list:
+        html_block = unordered_list_to_html(unordered_list_lines)
+        unordered_list_lines.clear()
+        return html_block, False
+    return None, False
+
+def build_html_line( stripped_line, post, lang, is_title_image):
+    """Convert markdown line to HTML and write to file."""
+    html_line = markdown_to_html(stripped_line, is_title_image)
+
+    if re.search(r'\{\{PUBLISH_DATE\}\}', html_line):
+        html_line = html_line.replace("{{PUBLISH_DATE}}", format_date(post['publication_date'], lang=lang))
+
+    if stripped_line == html_line:
+        stripped_line = fill_markdown_links(stripped_line)
+        wrapped = textwrap.wrap(stripped_line, width=80)
+        paragraph = '          <p>\n'
+        for w in wrapped:
+            paragraph += f'              {w}\n'
+        paragraph += '          </p>\n'
+        return paragraph
+    else:
+        return f'          {html_line}\n'
+    
+def flush_pending_blocks(html_file,
+                         table_lines, is_parsing_table,
+                         unordered_list_lines, is_unordered_list,
+                         code_lines, is_code_block, code_language):
+    
+    if is_unordered_list and unordered_list_lines:
+        html_file.write(unordered_list_to_html(unordered_list_lines))
+
+    if is_parsing_table and table_lines:
+        html_file.write(markdown_table_to_html(table_lines))
+
+
+    if is_code_block and code_lines:
+        html_file.write(convert_code_block_to_html(code_lines, code_language))
+
+
+    if not any([is_code_block, is_parsing_table, is_unordered_list]):
+        html_file.flush()
+
+def parse_markdown_lines(md_file, html_file, post, lang):
+    is_title_image = False
+    table_lines = []
+    is_parsing_table = False
+    code_lines = []
+    is_code_block = False
+    code_language = ""
+    is_unordered_list = False
+    unordered_list_lines = []
+
+    for line in md_file:
+        stripped_line = line.strip()
+
+        # Detect the TITLE_IMAGE comment
+        if stripped_line == "<!-- TITLE_IMAGE -->":
+            is_title_image = True
+            continue
+
+        # Ignore empty lines
+        if not stripped_line:
+            continue
+        
+        #TODO: Refactor handlers to reduce repetition and  avoid order issues
+
+        # Handle unordered lists
+        list_html, is_unordered_list = handle_unordered_list(
+            stripped_line, is_unordered_list, unordered_list_lines
+        )
+        if is_unordered_list:
+            continue
+        if list_html is not None:
+            html_file.write(list_html)
+
+        # Handle tables
+        table_html, is_parsing_table = handle_table_lines(stripped_line, is_parsing_table, table_lines)
+        if is_parsing_table:
+            continue
+        if table_html is not None:
+            html_file.write(table_html)
+
+        # Handle code blocks
+        code_block_html, is_code_block, code_language = handle_code_block(
+            stripped_line, is_code_block, code_language, code_lines
+        )
+        if is_code_block:
+            continue
+        if code_block_html is not None:
+            html_file.write(code_block_html)
+            continue
+       
+        
+
+        html_line = build_html_line(stripped_line, post, lang, is_title_image)
+        html_file.write(html_line)
+        
+        is_title_image = False  # reset after one use
+    html_file.flush()
+    flush_pending_blocks(html_file,
+                         table_lines, is_parsing_table,
+                         unordered_list_lines, is_unordered_list,
+                         code_lines, is_code_block, code_language)
+
+
+
+def process_markdown_file(md_file_path, html_file_path, post, lang, template_manager, other_posts_section):
+    """Convert a markdown file to HTML using the template manager."""
+    with open(md_file_path, 'r', encoding='utf-8') as md_file, open(html_file_path, 'w', encoding='utf-8') as html_file:
+        template_manager.write_header(html_file)
+        html_file.write("\n<div class=\"vertical-body-container\">\n")
+        parse_markdown_lines(md_file, html_file, post, lang)
+        html_file.write("</div>\n</main>\n")
+        html_file.write(other_posts_section)
+        template_manager.write_footer(html_file)
+
+
+def txt_to_html(raw_dir, posts_dir, templates_dir, posts, lang):
+    prepare_output_directory(posts_dir)
+    
     template_manager = TemplateManager(language=lang)
-
-    # Circular relation between the posts for other posts section
     post_processor = PostProcessor(language=lang)
     post_neighborhoods = post_processor.process_posts(posts)
 
     for post_neighborhood in post_neighborhoods:
         post = post_neighborhood['post']
         filename = post['file_name']
-        if filename.endswith(".md"):  # Use .md extension for markdown files
-            md_file_path = os.path.join(raw_dir, filename)
+        if not filename.endswith(".md"):  
+            continue
+        md_file_path = os.path.join(raw_dir, filename)
 
-            # Change the file extension from .md to .html
-            html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
-            html_file_path = os.path.join(posts_dir, html_filename)
-            print(raw_dir, posts_dir, templates_dir, html_filename, html_file_path)
+        # Change the file extension from .md to .html
+        html_filename = os.path.splitext(os.path.basename(filename))[0] + ".html"
+        html_file_path = os.path.join(posts_dir, html_filename)
+       
 
-            # Check if the file has already been processed
-            if os.path.exists(html_file_path):
-                print(f"{html_filename} already exists. Skipping...")
-                continue
+        if os.path.exists(html_file_path):
+            print(f"{html_filename} already exists. Skipping...")
+            continue
 
-            # Read the .md file and write the corresponding .html file
-            with open(md_file_path, 'r', encoding='utf-8') as md_file, open(html_file_path, 'w', encoding='utf-8') as html_file:
-                # Write the header using TemplateManager
-                template_manager.write_header(html_file)
-
-                # Write the main content main tag alreaddy added by template manager
-                html_file.write("""\n<div class="vertical-body-container">\n""")
-                is_title_image = False
-                table_lines = []
-                is_parsing_table = False
-                code_lines = []
-                is_code_block = False
-                code_language = ""
-
-                for line in md_file:
-                    stripped_line = line.strip()
-
-                    # Detect the TITLE_IMAGE comment
-                    if stripped_line == "<!-- TITLE_IMAGE -->":
-                        is_title_image = True
-                        continue
-
-                    # Ignore empty lines
-                    if not stripped_line:
-                        continue
-
-                    # Detect the start of a code block
-                    if stripped_line.startswith("```"):
-                        if not is_code_block:  # Beginning of a new code block
-                            is_code_block = True
-                            code_language = stripped_line[3:]  # Capture the language after ```
-                        else:  # End of the current code block
-                            is_code_block = False
-                            # Convert the collected code lines to an HTML block
-                            html_block = convert_code_block_to_html(code_lines, code_language)
-                            html_file.write(html_block)  # Write the HTML block to the file
-                            # Reset for the next potential block
-                            code_language = None
-                            code_lines = []
-                        continue
-
-                    # Collect code lines if inside a code block
-                    if is_code_block:
-                        code_lines.append(stripped_line)
-                        continue
-
-                    # Check if the line is part of a markdown table
-                    if re.match(r'^\|.*\|$', stripped_line) and not is_parsing_table:
-                        is_parsing_table = True
-                        table_lines.append(stripped_line)
-                        continue
-
-                    if is_parsing_table:
-                        if re.match(r'^\|[-\s|]+\|$', stripped_line):
-                            table_lines.append(stripped_line)
-                        elif re.match(r'^\|.*\|$', stripped_line):
-                            table_lines.append(stripped_line)
-                        else:
-                            html_file.write(markdown_table_to_html(table_lines))
-                            table_lines = []
-                            is_parsing_table = False
-
-                    if not is_parsing_table:
-                        # Convert the markdown line to HTML
-                        html_line = markdown_to_html(stripped_line, is_title_image)
-
-                        # Reset the title image flag after processing the image
-                        if is_title_image:
-                            is_title_image = False
-
-                        if re.search(r'\{\{PUBLISH_DATE\}\}', html_line):
-                            html_line = html_line.replace("{{PUBLISH_DATE}}", format_date(post['publication_date'], lang=lang))
-
-                        if stripped_line == html_line:
-                            stripped_line = fill_markdown_links(stripped_line)
-                            # Split into wrapped lines less than 80 characters
-                            wrapped_lines = textwrap.wrap(stripped_line, width=80)
-
-                            # Embed each wrapped line in <p> tags and write to the HTML file
-                            html_file.write(f'          <p>\n')
-                            for wrapped_line in wrapped_lines:
-                                html_file.write(f'              {wrapped_line}\n')
-                            html_file.write(f'          </p>\n')
-                        else:
-                            # Write the processed HTML line
-                            html_file.write(f'          {html_line}\n')
-
-                        if is_parsing_table and table_lines:
-                            html_file.write(markdown_table_to_html(table_lines))
-
-                # Write the end of the main content
-                html_file.write("</div>\n</main>\n")
-                html_file.write(post_neighborhood['other_posts_section'])
-
-                # Write the footer using TemplateManager
-                template_manager.write_footer(html_file)
-
-            print(f"Processed {filename} to {html_file_path}")
+        print(f"Processing {filename} → {html_file_path}")
+        process_markdown_file(md_file_path, html_file_path, post, lang, template_manager, post_neighborhood['other_posts_section'])
 
 
-def main():
+def markdowns_to_posts():
     """Procesa todos los idiomas y genera los archivos HTML correspondientes."""
     if not LANGUAGES:
         raise ValueError("LANGUAGES list is empty. Please define at least one language.")
@@ -317,4 +375,4 @@ def main():
 
 # Ejecuta el método principal
 if __name__ == "__main__":
-    main()
+    markdowns_to_posts()

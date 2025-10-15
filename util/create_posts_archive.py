@@ -75,6 +75,11 @@ def generate_archive(language):
     print(f"HTML archive generated: {paths['output_html']}")
 
 
-# Process all languages
-for lang in LANGUAGES:
-    generate_archive(lang)
+def generate_posts_all_languages():
+    # Process all languages
+    for lang in LANGUAGES:
+        generate_archive(lang)
+
+
+if __name__ == "__main__":
+    generate_posts_all_languages()

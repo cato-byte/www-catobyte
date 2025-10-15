@@ -126,7 +126,7 @@
             }
         },
         "creation_date": "2024-02-10",
-        "publication_date": "2025-02-10",
+        "publication_date": "2024-02-10",
         "title_image_url": "../../images/chat_gpt_store_title_img.png"
     },
     {
@@ -258,5 +258,31 @@
         "creation_date": "2025-02-02",
         "publication_date": "2025-02-02",
         "title_image_url": "../../images/understanding_neural_networks_title_img.webp"
+    },
+    {
+        "post_id": " pyspark_study_guide",
+        "languages": {
+            "en": {
+                "file_name": " pyspark_study_guide.md",
+                "title": "Pyspark Study Guide",
+                "post_url": "../../post/en/ pyspark_study_guide.html",
+                "title_image_description": "Image created by ChatGPT, OpenAI. 21 October 2025 "
+            },
+            "es": {
+                "file_name": " pyspark_study_guide.md",
+                "title": "Guía de estudio de Pyspark",
+                "post_url": "../../post/es/ pyspark_study_guide.html",
+                "title_image_description": "Imagen creada por ChatGPT, OpenAI. 21 de Octubre de 2025 "
+            },
+            "fr": {
+                "file_name": " pyspark_study_guide.md",
+                "title": "Guide d'etude Pyspark",
+                "post_url": "../../post/fr/ pyspark_study_guide.html",
+                "title_image_description": "Image créée par ChatGPT, OpenAI. 11 octobre 2025 "
+            }
+        },
+        "creation_date": "2025-10-15",
+        "publication_date": "2025-10-15",
+        "title_image_url": "../../images/pyspark_study_guide_title_img.png"
     }
 ]

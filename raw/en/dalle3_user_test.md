@@ -129,7 +129,7 @@ Once again, we encounter the same issue: a visually stunning image marred by inc
 
 When we refine the request, we achieve a slightly improved outcome
 
-**can you draw me a database entity relationship diagram for a restaurant that respect's peter chen's standard?**
+**Can you draw me a database entity relationship diagram for a restaurant that respect's peter chen's standard?**
 
 ![Image created by ChatGPT, OpenAI. 20th February 2024 ](../../images/dalle3_user_test_technical_diagram3.webp)
 
