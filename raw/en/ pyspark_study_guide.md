@@ -15,16 +15,16 @@
 
 - Transformation: A method on a dataframe that returns another dataframe. 
 - Action: A method on a dataframe which returns a value.
-- Catalyst Optimizer: A Spark mechanism which asseses all the transformation it has to run, and figures out the most efficient way to run them together. 
+- Catalyst Optimizer: A Spark mechanism which assesses all the transformations it has to run, and figures out the most efficient way to run them together. 
 
 <a name="diff-spark-concepts"></a>
 ### What’s the difference between SparkContext, SparkSession, and SQLContext?
 
 They are all three entry points for interacting with the processing engine:
 
- - SparkContext: Is the original entrypoint for Spark. Designed to launch application, establish a connection to the cluster and manage operations on RDDs. Is focused on RDDs custom operations .
- - SparkSession: Is the modern entrypoint for Spark, unifying the different entrypoints and giving access to SparkSQL and Dataframes. 
- - SQLContext: Is the entrypoint for SparkSQL. Spark SQL is a Spark module for structured data processing. It provides an abstraction called DataFrames and it can act as a distributed SQL Engine.
+ - SparkContext: Is the original entrypoint for Spark. Designed to launch application, establish a connection to the cluster and manage operations on RDDs. 
+ - SparkSession: Is the modern entrypoint for Spark, unifying the different entrypoints and giving access to SparkSQL and Dataframes. SparkSession internally contains SparkContext, so direct RDD operations are still possible
+ - SQLContext: In modern PySpark, SparkSession replaces SQLContext, which is mostly legacy.
 
 ```python
 from pyspark import SparkContext
@@ -73,7 +73,7 @@ spark.stop()
 ```
 ### RDD support SparkContext vs Spark Session
 
-SparkContext manages RDDs directly whereas SpárkSession had an imbeded SparkContext that handles these interactions
+SparkContext manages RDDs directly whereas SparkSession had an embedded SparkContext that handles these interactions
 
 ```python
 from pyspark import SparkConf, SparkContext
@@ -109,21 +109,95 @@ spark.close()
 
 ### Difference between wide and narrow transformation in Pyspark
 
-In spark narrow transformations are those that do not require a shuffle to perform. This increases the performance as the operations can be handled individually in their own partitions. What are some of these operations filter, map and union. Joins can be a narrow function only if the dataset is partitioned by the join key. 
+In spark narrow transformations are those that do not require a shuffle to perform. This increases the performance as the operations can be handled individually in their own partitions. What are some of these operations filter, map and union. 
 
-On the contrary operations that do require shuffling between workers are called wide partitions. They have a performance penalty in execution time but on the other hand are sometimes unavoidable. Joins, groupbykey,  reduceByKey are operations that require shuffling of data. 
+On the contrary operations that do require shuffling between workers are called wide transformations. They have a performance penalty in execution time but they are sometimes unavoidable. Joins, groupbykey,  reduceByKey are operations that require shuffling of data. 
 
 ### Lazy evaluation in Spark 
 
-Lazy evaluation is a feture on Spark that prevents transformations from being executed until an action is executed. Thanks to catalyst it looks at the most efficient way to combine the transformations. 
+Lazy evaluation is a feature on Spark that prevents transformations from being executed until an action is executed.  Then Catalyst optimizer analyzes the transformations and builds the most efficient execution plan.  
 
-### Pyspark faster than pure Python 
+### What's Spark serialization and deserialization? Why is it needed?
 
-It depends on how large the dataset. Pyspark is udually faster than python because it can distribute the workload in different nodes and process data in parallel. However there are 
+Serialization: It’s the process of taking an object and transform it into a stream of bytes so it can be sent across the network or saved more efficiently.
 
-### Practical problem 1
+Deserialization: Is the opposite process, rebuilding objects from a stream of bytes. 
 
-Given the following csv file
+These processes are needed as spark needs to share data between the driver and worker nodes. 
+
+### What are the different types of serialization available in Spark?
+
+In Spark you can find two types of serializers Java serializer and Kryo serializer. 
+
+- Java serializer: is the default serializer in Spark as there's full compatibility with Spark objects. 
+- Kryo serializer: Is faster and more compact but requires extra configuration. It supports  standard types, but some Python objects may require special manipulation.
+- Custom serialization: In some cases it is necessary when working with custom objects. 
+
+Using Kryo serialization in Pyspark.
+
+```python
+from pyspark import SparkConf
+from pyspark.sql import SparkSession
+
+spark_conf = SparkConf().set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")
+
+spark = SparkSession.builder.appName("Kryo app").config(conf = spark_conf).getOrCreate()
+```
+
+Using Custom serialization
+
+```python
+from pyspark import SparkConf, SparkContext
+from pyspark.serializers import Serializer, AutoBatchedSerializer
+import json
+
+
+class Person:
+    def __init__(self, name, age, addresses):
+        self.name, self.age, self.addresses = name, age, addresses
+
+    def __repr__(self):
+        return f"Person({self.name}, {self.age}, {self.addresses})"
+
+
+class PersonSerializer(Serializer):
+    def dumps(self, obj):
+        if not isinstance(obj, Person):
+            raise TypeError("PersonSerializer can only serialize Person objects")
+        return json.dumps(obj.__dict__).encode()
+
+    def loads(self, b):
+        d = json.loads(b.decode())
+        return Person(d["name"], d["age"], d["addresses"])
+
+
+
+conf = SparkConf().setAppName("CustomPersonSerializer").setMaster("local[*]")
+sc = SparkContext(conf=conf, serializer=AutoBatchedSerializer(PersonSerializer()))
+
+
+
+rdd = sc.parallelize([
+    Person("Daniel Noboa", 30, {"home": {"city": "Quito", "address": "QFJP+5X2, García Moreno, Quito 170401, Ecuador"}}),
+    Person("Nayib Bukele", 25, {"home": {"city": "San Salvador", "address": "4a Calle Poniente"}})
+])
+
+print(rdd.collect())
+sc.stop()
+
+```
+
+
+### Is Pyspark faster than pure Python? 
+
+It depends on how large the dataset. Pyspark is usually faster than python because it can distribute the workload in different nodes and process data in parallel. 
+
+However if the datasets you're working with, are small, they fit comfortably in a single machine a python program might be more efficient. 
+
+### Practical problem 1: aggregations
+
+Given the following csv file:
+
 ```
 user_id;product_id;amount;city
 1;101;12500.0;Bogota
@@ -156,16 +230,18 @@ schema = StructType() \
 
 df_products = spark.read.options(header=True,delimiter=";",schema=schema).csv('path/to/file')
 
-total_per_user = df_products.groupBy('user').sum('amount')
+total_per_user = df_products.groupBy('user_id').sum('amount')
 
-filtered_avg_city = df_products.groupBy('city').agg(avg('amount').alias(avg_amount)).filter(col('avg_amount' > 8000)
+filtered_avg_city = df_products.groupBy('city') \
+    .agg(avg('amount').alias('avg_amount')) \
+    .filter(col('avg_amount') > 8000)
 
 filtered_avg_city.cache()
 ```
 
-### Practical problem 2
+### Practical problem 2: Joins
 
-Given the following csvs 
+- Given the following csvs 
 
 ```csv
 user_id;name
@@ -180,10 +256,10 @@ user_id;product_id;amount
 2;101;5000.0
 ```
 
-Load dataframes
-Join Dataframes to get user names and transaction amounts
-Compute total spent per user
-Sort descending by total amount
+- Load dataframes
+- Join Dataframes to get user names and transaction amounts
+- Compute total spent per user
+- Sort descending by total amount
 
 ```python
 from pyspark.sql import SparkSession
@@ -196,12 +272,14 @@ df_transactions = spark.read.options(header=True,delimiter=";",inferSchema=True)
 
 
 df_user_transactions = df_user.join(df_transactions,df_user.user_id == df_transactions.user_id,"inner")
-df_total_per_user = df_user_transactions.groupBy(col("name")).agg(sum("amount")).sort(col("amount").desc
 
+df_total_per_user = df_user_transactions.groupBy(col("name")) \
+    .agg(sum("amount").alias("total_amount")) \
+    .orderBy(col("total_amount").desc())
 ```
 
 
-### Practical problem 3
+### Practical problem 3: Window Function
 
 Consider the following dataframe
 
@@ -228,14 +306,14 @@ sales_df = spark.createDataFrame([
 
 from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
-from pyspark.sql.functions import sum as _sum,
+from pyspark.sql.functions import sum as _sum, lag
 
 windowSpec = Window.partitionBy("store").orderBy("date")
 
 spark = SparkSession.builder.getOrCreate()
 
-window_revenue = sales_df.withColumn("window_sum" ,̣_sum("revenue").over(windowSpec)) \
-                             .withColumn("day_to_day_diff" ,col("revenue") - lag("revenue").over(windowSpec))
+window_revenue = sales_df.withColumn("window_sum", _sum("revenue").over(windowSpec)) \
+                          .withColumn("day_to_day_diff", col("revenue") - lag("revenue").over(windowSpec))
 
 window_revenue .show()
                                                                                                     
@@ -246,22 +324,22 @@ spark.stop()
 
 ### Whats the difference between cache and persist?
 
-Cache will save the RDD or dataframe in meomory only. The persist method is used to store it at the level defined by user it can be MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY etc. 
+Cache will save the RDD or dataframe in memory only. The persist method is used to store it at the level defined by user it can be MEMORY_ONLY, MEMORY_AND_DISK, DISK_ONLY etc. 
 
-### Whatś a shuffle and why is it expensive?
+### What's a shuffle and why is it expensive?
 
 A shuffle means that nodes have to send data across the cluster to other nodes to perform operations. These are called wide operations and the transmission of all this data  introduces an overhead in time and resource utilization. In extreme cases it can lead to job failure. 
 
 ### What's the role of the catalyst optimizer?
 
-Catalyst optimizer eexamines the dag execution plan and proposes a specific order to apply the transformations so it is more optimal instead of resource usage. only available for dataframes and datasets.
+Catalyst optimizer examines the dag execution plan and proposes a specific order to apply the transformations so that the execution plan uses resources efficiently.. only available for dataframes and datasets.
 
 
 ### Name two ways to reduce shuffle in operations in Spark
 
 One is to use narrow transformations whenever possible. The second is a broadcast in joins for tables that are small. 
 
-### How would you debuf a job that takes much longer than expected?
+### How would you debug a job that takes much longer than expected?
 
 I would start by examining the execution plan (df.explain() or Spark UI) to see which stages or transformations are triggering heavy shuffles or scans.
 
@@ -273,13 +351,13 @@ I would start by examining the execution plan (df.explain() or Spark UI) to see 
 
 ### Explain execution of a spark job from the moment an action is called. How is the DAG built? What is a stage? What are tasks? How are they distributed?
 
-Once an action is called catalyst creates a graph from the action backwards looking at the previous transformation until it arrives to the sources datasets. A spark job is divided in stages that in turn those are a collection of tasks. There are narrow stages and wide stages. Narrow stages mean that there's no shufffle needed and that all the transformations are done in each worker. Whereas in wide stages there's shuffle of data between the partitions. 
+Once an action is called catalyst creates a graph from the action backwards looking at the previous transformation until it arrives to the sources datasets. A spark job is divided in stages that in turn those are a collection of tasks. There are narrow stages and wide stages. Narrow stages mean that there's no shuffle needed and that all the transformations are done in each worker. Whereas in wide stages there's shuffle of data between the partitions. 
 
 ### What's the difference between map(), flatMap() and mapPartitions()?
 
 In map a function is applied to every element of the RDD. 
-In flatmap a column produces one or more columns. 
-In mapPartitions a function is applied to a whole partition instead of each element. Fort example if we wanted to get the average of a partition
+In flatmap flatMap applies a function to each element of the RDD and flattens the results.
+In mapPartitions a function is applied to a whole partition instead of each element. For example if we wanted to get the average of a partition
 
 examples:
 map
@@ -291,19 +369,6 @@ squared_rdd.collect()
 
 # output
 [1, 4, 9, 16]
-```
-
-mapPartitions
-```python
-rdd = sc.parallelize([1, 2, 3, 4], 2)
-def sum_partition(iterator):
-    yield sum(iterator)
-
-sum_rdd = rdd.mapPartitions(sum_partition)
-sum_rdd.collect()
-
-# output
-[3, 7]
 ```
 
 flatMap
@@ -321,6 +386,21 @@ flat_rdd.collect()
 # output
 ['hello', 'world', 'how', 'are', 'you']
 ```
+
+mapPartitions
+```python
+rdd = sc.parallelize([1, 2, 3, 4], 2)
+def sum_partition(iterator):
+    yield sum(iterator)
+
+sum_rdd = rdd.mapPartitions(sum_partition)
+sum_rdd.collect()
+
+# output
+[3, 7]
+```
+
+
  
 <a name="what-are-broadcast-joins"></a>
 
@@ -330,26 +410,34 @@ Broadcast join is used when a table is very small to be joined with a bigger tab
 
 examples:
 
-braodcast
+broadcast
+
 ```python
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-from pyspark.sql.functions import lit, rand, floor,concat
+from pyspark.sql.functions import broadcast
 
-spark = SparkSession.builder.getOrCreate()
+spark = SparkSession.builder.appName("BroadcastJoinExample").getOrCreate()
 
-data = [
-('A', 100),
-('A', 200),
-('A', 300),
-('B', 10),
-('C', 20)
+large_data = [
+    ('A', 1000),
+    ('B', 2000),
+    ('C', 3000),
+    ('D', 4000)
 ]
+large_df = spark.createDataFrame(large_data, ['key', 'amount'])
 
-df = spark.createDataFrame(data, ['key','value'])
+small_data = [
+    ('A', 'Apple'),
+    ('B', 'Banana'),
+    ('C', 'Cherry')
+]
+small_df = spark.createDataFrame(small_data, ['key', 'fruit'])
 
+df_joined = large_df.join(broadcast(small_df), "key", "inner")
 
+df_joined.show()
 ```
+
 skewed salting
 
 ```python
