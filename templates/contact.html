@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container page-head">
+  <h1>{{ t.contact.title }}</h1>
+  <p class="lede">{{ t.contact.lede }}</p>
+</div>
+
+<div class="container section-tight">
+  <ul class="contact-grid">
+    <li class="card contact-card">
+      <p class="eyebrow">{{ t.contact.email }}</p>
+      <a class="contact-value" href="mailto:{{ site.owner.email }}">{{ site.owner.email }}</a>
+      <p class="muted">{{ t.contact.email_hint }}</p>
+    </li>
+    <li class="card contact-card">
+      <p class="eyebrow">LinkedIn</p>
+      <a class="contact-value" href="{{ site.owner.linkedin }}" rel="me noopener">{{ site.owner.linkedin | replace('https://www.', '') | trim('/') }}</a>
+      <p class="muted">{{ t.contact.linkedin_hint }}</p>
+    </li>
+    <li class="card contact-card">
+      <p class="eyebrow">GitHub</p>
+      <a class="contact-value" href="{{ site.owner.github }}" rel="me noopener">{{ site.owner.github | replace('https://', '') }}</a>
+      <p class="muted">{{ t.contact.github_hint }}</p>
+    </li>
+  </ul>
+</div>
+{% endblock %}

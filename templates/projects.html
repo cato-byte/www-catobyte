@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import project_card %}
+
+{% block content %}
+<div class="container page-head">
+  <h1>{{ t.projects.title }}</h1>
+  <p class="lede">{{ t.projects.intro }}</p>
+</div>
+<div class="container section-tight">
+  <div class="grid grid-projects">
+    {% for project in projects %}{{ project_card(project, lang, t) }}{% endfor %}
+  </div>
+</div>
+{% endblock %}

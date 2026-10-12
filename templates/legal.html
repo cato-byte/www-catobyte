@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container page-head">
+  <h1>{{ t.legal.title }}</h1>
+  <p class="muted">{{ t.legal.updated }}</p>
+</div>
+<div class="container prose">
+  {% for section in t.legal.sections %}
+  <h2>{{ section.title }}</h2>
+  {% for paragraph in section.paragraphs %}<p>{{ paragraph }}</p>{% endfor %}
+  {% endfor %}
+  <p>{{ t.legal.contact }} <a href="mailto:{{ site.owner.email }}">{{ site.owner.email }}</a>.</p>
+</div>
+{% endblock %}

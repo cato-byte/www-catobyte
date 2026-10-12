@@ -1,15 +1,6 @@
 #!/bin/bash
-sudo apt update
-sudo apt install pkg-config
-sudo apt install libxml2-dev
-#create venv
+# Create the virtual environment and install build + test dependencies.
+set -euo pipefail
 python3 -m venv kunturvenv
-
-# Activate the virtual environment
-source ./kunturvenv/bin/activate
-
-# Upgrade pip and setuptools
-pip install --upgrade pip setuptools
-
-# Install the dependencies from requirements.txt
-pip install -r requirements.txt
+./kunturvenv/bin/pip install --upgrade pip
+./kunturvenv/bin/pip install -r requirements-dev.txt

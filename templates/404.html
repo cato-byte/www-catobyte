@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container page-head not-found">
+  <p class="eyebrow">404</p>
+  <h1>{{ t.not_found.title }}</h1>
+  <p class="lede">{{ t.not_found.text }}</p>
+  <div class="actions">
+    <a class="button" href="{{ url_for(lang, 'home') }}">{{ t.not_found.home }}</a>
+    <a class="button button-ghost" href="{{ url_for(lang, 'projects') }}">{{ t.nav.projects }}</a>
+  </div>
+</div>
+{% endblock %}

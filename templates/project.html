@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<article class="article article-wide">
+  <header class="container article-head">
+    <a class="back-link" href="{{ url_for(lang, 'projects') }}"><span aria-hidden="true">←</span> {{ t.projects.back }}</a>
+    <p class="eyebrow">
+      <span class="status status-{{ project.status }}">{{ t.projects.status[project.status] }}</span>
+      {% if project.started %} · {{ t.projects.started }} {{ project.started | month(lang) }}{% endif %}
+      · {{ t.projects.updated }} <time datetime="{{ project.updated.isoformat() }}">{{ project.updated | date(lang) }}</time>
+    </p>
+    <h1>{{ project.title }}</h1>
+    <p class="lede">{{ project.summary }}</p>
+    <ul class="tags" aria-label="{{ t.projects.stack }}">
+      {% for item in project.stack %}<li>{{ item }}</li>{% endfor %}
+    </ul>
+    {% if project.repo or project.demo %}
+    <div class="actions">
+      {% if project.repo %}<a class="button" href="{{ project.repo }}" rel="noopener">{{ t.projects.repo }}</a>{% endif %}
+      {% if project.demo %}<a class="button button-ghost" href="{{ project.demo }}" rel="noopener">{{ t.projects.demo }}</a>{% endif %}
+    </div>
+    {% endif %}
+  </header>
+  {% if project.cover %}
+  <img class="article-cover container" src="{{ project.cover }}" alt="{{ project.cover_alt }}" width="1200" height="630">
+  {% endif %}
+  <div class="container prose">
+    {{ body }}
+  </div>
+</article>
+{% endblock %}

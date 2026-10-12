@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% from "macros.html" import avatar, skills, certification %}
+
+{% block content %}
+<div class="container page-head about-head">
+  {{ avatar(site) }}
+  <div>
+    <h1>{{ t.about.title }}</h1>
+    <p class="lede">{{ t.about.lede }}</p>
+  </div>
+</div>
+
+<div class="container prose prose-wide">
+  {% for paragraph in t.about.intro %}<p>{{ paragraph }}</p>{% endfor %}
+
+  <h2>{{ t.about.principles_title }}</h2>
+  <ul class="principles">
+    {% for item in t.about.principles %}
+    <li><strong>{{ item.title }}.</strong> {{ item.text }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<section class="container prose prose-wide" aria-labelledby="experience-title">
+  <h2 id="experience-title">{{ t.about.experience_title }}</h2>
+  <ol class="timeline">
+    {% for job in cv.experience %}
+    {% set text = job[lang] %}
+    <li>
+      <p class="eyebrow">{{ job.start | month(lang) }} – {{ job.end | month(lang) }}</p>
+      <h3>{{ text.role }} · {{ job.company }}</h3>
+      {% if text.get('context') %}<p class="muted job-context">{{ text.context }}</p>{% endif %}
+      {% if text.get('summary') %}<p>{{ text.summary }}</p>{% endif %}
+      {% if text.get('highlights') %}
+      <ul>{% for item in text.highlights %}<li>{{ item }}</li>{% endfor %}</ul>
+      {% endif %}
+      {% if job.get('missions') %}
+      <p class="missions-title">{{ t.about.missions }}</p>
+      <ul class="missions">
+        {% for mission in job.missions %}
+        <li>
+          <p><strong>{{ mission.client }}</strong> <span class="muted">· {{ mission.period }}</span></p>
+          <p>{{ mission[lang] }}</p>
+          <ul class="tags">{% for item in mission.stack %}<li>{{ item }}</li>{% endfor %}</ul>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <ul class="tags">{% for item in job.stack %}<li>{{ item }}</li>{% endfor %}</ul>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</section>
+
+<section class="container prose prose-wide" aria-labelledby="certs-title">
+  <h2 id="certs-title">{{ t.about.certifications_title }}</h2>
+  {% for cert in site.certifications %}{{ certification(cert, lang, t) }}{% endfor %}
+</section>
+
+<section class="container prose prose-wide" aria-labelledby="skills-title">
+  <h2 id="skills-title">{{ t.home.skills_title }}</h2>
+  {{ skills(site) }}
+</section>
+
+<section class="container prose prose-wide" aria-labelledby="education-title">
+  <h2 id="education-title">{{ t.about.education_title }}</h2>
+  <ul class="plain-list">
+    {% for degree in cv.education %}
+    <li>
+      <strong>{{ degree[lang] }}</strong>
+      <span class="muted">{{ degree.school }} · {{ degree.years }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <h2>{{ t.about.languages_title }}</h2>
+  <ul class="plain-list plain-list-inline">
+    {% for language in cv.spoken_languages %}
+    <li><strong>{{ language[lang] }}</strong> <span class="muted">· {{ language.level }}</span></li>
+    {% endfor %}
+  </ul>
+  <p>{{ t.about.languages }}</p>
+
+  <h2>{{ t.about.beyond_title }}</h2>
+  <p>{{ t.about.beyond }}</p>
+
+  <div class="actions">
+    {% if site.owner.cv %}<a class="button" href="/{{ site.owner.cv }}">{{ t.about.cv }}</a>{% endif %}
+    <a class="button {% if site.owner.cv %}button-ghost{% endif %}" href="{{ url_for(lang, 'contact') }}">{{ t.home.cta_contact }}</a>
+  </div>
+</section>
+{% endblock %}

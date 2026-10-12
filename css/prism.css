@@ -224,21 +224,23 @@ pre[class*=language-].line-numbers>code {
 }
 
 div.code-toolbar {
-    position: relative; /* Maintains relative positioning */
-    display: flex; /* Enables flexbox for layout control */
-    flex-direction: column; /* Stack code and toolbar vertically */
-    max-width: 75%; /* Ensures it takes full width of the parent container */
-    margin: 0 auto; /* Center it horizontally if constrained by parent */
-    padding: 0; /* Remove unnecessary padding */
+    position: relative;
+    margin: 1.5rem 0;
+}
+
+div.code-toolbar>pre[class*=language-] {
+    margin: 0;
 }
 
 div.code-toolbar>.toolbar {
-    display: flex; /* Flexbox to align items horizontally */
-    justify-content: flex-start; /* Align all items to the left */
-    align-items: center; /* Center items vertically */
-    gap: 8px; /* Add spacing between the items */
-    margin-top: 8px; /* Add spacing from code block */
-    padding: 0; /* Remove extra padding */
+    position: absolute;
+    z-index: 10;
+    top: .4em;
+    right: .4em;
+    display: flex;
+    gap: 6px;
+    transition: opacity .3s ease-in-out;
+    opacity: 0;
 }
 
 div.code-toolbar:hover>.toolbar {

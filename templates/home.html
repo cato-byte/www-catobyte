@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% from "macros.html" import project_card, post_card, avatar, skills, certification %}
+
+{% block head %}
+<script type="application/ld+json">
+{{ {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": site.owner.name,
+  "jobTitle": t.home.role,
+  "url": site.base_url ~ page.url,
+  "image": site.base_url ~ "/" ~ site.owner.photo if site.owner.photo else None,
+  "email": "mailto:" ~ site.owner.email,
+  "sameAs": [site.owner.linkedin, site.owner.github],
+  "alumniOf": cv.education | map(attribute="school") | list,
+  "hasCredential": site.certifications | map(attribute="name") | list
+} | tojson }}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <p class="eyebrow">{{ t.home.eyebrow }}</p>
+      <h1>{{ t.home.headline | replace('{name}', site.owner.short_name) }}</h1>
+      <p class="lede">{{ t.home.lede }}</p>
+      <div class="actions">
+        <a class="button" href="{{ url_for(lang, 'projects') }}">{{ t.home.cta_projects }}</a>
+        <a class="button button-ghost" href="{{ url_for(lang, 'contact') }}">{{ t.home.cta_contact }}</a>
+      </div>
+      <p class="availability"><span class="dot" aria-hidden="true"></span>{{ t.home.availability }}</p>
+      <div class="previously">
+        <p class="eyebrow">{{ t.home.previously }}</p>
+        <ul>
+          {% for job in cv.experience %}
+          <li>{{ job.company }}</li>
+          {% for mission in job.get('missions', []) %}<li>{{ mission.client }}</li>{% endfor %}
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+    <div class="hero-aside">
+      {{ avatar(site) }}
+      {% for cert in site.certifications %}{{ certification(cert, lang, t) }}{% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section section-alt" aria-labelledby="now-title">
+  <div class="container">
+    <h2 id="now-title">{{ t.home.now_title }}</h2>
+    <ul class="now-list">
+      {% for item in t.home.now_items %}
+      <li class="now-item">
+        <span class="now-label">{{ item.label }}</span>
+        <span>{{ item.text }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% if projects %}
+<section class="section" aria-labelledby="projects-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="projects-title">{{ t.home.projects_title }}</h2>
+      <a class="text-link" href="{{ url_for(lang, 'projects') }}">{{ t.home.projects_all }} <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="grid grid-projects">
+      {% for project in projects %}{{ project_card(project, lang, t) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section section-alt" aria-labelledby="skills-title">
+  <div class="container">
+    <h2 id="skills-title">{{ t.home.skills_title }}</h2>
+    {{ skills(site) }}
+  </div>
+</section>
+
+{% if posts %}
+<section class="section" aria-labelledby="writing-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="writing-title">{{ t.home.writing_title }}</h2>
+      <a class="text-link" href="{{ url_for(lang, 'blog') }}">{{ t.home.writing_all }} <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="grid grid-posts">
+      {% for post in posts %}{{ post_card(post, lang, t, compact=true) }}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section cta-band">
+  <div class="container cta-inner">
+    <h2>{{ t.home.cta_title }}</h2>
+    <p>{{ t.home.cta_text }}</p>
+    <a class="button" href="{{ url_for(lang, 'contact') }}">{{ t.home.cta_contact }}</a>
+  </div>
+</section>
+{% endblock %}

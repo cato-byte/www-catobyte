@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.kind == "home" %}{{ page.title }}{% else %}{{ page.title }} · {{ site.owner.name }}{% endif %}</title>
+  <meta name="description" content="{{ page.description }}">
+  {% if page.noindex %}
+  <meta name="robots" content="noindex">
+  {% endif %}
+  <link rel="canonical" href="{{ site.base_url }}{{ page.url }}">
+  {% for code, href in page.alternates.items() %}
+  <link rel="alternate" hreflang="{{ code }}" href="{{ site.base_url }}{{ href }}">
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ site.base_url }}{{ page.alternates[site.default_language] }}">
+
+  <meta property="og:type" content="{{ 'article' if page.kind in ('post', 'project') else 'website' }}">
+  <meta property="og:title" content="{{ page.title }}">
+  <meta property="og:description" content="{{ page.description }}">
+  <meta property="og:url" content="{{ site.base_url }}{{ page.url }}">
+  <meta property="og:image" content="{{ site.base_url }}{{ page.image or '/images/og-default.png' }}">
+  <meta property="og:locale" content="{{ t.meta.locale }}">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)">
+  <link rel="icon" href="/images/favicon_io/favicon.ico" sizes="any">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon_io/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/images/favicon_io/apple-touch-icon.png">
+  <link rel="manifest" href="/images/favicon_io/site.webmanifest">
+
+  <link rel="stylesheet" href="/css/site.css?v={{ asset_version }}">
+  {% if page.has_code %}
+  <link rel="stylesheet" href="/css/prism.css?v={{ asset_version }}">
+  <script src="/js/prism.js?v={{ asset_version }}" defer></script>
+  {% endif %}
+  <script src="/js/site.js?v={{ asset_version }}"></script>
+  {% block head %}{% endblock %}
+</head>
+<body class="page-{{ page.kind }}">
+  <a class="skip-link" href="#main">{{ t.nav.skip }}</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="{{ url_for(lang, 'home') }}">
+        <span class="brand-mark" aria-hidden="true">{{ site.owner.initials }}</span>
+        <span class="brand-text">{{ site.owner.name }}<span class="brand-role">{{ t.home.role }}</span></span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">
+        <span class="nav-toggle-bar" aria-hidden="true"></span>
+        <span class="visually-hidden">{{ t.nav.menu }}</span>
+      </button>
+
+      <nav id="site-nav" class="site-nav" aria-label="{{ t.nav.label }}">
+        <ul class="nav-links">
+          {% for key in ["projects", "blog", "about", "contact"] %}
+          <li><a href="{{ url_for(lang, key) }}"{% if page.kind == key or (page.kind == 'project' and key == 'projects') or (page.kind == 'post' and key == 'blog') %} aria-current="page"{% endif %}>{{ t.nav[key] }}</a></li>
+          {% endfor %}
+        </ul>
+        <ul class="lang-switch" aria-label="{{ t.nav.language }}">
+          {% for code in languages %}
+          <li><a href="{{ page.alternates[code] }}" hreflang="{{ code }}" lang="{{ code }}" title="{{ LANGUAGE_NAMES[code] }}"{% if code == lang %} aria-current="true"{% endif %}>{{ code | upper }}</a></li>
+          {% endfor %}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <p class="footer-name">{{ site.owner.name }} · {{ t.home.role }}</p>
+        <p class="muted">© {{ year }} Catobyte · <a href="{{ url_for(lang, 'legal') }}">{{ t.legal.title }}</a></p>
+      </div>
+      <ul class="footer-links">
+        <li><a href="mailto:{{ site.owner.email }}">{{ t.contact.email }}</a></li>
+        <li><a href="{{ site.owner.linkedin }}" rel="me noopener">LinkedIn</a></li>
+        <li><a href="{{ site.owner.github }}" rel="me noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# Site-wide settings. Everything personal lives here so templates stay generic.
+# Fields set to null are optional: the templates hide the matching element.
+# Work history and education live in content/experience.yaml.
+
+base_url: https://www.catobyte.co
+languages: [en, es, fr]
+default_language: en
+
+owner:
+  name: Cato Perez
+  short_name: Cato                 # used in the home headline ("Hi, I'm Cato")
+  initials: CP                     # fallback avatar when no photo is set
+  photo: images/profile-square.webp   # 600x600 crop of images/profile.webp
+  email: cato@catobyte.co
+  linkedin: https://www.linkedin.com/in/catobyte/
+  github: https://github.com/cato-byte
+  cv: null                         # e.g. files/cv_en.pdf
+
+certifications:
+  - name: AWS Certified Cloud Practitioner
+    issuer: Amazon Web Services
+    date: 2026-10
+    url: https://www.credly.com/badges/10e4f518-34cf-4591-8ded-1bbf0ceb6792
+    badge: images/aws_logo_smile_1200x630.png
+
+# Grouped skills shown on Home and About. Kept language-neutral on purpose.
+skills:
+  - group: Languages
+    items: [Python, SQL, Scala]
+  - group: Big Data
+    items: [Apache Spark, PySpark, Hadoop, Hive, Apache NiFi]
+  - group: Cloud & lakehouse
+    items: [Databricks, Delta Lake, AWS, Google BigQuery, Azure Data Factory]
+  - group: Data modelling
+    items: [Data Vault 2.0, Medallion architecture, Dimensional modelling, PostgreSQL]
+  - group: Orchestration
+    items: [Apache Airflow, Control-M, Azure Data Factory, AWS Lambda]
+  - group: Quality & DevOps
+    items: [pytest, ScalaTest, Docker, Git, GitLab]

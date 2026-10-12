@@ -1,8 +1,10 @@
 .env
 .vscode/
 kunturvenv/
+dist/
+__pycache__/
+.pytest_cache/
+# Old generator output and private config, kept out of git
 pages/
 post/
-util/__pycache__/
 util/config.py
-setup_Venv.sh

@@ -1,0 +1,110 @@
+# Work history and education shown on the About page (and company names on Home).
+# Newest first. Dates are YYYY-MM; text is per language.
+
+experience:
+  - company: Corum L'Épargne
+    start: 2023-01
+    end: 2024-01
+    stack: [Azure Data Factory, SQL, PostgreSQL, Python, Data Vault]
+    en:
+      role: Data Engineer
+      context: International real-estate investment company
+      highlights:
+        - Built and maintained automated ETL pipelines in Azure Data Factory integrating financial and customer data, from linked services and transformations to orchestration.
+        - Wrote SQL queries, stored procedures and other database objects to optimise processing.
+        - Delivered on a data platform modelled with Data Vault.
+    es:
+      role: Ingeniero de datos
+      context: Gestora internacional de inversión inmobiliaria
+      highlights:
+        - Construí y mantuve pipelines ETL automatizados en Azure Data Factory para integrar datos financieros y de clientes, desde los linked services y las transformaciones hasta la orquestación.
+        - Desarrollé consultas SQL, procedimientos almacenados y otros objetos de base de datos para optimizar los procesos.
+        - Trabajé sobre una plataforma de datos modelada con Data Vault.
+    fr:
+      role: Data Engineer
+      context: Société internationale d'épargne immobilière
+      highlights:
+        - Conception et maintenance de pipelines ETL automatisés sous Azure Data Factory intégrant les données financières et clients, des linked services et transformations jusqu'à l'orchestration.
+        - Écriture de requêtes SQL, de procédures stockées et d'autres objets de base de données pour optimiser les traitements.
+        - Développements sur une plateforme de données modélisée en Data Vault.
+
+  - company: RiverBank
+    start: 2022-09
+    end: 2022-12
+    stack: [PySpark, pytest, Docker, GitLab]
+    en:
+      role: Data Engineer
+      highlights:
+        - Worked on a framework to standardise how PySpark data flows are developed.
+        - Introduced automated unit tests with pytest to make delivery more reliable.
+        - Delivered within a microservices-based data platform.
+    es:
+      role: Ingeniero de datos
+      highlights:
+        - Trabajé en un framework para estandarizar el desarrollo de flujos de datos con PySpark.
+        - Implanté tests unitarios automatizados con pytest para hacer las entregas más fiables.
+        - Desarrollé dentro de una plataforma de datos basada en microservicios.
+    fr:
+      role: Data Engineer
+      highlights:
+        - Travail sur un framework standardisant le développement des flux de données PySpark.
+        - Mise en place de tests unitaires automatisés avec pytest pour fiabiliser les livraisons.
+        - Développements au sein d'une plateforme de données en architecture microservices.
+
+  - company: Epsilon France (Publicis Groupe)
+    start: 2017-10
+    end: 2022-08
+    stack: [Apache Spark, Scala, Python, Apache NiFi, BigQuery, Hadoop]
+    en:
+      role: Big Data Consultant
+      context: Data-marketing unit of Publicis Groupe
+      summary: Delivered data automation projects (ingestion, transformation, orchestration, monitoring and incident correction) for clients in banking, insurance, retail and mobility, on private and public cloud platforms.
+    es:
+      role: Consultor Big Data
+      context: Unidad de data marketing de Publicis Groupe
+      summary: Proyectos de automatización de datos (ingesta, transformación, orquestación, monitorización y corrección de incidencias) para clientes de banca, seguros, retail y movilidad, en entornos cloud privados y públicos.
+    fr:
+      role: Consultant Big Data
+      context: Entité data marketing de Publicis Groupe
+      summary: Projets d'automatisation des données (ingestion, transformation, orchestration, supervision et correction d'anomalies) pour des clients de la banque, de l'assurance, du retail et de la mobilité, sur des clouds privés et publics.
+    missions:
+      - client: Mobilize Financial Services
+        period: 2020 – 2022
+        stack: [Apache NiFi, Python, BigQuery, SQL]
+        en: Built and maintained multi-source ETL pipelines with Apache NiFi and Python, with traceability and data integrity, feeding data science and marketing teams. During the platform migration to Google BigQuery, rebuilt transformations in SQL and reconciled outputs so both platforms produced identical results.
+        es: Desarrollé y mantuve pipelines ETL multifuente con Apache NiFi y Python, garantizando trazabilidad e integridad, para los equipos de data science y marketing. Durante la migración a Google BigQuery, reescribí las transformaciones en SQL y concilié los resultados para que ambas plataformas produjeran datos idénticos.
+        fr: Développement et maintenance de pipelines ETL multi-sources avec Apache NiFi et Python, garantissant traçabilité et intégrité, pour les équipes data science et marketing. Lors de la migration vers Google BigQuery, réécriture des transformations en SQL et rapprochement des résultats pour garantir des données identiques sur les deux plateformes.
+      - client: PMU
+        period: "2020"
+        stack: [Apache Spark, Scala, Hive, Maven]
+        en: Developed Apache Spark (Scala) pipelines on a Hadoop platform to load operational data into the data lake, added automated tests to improve data quality, and handled monitoring, corrections and orchestration.
+        es: Desarrollé pipelines Apache Spark (Scala) sobre una plataforma Hadoop para cargar datos operativos en el data lake, añadí tests automatizados para mejorar la calidad de los datos y me encargué de la monitorización, las correcciones y la orquestación.
+        fr: Développement de pipelines Apache Spark (Scala) sur une plateforme Hadoop pour intégrer les données opérationnelles au data lake, ajout de tests automatisés pour la qualité des données, supervision, corrections et orchestration des flux.
+      - client: Allianz France
+        period: 2017 – 2019
+        stack: [Apache Spark, Python, Jupyter, Zeppelin]
+        en: Modernised ETL processes and automated data workflows on a private cloud, turning Python notebooks into production-ready jobs in collaboration with the platform teams.
+        es: Modernicé procesos ETL y automaticé flujos de datos en un cloud privado, convirtiendo notebooks de Python en procesos listos para producción junto a los equipos de plataforma.
+        fr: Modernisation des processus ETL et automatisation des flux de données sur un cloud privé, avec l'industrialisation de notebooks Python en traitements de production, en lien avec les équipes plateforme.
+
+education:
+  - years: 2016 – 2017
+    school: Université Paris-Saclay · Télécom ParisTech
+    en: Master's degree (M2), Data and Knowledge
+    es: Máster (M2), Datos y Conocimiento
+    fr: Master 2, Données et Connaissances
+  - years: 2015 – 2016
+    school: Université de Rennes 1
+    en: Master's degree (M1), Software Engineering
+    es: Máster (M1), Ingeniería de Software
+    fr: Master 1, Génie Logiciel
+  - years: 2007 – 2012
+    school: Universidad de los Andes, Bogotá
+    en: Bachelor's degree, Computer Science
+    es: Pregrado, Ingeniería de Sistemas y Computación
+    fr: Licence (Bac+3), Informatique
+
+spoken_languages:
+  - { en: Spanish, es: Español, fr: Espagnol, level: C2 }
+  - { en: English, es: Inglés, fr: Anglais, level: C1 }
+  - { en: French, es: Francés, fr: Français, level: C1 }
