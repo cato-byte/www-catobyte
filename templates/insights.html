@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link rel="stylesheet" href="/js/vendor/leaflet/leaflet.css">
+<link rel="preconnect" href="https://tile.openstreetmap.org" crossorigin>
+<script src="/js/vendor/leaflet/leaflet.js" defer></script>
+<script src="/js/insights.js?v={{ asset_version }}" defer></script>
+{% endblock %}
+
+{% block content %}
+<article class="article article-wide insights" data-insights data-src="{{ insights.data_url }}">
+  <header class="container article-head">
+    <a class="back-link" href="{{ url_for(lang, 'project', project.slug) }}"><span aria-hidden="true">←</span> {{ t.insights.back }}</a>
+    <p class="eyebrow">{{ t.insights.eyebrow }} · {{ t.insights.as_of }} <span data-asof>{{ project.updated | date(lang) }}</span></p>
+    <h1>{{ insights.title }}</h1>
+    <p class="lede">{{ insights.summary }}</p>
+    <div class="actions">
+      <a class="button button-ghost" href="{{ url_for(lang, 'project', project.slug) }}">{{ t.insights.read_case_study }}</a>
+      {% if project.repo %}<a class="button button-ghost" href="{{ project.repo }}" rel="noopener">{{ t.projects.repo }}</a>{% endif %}
+    </div>
+  </header>
+  <div class="container prose prose-data">
+    <noscript><p class="callout">{{ t.insights.noscript }}</p></noscript>
+    {{ body }}
+  </div>
+</article>
+<script type="application/json" id="insights-i18n">{{ t.insights.js | tojson }}</script>
+{% endblock %}

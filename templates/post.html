@@ -5,7 +5,7 @@
 <article class="article">
   <header class="container article-head">
     <a class="back-link" href="{{ url_for(lang, 'blog') }}"><span aria-hidden="true">←</span> {{ t.blog.back }}</a>
-    <p class="eyebrow"><time datetime="{{ post.date.isoformat() }}">{{ post.date | date(lang) }}</time> · {{ t.blog.minutes | replace('{n}', post.reading_minutes | string) }}</p>
+    <p class="eyebrow"><time datetime="{{ post.date.isoformat() }}">{{ post.date | date(lang) }}</time> · {% if post.question_count %}{{ t.blog.questions | replace('{n}', post.question_count | number(lang)) }}{% else %}{{ t.blog.minutes | replace('{n}', post.reading_minutes | string) }}{% endif %}</p>
     <h1>{{ post.title }}</h1>
   </header>
   {% if post.cover %}
@@ -15,7 +15,25 @@
   </figure>
   {% endif %}
   <div class="container prose">
+    {% if post.qa_sections %}
+    {% set intro, questions = body.split('<!-- qa-nav -->', 1) %}
+    {{ intro }}
+    <nav class="qa-toc" aria-labelledby="qa-toc-title">
+      <p id="qa-toc-title">{{ t.blog.contents }}</p>
+      <ol>
+        {% for anchor, title, count in post.qa_sections %}<li><a href="#{{ anchor }}">{{ title }}</a> <small>({{ count }})</small></li>{% endfor %}
+      </ol>
+    </nav>
+    <div class="qa-tools" hidden>
+      <label class="field qa-filter"><span>{{ t.blog.filter }}</span><input type="search" data-qa-filter data-status="{{ t.blog.filter_status }}"></label>
+      <button type="button" data-qa="open">{{ t.blog.expand_all }}</button>
+      <button type="button" data-qa="close">{{ t.blog.collapse_all }}</button>
+      <p class="muted qa-status" data-qa-status aria-live="polite"></p>
+    </div>
+    {{ questions }}
+    {% else %}
     {{ body }}
+    {% endif %}
   </div>
 </article>
 

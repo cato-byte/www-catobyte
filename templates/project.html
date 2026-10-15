@@ -16,11 +16,22 @@
     </ul>
     {% if project.repo or project.demo %}
     <div class="actions">
-      {% if project.repo %}<a class="button" href="{{ project.repo }}" rel="noopener">{{ t.projects.repo }}</a>{% endif %}
+      {% if project.repo %}<a class="button{% if project.insights %} button-ghost{% endif %}" href="{{ project.repo }}" rel="noopener">{{ t.projects.repo }}</a>{% endif %}
       {% if project.demo %}<a class="button button-ghost" href="{{ project.demo }}" rel="noopener">{{ t.projects.demo }}</a>{% endif %}
     </div>
     {% endif %}
   </header>
+  {% if project.insights %}
+  <div class="container prose prose-wide">
+    <aside class="data-panel" aria-labelledby="data-panel-title">
+      <div>
+        <h2 id="data-panel-title">{{ t.insights.explore_title }}</h2>
+        <p>{{ t.insights.explore_text }}</p>
+      </div>
+      <a class="button" href="{{ url_for(lang, 'insights', project.slug) }}">{{ t.insights.explore }} <span aria-hidden="true">→</span></a>
+    </aside>
+  </div>
+  {% endif %}
   {% if project.cover %}
   <img class="article-cover container" src="{{ project.cover }}" alt="{{ project.cover_alt }}" width="1200" height="630">
   {% endif %}

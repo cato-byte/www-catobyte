@@ -32,6 +32,11 @@ class Post:
     has_code: bool
     reading_minutes: int
     languages: list[str]
+    qa_sections: list[tuple[str, str, int]] = field(default_factory=list)
+
+    @property
+    def question_count(self) -> int:
+        return sum(n for _, _, n in self.qa_sections)
 
 
 @dataclass
@@ -52,6 +57,20 @@ class Project:
     has_code: bool = False
     reading_minutes: int = 1
     languages: list[str] = field(default_factory=list)
+    insights: "Insights | None" = None
+    featured: bool = False
+    highlights: list[dict] = field(default_factory=list)  # [{value, label}] key figures for the home page
+    points: list[str] = field(default_factory=list)       # one-line summaries shown under "What's inside"
+
+
+@dataclass
+class Insights:
+    """A project's data page: narrative from content/projects/<lang>/insights/<slug>.md, charts
+    drawn in the browser from the JSON the project's pipeline publishes at ``data_url``."""
+    title: str
+    summary: str
+    body_html: str
+    data_url: str
 
 
 def _reading_minutes(word_count: int) -> int:
@@ -99,6 +118,7 @@ def load_posts(lang: str, registry: list[dict] | None = None, blog_dir: Path = B
                 has_code=rendered.has_code,
                 reading_minutes=_reading_minutes(rendered.word_count),
                 languages=sorted(entry["languages"]),
+                qa_sections=rendered.qa_sections,
             )
         )
     return sorted(posts, key=lambda p: p.date, reverse=True)
@@ -127,6 +147,7 @@ def load_projects(lang: str, projects_dir: Path = PROJECTS_DIR) -> list[Project]
                 raise ContentError(f"{md_path}: front matter is missing '{required}'")
         slug = md_path.stem
         rendered = render_markdown(body, extract_title=False, data_dir=projects_dir / "data" / slug)
+        insights = load_insights(projects_dir / lang / "insights" / f"{slug}.md")
         projects.append(
             Project(
                 slug=slug,
@@ -145,6 +166,22 @@ def load_projects(lang: str, projects_dir: Path = PROJECTS_DIR) -> list[Project]
                 has_code=rendered.has_code,
                 reading_minutes=_reading_minutes(rendered.word_count),
                 languages=sorted(p.parent.name for p in projects_dir.glob(f"*/{slug}.md")),
+                insights=insights,
+                featured=bool(meta.get("featured", False)),
+                highlights=meta.get("highlights", []),
+                points=meta.get("points", []),
             )
         )
     return sorted(projects, key=lambda p: p.updated, reverse=True)
+
+
+def load_insights(md_path: Path) -> Insights | None:
+    if not md_path.exists():
+        return None
+    meta, body = parse_front_matter(md_path.read_text(encoding="utf-8"))
+    for required in ("title", "summary", "data_url"):
+        if required not in meta:
+            raise ContentError(f"{md_path}: front matter is missing '{required}'")
+    rendered = render_markdown(body, extract_title=False)
+    return Insights(title=meta["title"], summary=meta["summary"], body_html=rendered.body_html,
+                    data_url=meta["data_url"])

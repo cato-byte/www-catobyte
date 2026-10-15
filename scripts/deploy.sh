@@ -9,6 +9,8 @@
 #
 # Files are only added or overwritten, never deleted, so a mistake can't wipe the bucket.
 # Old URLs (/pages/..., /post/...) are overwritten by redirect pages from the build.
+# Project data under */projects/*/data/ is excluded: the pipeline publishes it there itself,
+# and a local preview copy (local_data/) must never overwrite a newer pipeline run.
 set -euo pipefail
 
 : "${BUCKET:?Set BUCKET to the S3 bucket name}"
@@ -23,6 +25,7 @@ cd "$(dirname "$0")/.."
 # Assets (css, js, images) can be cached for a day: their URLs carry a content hash (?v=...).
 # HTML, the sitemap and robots.txt for 5 minutes, so content edits show up quickly.
 aws s3 sync dist "s3://$BUCKET" $DRY --no-progress \
+  --exclude "*/projects/*/data/*" \
   --exclude "*.html" --exclude "*.xml" --exclude "*.txt" \
   --cache-control "public, max-age=86400"
 aws s3 sync dist "s3://$BUCKET" $DRY --no-progress \

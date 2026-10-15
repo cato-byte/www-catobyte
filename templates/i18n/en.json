@@ -19,23 +19,23 @@
     "role": "Data Engineer",
     "eyebrow": "Data Engineer · PySpark · Databricks · AWS",
     "headline": "Hi, I'm {name}. I build data pipelines that turn messy sources into tables people trust.",
-    "lede": "Data engineer with 6+ years of experience building data integration pipelines for finance, insurance, mobility and marketing, from Spark on Hadoop to Azure Data Factory and BigQuery. I'm currently building a pan-European company-registry lakehouse on Databricks and AWS, and documenting every design decision here.",
+    "lede": "Data engineer with 6+ years of experience building data integration pipelines for finance, insurance, mobility and marketing, from Spark on Hadoop to Azure Data Factory and BigQuery. My latest project is a pan-European company-registry lakehouse on Databricks and AWS: it keeps 52 million register rows up to date every month, and its results are live on this site.",
     "cta_projects": "See my projects",
     "cta_contact": "Get in touch",
     "availability": "Open to data engineering roles: full-time or contract, remote or on-site in Europe.",
     "now_title": "What I'm working on",
     "now_items": [
       {
-        "label": "Building",
-        "text": "A lakehouse that integrates the open company registers of six European countries into a Data Vault 2.0 model, with geocoded gold tables."
+        "label": "Shipped",
+        "text": "A lakehouse that cleans, historises and geocodes six European company registers every month on Databricks serverless and AWS, with a live map of the results."
       },
       {
         "label": "Certified",
-        "text": "AWS Certified Cloud Practitioner. I put it into practice with Lambda, S3, IAM and AWS Location Service in my projects."
+        "text": "AWS Certified Cloud Practitioner, earned in October 2026. In production in my lakehouse: Lambda, S3, IAM, EventBridge, CloudWatch and SAM."
       },
       {
         "label": "Writing",
-        "text": "Study guides on PySpark and the data engineering stack, written while I build."
+        "text": "Question-by-question study guides on AWS, PySpark, Python, PostgreSQL and dbt."
       }
     ],
     "projects_title": "Recent projects",
@@ -45,7 +45,9 @@
     "writing_all": "Blog archive",
     "cta_title": "Let's talk data",
     "cta_text": "Hiring for a data engineering role, or want to discuss a pipeline? I would be glad to hear from you.",
-    "previously": "Experience with"
+    "previously": "Experience with",
+    "featured_title": "Featured project",
+    "featured_inside": "What's inside"
   },
   "projects": {
     "title": "Projects",
@@ -60,7 +62,8 @@
     "demo": "Live demo",
     "status": {
       "in_progress": "In progress",
-      "completed": "Completed"
+      "completed": "Completed",
+      "live": "Live"
     }
   },
   "blog": {
@@ -69,7 +72,13 @@
     "intro": "Study notes on the data engineering stack, plus the articles on AI and machine learning I wrote in 2024 and 2025, kept here as an archive.",
     "back": "All posts",
     "more": "More posts",
-    "minutes": "{n} min read"
+    "minutes": "{n} min read",
+    "questions": "{n} questions",
+    "contents": "Contents",
+    "expand_all": "Open all answers",
+    "collapse_all": "Close all answers",
+    "filter": "Filter the questions",
+    "filter_status": "{n} matching questions"
   },
   "about": {
     "title": "About me",
@@ -78,7 +87,7 @@
     "intro": [
       "I'm a data engineer with more than six years of experience designing and running data integration pipelines for companies in finance, insurance, mobility and marketing, as a consultant at Epsilon France (Publicis Groupe) and then as a data engineer at RiverBank and Corum L'Épargne.",
       "I've worked in both worlds: distributed Big Data processing with Spark, Scala and Hadoop, and more traditional platforms built on SQL, Azure Data Factory, Apache NiFi and Google BigQuery. Across them, I focus on what keeps pipelines healthy in production: automated tests, monitoring, data quality and code that the next engineer can maintain.",
-      "Today I'm deepening the modern lakehouse stack. I first worked with Data Vault on Corum's data platform; my current project applies Data Vault 2.0 on Databricks and AWS to six European company registers, and I've earned the AWS Certified Cloud Practitioner certification."
+      "Today I work on the modern lakehouse stack. I first worked with Data Vault on Corum's data platform; my latest project integrates six European company registers on Databricks and AWS with a medallion architecture, SCD Type 2 history and automated data-quality gates, and I earned the AWS Certified Cloud Practitioner certification in October 2026."
     ],
     "principles_title": "How I work",
     "principles": [
@@ -104,7 +113,9 @@
     "beyond": "I'm a tenor and sing whenever I can, I train CrossFit, and I'm endlessly curious about nature, from rivers and forests to the deep ocean.",
     "cv": "Download my CV",
     "education_title": "Education",
-    "missions": "Client missions"
+    "missions": "Client missions",
+    "new": "New",
+    "earned": "earned"
   },
   "contact": {
     "title": "Contact",
@@ -124,7 +135,8 @@
         "title": "Privacy",
         "paragraphs": [
           "This is a static personal website. It uses no cookies, no analytics, no advertising and no forms, and I don't collect personal data from visitors.",
-          "The site is served by Amazon Web Services (Amazon S3 and CloudFront). As with any web host, their servers may process technical data such as your IP address to deliver pages and protect against abuse. I don't use this data to identify visitors."
+          "The site is served by Amazon Web Services (Amazon S3 and CloudFront). As with any web host, their servers may process technical data such as your IP address to deliver pages and protect against abuse. I don't use this data to identify visitors.",
+          "The interactive map on the project data page loads map tiles from the OpenStreetMap Foundation's tile servers, which receive your IP address and the page address to deliver the tiles. No other page loads content from a third party."
         ]
       },
       {
@@ -147,5 +159,214 @@
     "title": "Page not found",
     "text": "This page doesn't exist or has moved. The site was recently redesigned, so older links may point to pages that are no longer here.",
     "home": "Go to the home page"
+  },
+  "insights": {
+    "back": "Case study",
+    "eyebrow": "Live data",
+    "as_of": "pipeline run of",
+    "read_case_study": "How the pipeline works",
+    "noscript": "The charts and the map on this page are drawn in your browser from the pipeline's published data, so they need JavaScript.",
+    "explore": "Explore the data",
+    "explore_title": "The results, live",
+    "explore_text": "Interactive map of every town, fishing hubs, company survival, distress by industry and the data-quality report, refreshed by each pipeline run.",
+    "js": {
+      "kpi": {
+        "records": "register rows ingested",
+        "current": "companies and establishments in silver",
+        "on_map": "placed on the map",
+        "quarantined": "rows quarantined by data-quality rules"
+      },
+      "labels": {
+        "show_table": "Show the data as a table",
+        "hide_table": "Hide the table",
+        "not_published": "not published by this register",
+        "loading": "Loading the map data…",
+        "error": "The data could not be loaded. Please try again later.",
+        "unclassified": "No NACE code",
+        "overseas": "Overseas departments (97)",
+        "country": "Country",
+        "active": "Active",
+        "operating": "Operating (estimate)",
+        "mass_address": "at mass addresses",
+        "dormant": "dormant",
+        "strike_off": "pending strike-off",
+        "address": "Address",
+        "companies": "Companies",
+        "companies_lc": "companies",
+        "industry": "Industry",
+        "no_activity_codes": "no activity code in the published file",
+        "town": "Town",
+        "fishing_companies": "Fishing companies",
+        "lq": "Location quotient",
+        "per_10k": "Fishing companies per 10,000 inhabitants",
+        "region": "Area",
+        "jobs": "Jobs",
+        "jobs_exact_or_low": "Exact count, or lower bound of the band",
+        "jobs_band": "Range of the published band",
+        "year": "Year",
+        "births": "Births",
+        "deaths": "Closures",
+        "live_only": "live companies only",
+        "cohort": "Cohort",
+        "cohort_size": "Cohort size",
+        "after": "Alive after {h}",
+        "registered": "Registered",
+        "distress": "In liquidation or insolvent",
+        "companies_reporting": "Units reporting staff",
+        "bronze_rows": "Bronze rows (latest snapshot)",
+        "silver_rows": "Current in silver",
+        "quarantined": "Quarantined",
+        "on_map": "On the map",
+        "rule": "Rule",
+        "severity": "Effect",
+        "failed_rows": "Rows",
+        "failure_rate": "Rate",
+        "quarantine": "quarantine",
+        "warning": "warning",
+        "insight": "Insight",
+        "included": "included",
+        "excluded": "excluded",
+        "dormant_h": "Dormant",
+        "strike_off_h": "Strike-off"
+      },
+      "charts": {
+        "activity_title": "Share of active companies that are probably operating",
+        "activity_note": "Operating = active, minus companies at mass-registration addresses (50+ companies), dormant accounts and pending strike-offs. A company can carry several signals. Dormancy and strike-off are only published by the UK and Irish registers.",
+        "hotspots_title": "The ten busiest registered-office addresses",
+        "hotspots_note": "Active companies registered at the same street address. Dormancy and strike-off are only published for the UK.",
+        "industry_title": "Industry mix: share of each register's active companies",
+        "industry_note": "NACE Rev. 2 sections, after mapping UK SIC, French NAF, Norwegian SN2007, Irish NACE and Spanish CNAE codes. Sections under 0.5% everywhere are left out.",
+        "hubs_title": "Fishing hubs: how over-represented fishing is in each town",
+        "hubs_note": "Location quotient = the town's fishing share divided by its country's. ×200 means fishing is 200 times more common among the town's companies than nationally. Towns with at least {n} active companies.",
+        "fishing_jobs_title": "Where the fishing and aquaculture jobs are",
+        "fishing_jobs_note": "Norway publishes exact headcounts per company. France publishes headcount bands, so French areas show the range they imply.",
+        "demography_title": "Company births and closures per year",
+        "demography_note": "Registers that list live companies only can't show closures, and their older years are under-counted. {year} is still running and is left out.",
+        "survival_title": "How many new companies are still alive after 1, 3, 5 and 10 years",
+        "survival_note": "Only France and Ireland keep closed units with their closure date, which survival analysis needs. A horizon is shown only for cohorts old enough to have reached it.",
+        "survival_sections_title": "Five-year survival by industry",
+        "survival_sections_note": "All cohorts since 1980 that are at least five years old. Industries with fewer than 1,000 births are left out.",
+        "distress_title": "Companies in liquidation, insolvency or pending strike-off, by industry",
+        "distress_note": "Share of registered companies. France and Navarra publish no such status. Industries with fewer than 1,000 companies are left out.",
+        "employment_title": "Jobs by industry",
+        "employment_note_exact": "Norway: exact headcounts reported to the register (only part of the units report).",
+        "employment_note_bands": "Headcount bands: the bar is the lower bound, the lighter part the range up to the band's upper bound.",
+        "funnel_title": "From raw rows to the map, per register",
+        "funnel_note": "Bronze keeps every raw row of the latest snapshot (Navarra's file holds nine yearly panels). Silver keeps one current version per company. The bar is the share of silver placed on the map.",
+        "precision_title": "How precisely each company is placed",
+        "precision_note": "The most precise tier available wins: address (register coordinates or the geocoding worker), postcode, district, town.",
+        "dq_title": "Data-quality rules that fired on the latest snapshot",
+        "dq_note": "Warnings keep the row and are tracked over time. Quarantine moves the row to silver.quarantine with the failed rules. Every other rule passed on every row.",
+        "coverage_title": "Which register feeds which insight",
+        "coverage_note": "A register is left out of an insight when it doesn't publish the fields needed, so an unknown is never shown as zero. Hover or focus a cell for the reason."
+      },
+      "precision": {
+        "ADDRESS": "Address",
+        "POSTCODE": "Postcode",
+        "DISTRICT": "District",
+        "CITY": "Town",
+        "NONE": "Not placed"
+      },
+      "map": {
+        "aria": "Map of companies by town",
+        "layer": "Map layer",
+        "layer_companies": "All companies",
+        "layer_fishing": "Fishing & aquaculture",
+        "show": "Show",
+        "all_countries": "All registers",
+        "metric_active": "Active companies",
+        "metric_operating": "Operating companies (estimate)",
+        "metric_fishing_all": "All fishing & aquaculture",
+        "marine_fishing": "Marine fishing",
+        "freshwater_fishing": "Freshwater fishing",
+        "marine_aquaculture": "Marine aquaculture",
+        "freshwater_aquaculture": "Freshwater aquaculture",
+        "top_industries": "Largest industries",
+        "top_title": "Top towns for this selection",
+        "status": "{n} towns · {total} in total. Circle area is proportional to the count. Click the map to zoom with the wheel."
+      },
+      "rules": {
+        "address_in_register_country": "address is in the register's own country",
+        "business_id_present": "register identifier present",
+        "city_present": "town present",
+        "closure_after_registration": "closure date after registration date",
+        "employees_range_consistent": "headcount band is consistent",
+        "id_checksum_valid": "identifier passes its check-digit or format rule",
+        "industry_mapped_to_nace": "activity code maps to NACE Rev. 2",
+        "name_present_for_legal_entities": "legal entities have a name",
+        "postal_code_valid": "postcode present and valid",
+        "status_known": "status maps to the shared vocabulary"
+      },
+      "insight_names": {
+        "company_activity_summary": "Operating vs registered",
+        "company_demography": "Births and closures",
+        "cohort_survival": "Survival",
+        "fishing_hubs": "Fishing hubs",
+        "employment_by_region_industry": "Jobs",
+        "distress_by_industry": "Distress"
+      },
+      "reasons": {
+        "Basic Company Data lists live companies only": "Basic Company Data lists live companies only",
+        "basic data lists registered companies only": "basic data lists registered companies only",
+        "births and closures (establishments)": "births and closures (establishments)",
+        "births and dissolutions": "births and dissolutions",
+        "births only. Live-only register": "births only. Live-only register",
+        "births only. Live-only register: older years under-counted": "births only. Live-only register: older years under-counted",
+        "births. Deaths only for units deleted between snapshots": "births. Deaths only for units deleted between snapshots",
+        "closed establishments kept with closure date": "closed establishments kept with closure date",
+        "deleted units are not in the bulk file": "deleted units are not in the bulk file",
+        "dissolved companies kept with dissolution date": "dissolved companies kept with dissolution date",
+        "dormant accounts, strike-off proposals, mass addresses": "dormant accounts, strike-off proposals, mass addresses",
+        "exact headcount": "exact headcount",
+        "headcount bands": "headcount bands",
+        "mass addresses only": "mass addresses only",
+        "mass addresses only (no dormancy signal)": "mass addresses only (no dormancy signal)",
+        "no activity code in the basic-data file": "no activity code in the basic-data file",
+        "no headcount in basic data": "no headcount in basic data",
+        "no headcount published": "no headcount published",
+        "no registration dates": "no registration dates",
+        "no status published": "no status published",
+        "only open/closed published": "only open/closed published",
+        "panel entries and exits between yearly releases": "panel entries and exits between yearly releases",
+        "strike-off list, mass addresses": "strike-off list, mass addresses"
+      },
+      "countries": {
+        "FR": "France",
+        "GB": "United Kingdom",
+        "IE": "Ireland",
+        "NO": "Norway",
+        "EE": "Estonia",
+        "ES": "Navarra (Spain)"
+      },
+      "sections": {
+        "A": "Agriculture, forestry & fishing",
+        "B": "Mining & quarrying",
+        "C": "Manufacturing",
+        "D": "Electricity & gas",
+        "E": "Water & waste",
+        "F": "Construction",
+        "G": "Wholesale & retail",
+        "H": "Transport & storage",
+        "I": "Accommodation & food",
+        "J": "Information & communication",
+        "K": "Finance & insurance",
+        "L": "Real estate",
+        "M": "Professional & scientific",
+        "N": "Administrative & support",
+        "O": "Public administration",
+        "P": "Education",
+        "Q": "Health & social work",
+        "R": "Arts & recreation",
+        "S": "Other services",
+        "T": "Households as employers",
+        "U": "Extraterritorial bodies"
+      },
+      "horizons": {
+        "1y": "1 year",
+        "3y": "3 years",
+        "5y": "5 years",
+        "10y": "10 years"
+      }
+    }
   }
 }

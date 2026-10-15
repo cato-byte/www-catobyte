@@ -21,9 +21,9 @@ ACCENT = (126, 162, 255)
 LAYERS = [
     ("Landing", (100, 116, 139)),
     ("Bronze", (176, 106, 43)),
-    ("Staging", (71, 85, 105)),
-    ("Vault", (37, 84, 217)),
+    ("Silver", (120, 132, 150)),
     ("Gold", (202, 150, 18)),
+    ("Map", (37, 84, 217)),
 ]
 
 
@@ -44,7 +44,7 @@ def default_image(path: Path, owner: dict) -> None:
     centered(d, (80, 90, 180, 190), owner["initials"], font("Bold", 64), NAVY)
     d.text((80, 240), owner["name"], font=font("Bold", 92), fill=TEXT)
     d.text((80, 360), "Data Engineer", font=font("SemiBold", 52), fill=ACCENT)
-    d.text((80, 440), "Spark · Databricks · AWS · Data Vault", font=font("Regular", 34), fill=MUTED)
+    d.text((80, 440), "Spark · Databricks · AWS · Delta Lake", font=font("Regular", 34), fill=MUTED)
     d.text((80, 535), "catobyte.co", font=font("SemiBold", 30), fill=TEXT)
     if owner.get("photo"):
         size = 340
@@ -60,7 +60,7 @@ def project_cover(path: Path) -> None:
     img = Image.new("RGB", (W, H), NAVY)
     d = ImageDraw.Draw(img)
     d.text((60, 52), "Pan-European Company Registry Lakehouse", font=font("Bold", 48), fill=TEXT)
-    d.text((60, 125), "6 national registers · Data Vault 2.0 · Databricks on AWS", font=font("Regular", 30), fill=MUTED)
+    d.text((60, 125), "6 national registers · 52M rows · Databricks + AWS", font=font("Regular", 30), fill=MUTED)
 
     # Country chips, 2 columns x 3 rows.
     chip_font = font("Bold", 30)
@@ -87,14 +87,40 @@ def project_cover(path: Path) -> None:
             ax = x0 + box_w + 3
             d.polygon([(ax, 370), (ax + 13, 380), (ax, 390)], fill=MUTED)
 
-    d.text((362, 500), "Lambda  ›  S3  ›  Delta Lake  ›  Hubs, Links, Satellites  ›  dim & fact",
+    d.text((362, 500), "Lambda  ›  S3  ›  raw Delta  ›  SCD2 + quality  ›  star schema  ›  static site",
            font=font("Regular", 24), fill=MUTED)
     d.rectangle((0, H - 10, W, H), fill=ACCENT)
     img.save(path, optimize=True)
+
+
+def guide_cover(path: Path, title: str, subtitle: str, tag: str, colour: tuple) -> None:
+    """Square cover for a study guide: a large tag, the title and what it covers."""
+    size = 1024
+    img = Image.new("RGB", (size, size), NAVY)
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle((96, 120, 96 + 300, 120 + 300), radius=48, fill=colour)
+    centered(d, (96, 120, 396, 420), tag, font("Bold", 110 if len(tag) <= 3 else 84), (255, 255, 255))
+    d.multiline_text((96, 480), title, font=font("Bold", 76), fill=TEXT, spacing=8)
+    y = d.multiline_textbbox((96, 480), title, font=font("Bold", 76), spacing=8)[3] + 40
+    for line in subtitle.split("\n"):
+        d.text((96, y), line, font=font("Regular", 38), fill=MUTED)
+        y += 56
+    d.text((96, size - 130), "~200 questions · catobyte.co", font=font("SemiBold", 34), fill=ACCENT)
+    d.rectangle((0, size - 16, size, size), fill=ACCENT)
+    img.save(path, optimize=True)
+
+
+GUIDES = [
+    ("aws_practicioner_guide_title_img.png", "AWS Cloud\nPractitioner", "Cloud concepts, security, services,\nbilling and pricing", "AWS", (236, 114, 17)),
+    ("dbt_study_guide_title_img.png", "dbt", "Models, tests, Jinja, incremental\nloads, snapshots and deployment", "dbt", (255, 105, 74)),
+    ("python_study_guide_title_img.png", "Python", "The language, the standard library\nand Python for data engineering", "Py", (55, 118, 171)),
+]
 
 
 if __name__ == "__main__":
     site = yaml.safe_load((ROOT / "site.yaml").read_text(encoding="utf-8"))
     default_image(ROOT / "images" / "og-default.png", site["owner"])
     project_cover(ROOT / "images" / "projects" / "eu-company-registry.png")
+    for name, title, subtitle, tag, colour in GUIDES:
+        guide_cover(ROOT / "images" / name, title, subtitle, tag, colour)
     print("Share images written to images/")

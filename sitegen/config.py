@@ -19,6 +19,8 @@ I18N_DIR = TEMPLATES_DIR / "i18n"
 STATIC_DIRS = ["css", "js", "images", "files"]
 
 DIST_DIR = ROOT / "dist"
+# Pipeline output fetched for a local preview (scripts/fetch_project_data.sh); never committed.
+LOCAL_DATA_DIR = ROOT / "local_data"
 SITE_FILE = ROOT / "site.yaml"
 
 

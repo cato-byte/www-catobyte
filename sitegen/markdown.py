@@ -6,17 +6,23 @@ Content conventions (kept from the original blog so old posts render unchanged):
   * A heading containing {{PUBLISH_DATE}} is removed; the template shows the date.
   * The image right after `<!-- TITLE_IMAGE -->` is the cover image, also rendered by the template.
   * An image alone in a paragraph becomes a <figure> with its alt text as caption.
+  * Study guides: after a `<!-- QA -->` line, every `###` is a category and every `####` a
+    question. Each question and its answer become a collapsible <details class="qa"> card; the
+    categories are returned in `qa_sections` so the template can render a table of contents.
 """
 
 import csv
 import html
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from markdown_it import MarkdownIt
 
 TITLE_IMAGE_MARKER = "<!-- TITLE_IMAGE -->"
+QA_MARKER = "<!-- QA -->"
+QA_NAV_SLOT = "<!-- qa-nav -->"  # where the template puts the contents list, between intro and questions
+_QA_SPLIT_RE = re.compile(r'(<h([23]) id="([^"]+)">(.*?)</h\2>)', re.DOTALL)
 PUBLISH_DATE_TOKEN = "{{PUBLISH_DATE}}"
 
 _TITLE_RE = re.compile(r"^#{1,2}\s+(.+?)\s*$")
@@ -34,6 +40,11 @@ class Rendered:
     summary: str = ""
     has_code: bool = False
     word_count: int = 0
+    qa_sections: list[tuple[str, str, int]] = field(default_factory=list)  # (id, title, questions)
+
+    @property
+    def question_count(self) -> int:
+        return sum(n for _, _, n in self.qa_sections)
 
 
 def slugify(text: str) -> str:
@@ -130,17 +141,56 @@ def _first_paragraph_text(tokens, limit: int = 180) -> str:
     return ""
 
 
+def _qa_cards(html_text: str) -> tuple[str, list[tuple[str, str, int]]]:
+    """Turn the flat <h2> category / <h3> question / answer sequence into collapsible cards."""
+    parts = _QA_SPLIT_RE.split(html_text)
+    # split() yields: text, (full heading, level, id, inner), text, ...
+    out = [parts[0]]
+    sections: list[tuple[str, str, int]] = []
+    open_card = False
+    number = 0
+    i = 1
+    while i < len(parts):
+        full, level, anchor, inner = parts[i:i + 4]
+        following = parts[i + 4] if i + 4 < len(parts) else ""
+        if open_card:
+            out.append("</div></details>\n")
+            open_card = False
+        if level == "2":
+            sections.append((anchor, re.sub(r"<[^>]+>", "", inner), 0))
+            out.append(full)
+        else:
+            if sections:
+                a, t, n = sections[-1]
+                sections[-1] = (a, t, n + 1)
+            number += 1
+            out.append(f'<details class="qa" id="{anchor}"><summary data-n="{number}">{inner}</summary><div class="qa-answer">')
+            open_card = True
+        out.append(following)
+        i += 5
+    if open_card:
+        out.append("</div></details>\n")
+    return '<div class="qa-guide">' + "".join(out) + "</div>", sections
+
+
 def render_markdown(source: str, *, extract_title: bool = True, data_dir: Path | None = None) -> Rendered:
     """Render a post or project body. Projects keep their title in front matter (extract_title=False)."""
     title, cover, cover_alt, body_lines = _extract_front(source.splitlines(), extract_title)
-    body_source = "\n".join(body_lines)
-    if data_dir is not None:
-        body_source = _DATA_MARKER_RE.sub(lambda m: render_data_block(m.group(1), data_dir / m.group(2)), body_source)
-
-    tokens = _md.parse(body_source)
-    _shift_headings(tokens)
-    body_html = _post_process(_md.renderer.render(tokens, _md.options, {}))
-
+    qa_at = next((i for i, line in enumerate(body_lines) if line.strip() == QA_MARKER), None)
+    if qa_at is not None:
+        intro = _render_body("\n".join(body_lines[:qa_at]), data_dir)
+        guide_tokens = _md.parse("\n".join(body_lines[qa_at + 1:]))
+        _shift_headings(guide_tokens)
+        guide_html, qa_sections = _qa_cards(_post_process(_md.renderer.render(guide_tokens, _md.options, {})))
+        body_html = intro[1] + "\n" + QA_NAV_SLOT + "\n" + guide_html
+        return Rendered(
+            title=title, body_html=body_html, cover=cover, cover_alt=cover_alt,
+            summary=_first_paragraph_text(intro[0]),
+            has_code='class="language-' in body_html,
+            word_count=len(re.sub(r"<[^>]+>", " ", body_html).split()),
+            qa_sections=qa_sections,
+        )
+    tokens, body_html = _render_body("\n".join(body_lines), data_dir)
     return Rendered(
         title=title,
         body_html=body_html,
@@ -150,6 +200,15 @@ def render_markdown(source: str, *, extract_title: bool = True, data_dir: Path |
         has_code='class="language-' in body_html,
         word_count=len(re.sub(r"<[^>]+>", " ", body_html).split()),
     )
+
+
+def _render_body(body_source: str, data_dir: Path | None):
+    """Markdown to (tokens, html) with the shared heading, figure and table conventions."""
+    if data_dir is not None:
+        body_source = _DATA_MARKER_RE.sub(lambda m: render_data_block(m.group(1), data_dir / m.group(2)), body_source)
+    tokens = _md.parse(body_source)
+    _shift_headings(tokens)
+    return tokens, _post_process(_md.renderer.render(tokens, _md.options, {}))
 
 
 def render_data_block(kind: str, csv_path: Path) -> str:

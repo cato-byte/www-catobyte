@@ -1,3 +1,5 @@
+import re
+
 from sitegen.markdown import render_data_block, render_markdown, slugify
 
 POST = """## My title
@@ -100,3 +102,57 @@ def test_missing_data_file_renders_nothing(tmp_path):
 def test_summary_skips_link_only_index_paragraphs():
     source = "## T\n\n[Broadcast joins](#a)\n[Key concepts](#b)\n\nA real first paragraph that explains what this guide covers in detail.\n"
     assert render_markdown(source).summary.startswith("A real first paragraph")
+
+
+GUIDE = """## A guide
+
+Intro paragraph that explains what this guide covers and how to use it well.
+
+<!-- QA -->
+
+### Basics
+
+#### What is a thing?
+
+A thing is *something*.
+
+```python
+thing = 1
+```
+
+#### Why use a thing?
+
+Because.
+
+### Advanced
+
+#### What is a thing?
+
+The same question in another category.
+"""
+
+
+def test_qa_guide_turns_questions_into_cards_grouped_by_category():
+    r = render_markdown(GUIDE)
+    assert r.title == "A guide"
+    assert r.qa_sections == [("basics", "Basics", 2), ("advanced", "Advanced", 1)]
+    assert r.question_count == 3
+    assert r.body_html.count('<details class="qa"') == 3
+    assert r.body_html.count("</details>") == 3
+    assert '<h2 id="basics">Basics</h2>' in r.body_html
+    assert '<summary data-n="1">What is a thing?</summary>' in r.body_html
+    # The answer, code included, stays inside its card; duplicate questions get unique ids.
+    first = r.body_html.split('<details class="qa" id="why-use-a-thing">')[0]
+    assert "<em>something</em>" in first and "thing = 1" in first
+    assert 'id="what-is-a-thing-2"' in r.body_html
+    # Numbers are fixed in the HTML, so filtering the list doesn't renumber the questions.
+    assert re.findall(r'data-n="(\d+)"', r.body_html) == ["1", "2", "3"]
+    # The template puts the contents list between the intro and the first category.
+    intro, questions = r.body_html.split("<!-- qa-nav -->")
+    assert "Intro paragraph" in intro and questions.lstrip().startswith('<div class="qa-guide">')
+    assert r.summary.startswith("Intro paragraph")
+
+
+def test_posts_without_qa_marker_have_no_cards():
+    r = render_markdown(POST)
+    assert r.qa_sections == [] and "<details" not in r.body_html

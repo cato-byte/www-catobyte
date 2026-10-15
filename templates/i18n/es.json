@@ -19,23 +19,23 @@
     "role": "Ingeniero de datos",
     "eyebrow": "Ingeniero de datos · PySpark · Databricks · AWS",
     "headline": "Hola, soy {name}. Construyo pipelines que convierten fuentes desordenadas en tablas fiables.",
-    "lede": "Ingeniero de datos con más de 6 años de experiencia construyendo pipelines de integración de datos para finanzas, seguros, movilidad y marketing, de Spark sobre Hadoop a Azure Data Factory y BigQuery. Ahora mismo construyo un lakehouse de registros mercantiles europeos sobre Databricks y AWS, y documento aquí cada decisión de diseño.",
+    "lede": "Ingeniero de datos con más de 6 años de experiencia construyendo pipelines de integración de datos para finanzas, seguros, movilidad y marketing, de Spark sobre Hadoop a Azure Data Factory y BigQuery. Mi último proyecto es un lakehouse de registros mercantiles europeos sobre Databricks y AWS: mantiene al día 52 millones de filas de registro cada mes, y sus resultados están en vivo en este sitio.",
     "cta_projects": "Ver mis proyectos",
     "cta_contact": "Contactar",
     "availability": "Disponible para puestos de ingeniería de datos: plantilla o freelance, en remoto o presencial en Europa.",
     "now_title": "En qué estoy trabajando",
     "now_items": [
       {
-        "label": "Construyendo",
-        "text": "Un lakehouse que integra los registros mercantiles abiertos de seis países europeos en un modelo Data Vault 2.0, con tablas gold geocodificadas."
+        "label": "En producción",
+        "text": "Un lakehouse que limpia, historiza y geocodifica seis registros mercantiles europeos cada mes sobre Databricks serverless y AWS, con un mapa en vivo de los resultados."
       },
       {
         "label": "Certificado",
-        "text": "AWS Certified Cloud Practitioner. Lo aplico con Lambda, S3, IAM y AWS Location Service en mis proyectos."
+        "text": "AWS Certified Cloud Practitioner, obtenida en octubre de 2026. En producción en mi lakehouse: Lambda, S3, IAM, EventBridge, CloudWatch y SAM."
       },
       {
         "label": "Escribiendo",
-        "text": "Guías de estudio sobre PySpark y el stack de ingeniería de datos, escritas mientras construyo."
+        "text": "Guías de estudio pregunta a pregunta sobre AWS, PySpark, Python, PostgreSQL y dbt."
       }
     ],
     "projects_title": "Proyectos recientes",
@@ -45,7 +45,9 @@
     "writing_all": "Archivo del blog",
     "cta_title": "Hablemos de datos",
     "cta_text": "¿Buscas un ingeniero de datos o quieres hablar de un pipeline? Estaré encantado de leerte.",
-    "previously": "Experiencia con"
+    "previously": "Experiencia con",
+    "featured_title": "Proyecto destacado",
+    "featured_inside": "Qué incluye"
   },
   "projects": {
     "title": "Proyectos",
@@ -60,7 +62,8 @@
     "demo": "Demo en vivo",
     "status": {
       "in_progress": "En curso",
-      "completed": "Terminado"
+      "completed": "Terminado",
+      "live": "En producción"
     }
   },
   "blog": {
@@ -69,7 +72,13 @@
     "intro": "Apuntes de estudio sobre el stack de ingeniería de datos y los artículos sobre IA y aprendizaje automático que escribí en 2024 y 2025, conservados como archivo.",
     "back": "Todos los artículos",
     "more": "Más artículos",
-    "minutes": "{n} min de lectura"
+    "minutes": "{n} min de lectura",
+    "questions": "{n} preguntas",
+    "contents": "Contenido",
+    "expand_all": "Abrir todas las respuestas",
+    "collapse_all": "Cerrar todas las respuestas",
+    "filter": "Filtrar las preguntas",
+    "filter_status": "{n} preguntas coinciden"
   },
   "about": {
     "title": "Sobre mí",
@@ -78,7 +87,7 @@
     "intro": [
       "Soy ingeniero de datos con más de seis años de experiencia diseñando y operando pipelines de integración de datos para empresas de finanzas, seguros, movilidad y marketing, primero como consultor en Epsilon France (Publicis Groupe) y después como ingeniero de datos en RiverBank y Corum L'Épargne.",
       "He trabajado en los dos mundos: procesamiento distribuido Big Data con Spark, Scala y Hadoop, y plataformas más tradicionales basadas en SQL, Azure Data Factory, Apache NiFi y Google BigQuery. En todos me centro en lo que mantiene sanos los pipelines en producción: tests automatizados, monitorización, calidad de datos y código que el siguiente ingeniero pueda mantener.",
-      "Hoy profundizo en el stack lakehouse moderno. Trabajé por primera vez con Data Vault en la plataforma de datos de Corum; mi proyecto actual aplica Data Vault 2.0 sobre Databricks y AWS a seis registros mercantiles europeos, y he obtenido la certificación AWS Certified Cloud Practitioner."
+      "Hoy trabajo con el stack lakehouse moderno. Trabajé por primera vez con Data Vault en la plataforma de datos de Corum; mi último proyecto integra seis registros mercantiles europeos sobre Databricks y AWS con una arquitectura medallion, historial SCD tipo 2 y controles automáticos de calidad de datos, y obtuve la certificación AWS Certified Cloud Practitioner en octubre de 2026."
     ],
     "principles_title": "Cómo trabajo",
     "principles": [
@@ -104,7 +113,9 @@
     "beyond": "Soy tenor y canto siempre que puedo, practico CrossFit y siento una curiosidad infinita por la naturaleza, de los ríos y bosques al fondo del océano.",
     "cv": "Descargar mi CV",
     "education_title": "Formación",
-    "missions": "Misiones para clientes"
+    "missions": "Misiones para clientes",
+    "new": "Nueva",
+    "earned": "obtenida en"
   },
   "contact": {
     "title": "Contacto",
@@ -124,7 +135,8 @@
         "title": "Privacidad",
         "paragraphs": [
           "Este es un sitio web personal estático. No usa cookies, analítica, publicidad ni formularios, y no recojo datos personales de los visitantes.",
-          "El sitio se sirve desde Amazon Web Services (Amazon S3 y CloudFront). Como cualquier alojamiento web, sus servidores pueden tratar datos técnicos como tu dirección IP para entregar las páginas y protegerse frente a abusos. No uso esos datos para identificar a nadie."
+          "El sitio se sirve desde Amazon Web Services (Amazon S3 y CloudFront). Como cualquier alojamiento web, sus servidores pueden tratar datos técnicos como tu dirección IP para entregar las páginas y protegerse frente a abusos. No uso esos datos para identificar a nadie.",
+          "El mapa interactivo de la página de datos del proyecto carga teselas de los servidores de la OpenStreetMap Foundation, que reciben tu dirección IP y la dirección de la página para servirlas. Ninguna otra página carga contenido de terceros."
         ]
       },
       {
@@ -147,5 +159,214 @@
     "title": "Página no encontrada",
     "text": "Esta página no existe o se ha movido. El sitio se ha rediseñado hace poco, así que algunos enlaces antiguos pueden apuntar a páginas que ya no están.",
     "home": "Ir a la página de inicio"
+  },
+  "insights": {
+    "back": "Caso de estudio",
+    "eyebrow": "Datos en vivo",
+    "as_of": "ejecución del pipeline del",
+    "read_case_study": "Cómo funciona el pipeline",
+    "noscript": "Los gráficos y el mapa de esta página se dibujan en el navegador a partir de los datos que publica el pipeline, así que necesitan JavaScript.",
+    "explore": "Explorar los datos",
+    "explore_title": "Los resultados, en vivo",
+    "explore_text": "Mapa interactivo de cada municipio, polos pesqueros, supervivencia de empresas, dificultades por sector y el informe de calidad de datos, actualizados en cada ejecución del pipeline.",
+    "js": {
+      "kpi": {
+        "records": "filas de registro ingeridas",
+        "current": "empresas y establecimientos en silver",
+        "on_map": "situados en el mapa",
+        "quarantined": "filas en cuarentena por reglas de calidad"
+      },
+      "labels": {
+        "show_table": "Ver los datos en una tabla",
+        "hide_table": "Ocultar la tabla",
+        "not_published": "este registro no lo publica",
+        "loading": "Cargando los datos del mapa…",
+        "error": "No se pudieron cargar los datos. Inténtalo de nuevo más tarde.",
+        "unclassified": "Sin código NACE",
+        "overseas": "Departamentos de ultramar (97)",
+        "country": "País",
+        "active": "Activas",
+        "operating": "En actividad (estimación)",
+        "mass_address": "en domicilios masivos",
+        "dormant": "inactivas",
+        "strike_off": "en proceso de baja",
+        "address": "Dirección",
+        "companies": "Empresas",
+        "companies_lc": "empresas",
+        "industry": "Sector",
+        "no_activity_codes": "el fichero publicado no incluye código de actividad",
+        "town": "Municipio",
+        "fishing_companies": "Empresas pesqueras",
+        "lq": "Cociente de localización",
+        "per_10k": "Empresas pesqueras por cada 10.000 habitantes",
+        "region": "Zona",
+        "jobs": "Empleos",
+        "jobs_exact_or_low": "Cifra exacta o límite inferior del tramo",
+        "jobs_band": "Amplitud del tramo publicado",
+        "year": "Año",
+        "births": "Altas",
+        "deaths": "Cierres",
+        "live_only": "solo empresas vivas",
+        "cohort": "Cohorte",
+        "cohort_size": "Tamaño de la cohorte",
+        "after": "Sobreviven a {h}",
+        "registered": "Registradas",
+        "distress": "En liquidación o insolvencia",
+        "companies_reporting": "Unidades que declaran plantilla",
+        "bronze_rows": "Filas bronze (última instantánea)",
+        "silver_rows": "Vigentes en silver",
+        "quarantined": "En cuarentena",
+        "on_map": "En el mapa",
+        "rule": "Regla",
+        "severity": "Efecto",
+        "failed_rows": "Filas",
+        "failure_rate": "Tasa",
+        "quarantine": "cuarentena",
+        "warning": "aviso",
+        "insight": "Análisis",
+        "included": "incluido",
+        "excluded": "excluido",
+        "dormant_h": "Inactivas",
+        "strike_off_h": "Bajas"
+      },
+      "charts": {
+        "activity_title": "Proporción de empresas activas que probablemente operan",
+        "activity_note": "En actividad = activas, menos las empresas en domicilios de registro masivo (50 o más empresas), las cuentas inactivas y las bajas en curso. Una empresa puede tener varias señales. Inactividad y bajas solo las publican los registros británico e irlandés.",
+        "hotspots_title": "Las diez direcciones con más sedes sociales",
+        "hotspots_note": "Empresas activas registradas en la misma dirección. La inactividad y las bajas solo se publican en el Reino Unido.",
+        "industry_title": "Estructura sectorial: proporción de empresas activas de cada registro",
+        "industry_note": "Secciones NACE Rev. 2, tras convertir los códigos SIC británicos, NAF franceses, SN2007 noruegos, NACE irlandeses y CNAE españoles. Se omiten las secciones por debajo del 0,5 % en todos los registros.",
+        "hubs_title": "Polos pesqueros: cuánto destaca la pesca en cada municipio",
+        "hubs_note": "Cociente de localización = peso de la pesca en el municipio dividido por su peso en el país. ×200 significa que la pesca es 200 veces más frecuente entre las empresas del municipio que en el conjunto del país. Municipios con al menos {n} empresas activas.",
+        "fishing_jobs_title": "Dónde están los empleos de la pesca y la acuicultura",
+        "fishing_jobs_note": "Noruega publica la plantilla exacta de cada empresa. Francia publica tramos de plantilla, así que las zonas francesas muestran el intervalo que implican.",
+        "demography_title": "Altas y cierres de empresas por año",
+        "demography_note": "Los registros que solo listan empresas vivas no pueden mostrar cierres, y sus años antiguos quedan infravalorados. {year} aún no ha terminado y se omite.",
+        "survival_title": "Cuántas empresas nuevas siguen vivas al cabo de 1, 3, 5 y 10 años",
+        "survival_note": "Solo Francia e Irlanda conservan las unidades cerradas con su fecha de cierre, necesaria para medir la supervivencia. Cada horizonte se muestra solo para las cohortes que ya lo han alcanzado.",
+        "survival_sections_title": "Supervivencia a cinco años por sector",
+        "survival_sections_note": "Todas las cohortes desde 1980 con al menos cinco años. Se omiten los sectores con menos de 1.000 altas.",
+        "distress_title": "Empresas en liquidación, insolvencia o baja en curso, por sector",
+        "distress_note": "Proporción de empresas registradas. Francia y Navarra no publican este estado. Se omiten los sectores con menos de 1.000 empresas.",
+        "employment_title": "Empleo por sector",
+        "employment_note_exact": "Noruega: plantillas exactas declaradas al registro (solo una parte de las unidades las declara).",
+        "employment_note_bands": "Tramos de plantilla: la barra es el límite inferior y la parte clara el intervalo hasta el límite superior.",
+        "funnel_title": "De las filas en bruto al mapa, por registro",
+        "funnel_note": "Bronze conserva todas las filas de la última instantánea (el fichero de Navarra contiene nueve paneles anuales). Silver conserva una versión vigente por empresa. La barra es la proporción de silver situada en el mapa.",
+        "precision_title": "Con qué precisión se sitúa cada empresa",
+        "precision_note": "Gana el nivel más preciso disponible: dirección (coordenadas del registro o geocodificador), código postal, distrito, municipio.",
+        "dq_title": "Reglas de calidad que saltaron en la última instantánea",
+        "dq_note": "Los avisos conservan la fila y se siguen en el tiempo. La cuarentena mueve la fila a silver.quarantine con las reglas incumplidas. Todas las demás reglas se cumplieron en todas las filas.",
+        "coverage_title": "Qué registro alimenta cada análisis",
+        "coverage_note": "Un registro queda fuera de un análisis cuando no publica los campos necesarios, para que un dato desconocido nunca aparezca como cero. Pasa el ratón o el foco por una celda para ver el motivo."
+      },
+      "precision": {
+        "ADDRESS": "Dirección",
+        "POSTCODE": "Código postal",
+        "DISTRICT": "Distrito",
+        "CITY": "Municipio",
+        "NONE": "Sin situar"
+      },
+      "map": {
+        "aria": "Mapa de empresas por municipio",
+        "layer": "Capa del mapa",
+        "layer_companies": "Todas las empresas",
+        "layer_fishing": "Pesca y acuicultura",
+        "show": "Mostrar",
+        "all_countries": "Todos los registros",
+        "metric_active": "Empresas activas",
+        "metric_operating": "Empresas en actividad (estimación)",
+        "metric_fishing_all": "Toda la pesca y acuicultura",
+        "marine_fishing": "Pesca marina",
+        "freshwater_fishing": "Pesca en agua dulce",
+        "marine_aquaculture": "Acuicultura marina",
+        "freshwater_aquaculture": "Acuicultura en agua dulce",
+        "top_industries": "Sectores principales",
+        "top_title": "Municipios principales para esta selección",
+        "status": "{n} municipios · {total} en total. El área del círculo es proporcional a la cifra. Haz clic en el mapa para hacer zoom con la rueda."
+      },
+      "rules": {
+        "address_in_register_country": "la dirección está en el país del registro",
+        "business_id_present": "identificador de registro presente",
+        "city_present": "municipio presente",
+        "closure_after_registration": "fecha de cierre posterior a la de alta",
+        "employees_range_consistent": "tramo de plantilla coherente",
+        "id_checksum_valid": "el identificador supera su dígito de control o regla de formato",
+        "industry_mapped_to_nace": "el código de actividad se convierte a NACE Rev. 2",
+        "name_present_for_legal_entities": "las personas jurídicas tienen nombre",
+        "postal_code_valid": "código postal presente y válido",
+        "status_known": "el estado pertenece al vocabulario común"
+      },
+      "insight_names": {
+        "company_activity_summary": "Activas frente a registradas",
+        "company_demography": "Altas y cierres",
+        "cohort_survival": "Supervivencia",
+        "fishing_hubs": "Polos pesqueros",
+        "employment_by_region_industry": "Empleo",
+        "distress_by_industry": "Dificultades"
+      },
+      "reasons": {
+        "Basic Company Data lists live companies only": "Basic Company Data solo lista empresas vivas",
+        "basic data lists registered companies only": "los datos básicos solo listan empresas registradas",
+        "births and closures (establishments)": "altas y cierres (establecimientos)",
+        "births and dissolutions": "altas y disoluciones",
+        "births only. Live-only register": "solo altas. Registro de empresas vivas",
+        "births only. Live-only register: older years under-counted": "solo altas. Registro de empresas vivas: años antiguos infravalorados",
+        "births. Deaths only for units deleted between snapshots": "altas. Cierres solo para unidades eliminadas entre instantáneas",
+        "closed establishments kept with closure date": "conserva los establecimientos cerrados con su fecha de cierre",
+        "deleted units are not in the bulk file": "las unidades eliminadas no figuran en el fichero masivo",
+        "dissolved companies kept with dissolution date": "conserva las empresas disueltas con su fecha de disolución",
+        "dormant accounts, strike-off proposals, mass addresses": "cuentas inactivas, propuestas de baja, domicilios masivos",
+        "exact headcount": "plantilla exacta",
+        "headcount bands": "tramos de plantilla",
+        "mass addresses only": "solo domicilios masivos",
+        "mass addresses only (no dormancy signal)": "solo domicilios masivos (sin señal de inactividad)",
+        "no activity code in the basic-data file": "sin código de actividad en el fichero de datos básicos",
+        "no headcount in basic data": "sin plantilla en los datos básicos",
+        "no headcount published": "no publica la plantilla",
+        "no registration dates": "sin fechas de alta",
+        "no status published": "no publica el estado",
+        "only open/closed published": "solo publica abierto/cerrado",
+        "panel entries and exits between yearly releases": "entradas y salidas del panel entre ediciones anuales",
+        "strike-off list, mass addresses": "lista de bajas, domicilios masivos"
+      },
+      "countries": {
+        "FR": "Francia",
+        "GB": "Reino Unido",
+        "IE": "Irlanda",
+        "NO": "Noruega",
+        "EE": "Estonia",
+        "ES": "Navarra (España)"
+      },
+      "sections": {
+        "A": "Agricultura, silvicultura y pesca",
+        "B": "Industrias extractivas",
+        "C": "Industria manufacturera",
+        "D": "Electricidad y gas",
+        "E": "Agua y residuos",
+        "F": "Construcción",
+        "G": "Comercio",
+        "H": "Transporte y almacenamiento",
+        "I": "Hostelería",
+        "J": "Información y comunicaciones",
+        "K": "Finanzas y seguros",
+        "L": "Inmobiliarias",
+        "M": "Actividades profesionales y científicas",
+        "N": "Actividades administrativas",
+        "O": "Administración pública",
+        "P": "Educación",
+        "Q": "Sanidad y servicios sociales",
+        "R": "Arte y ocio",
+        "S": "Otros servicios",
+        "T": "Hogares como empleadores",
+        "U": "Organismos extraterritoriales"
+      },
+      "horizons": {
+        "1y": "1 año",
+        "3y": "3 años",
+        "5y": "5 años",
+        "10y": "10 años"
+      }
+    }
   }
 }

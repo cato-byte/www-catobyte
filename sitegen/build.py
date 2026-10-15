@@ -7,6 +7,7 @@ endpoint, which does not resolve directory indexes):
     /{lang}/index.html              home
     /{lang}/{about,contact,legal}.html
     /{lang}/projects/index.html     /{lang}/projects/{slug}.html
+    /{lang}/projects/{slug}/insights.html   a project's data page, when it has one
     /{lang}/blog/index.html         /{lang}/blog/{slug}.html
     /pages/... and /post/...        redirects from the old site's URLs
 """
@@ -56,6 +57,8 @@ def url_for(lang: str, page: str, slug: str | None = None) -> str:
         return f"/{lang}/{page}/index.html"
     if page == "project":
         return f"/{lang}/projects/{slug}.html"
+    if page == "insights":
+        return f"/{lang}/projects/{slug}/insights.html"
     if page == "post":
         return f"/{lang}/blog/{slug}.html"
     return f"/{lang}/{page}.html"
@@ -78,10 +81,25 @@ def format_month(value: str | date | None, lang: str) -> str:
     return f"{MONTHS[lang][int(month) - 1]} {year}"
 
 
+def format_number(value: int, lang: str) -> str:
+    """1000 -> '1,000' (en), '1.000' (es), '1 000' (fr, narrow no-break space)."""
+    text = f"{value:,}"
+    return {"es": text.replace(",", "."), "fr": text.replace(",", "\u202f")}.get(lang, text)
+
+
+def is_recent(value: str | date | None, months: int = 6) -> bool:
+    """True when a 'YYYY-MM' date is within the last `months` months (e.g. a new certification)."""
+    if not value:
+        return False
+    year, month = map(int, str(value).split("-")[:2])
+    today = date.today()
+    return 0 <= (today.year - year) * 12 + today.month - month <= months
+
+
 def asset_version() -> str:
     """Short hash of the CSS/JS so browsers fetch new files after a deploy (cache busting)."""
     digest = hashlib.sha256()
-    for name in ("css/site.css", "css/prism.css", "js/site.js", "js/prism.js"):
+    for name in ("css/site.css", "css/prism.css", "js/site.js", "js/prism.js", "js/insights.js"):
         digest.update((config.ROOT / name).read_bytes())
     return digest.hexdigest()[:10]
 
@@ -112,6 +130,8 @@ class Builder:
         )
         self.env.filters["date"] = format_date
         self.env.filters["month"] = format_month
+        self.env.filters["recent"] = is_recent
+        self.env.filters["number"] = format_number
         self.env.globals.update(
             url_for=url_for, LANGUAGE_NAMES=LANGUAGE_NAMES, asset_version=asset_version(),
             cv=config.load_experience(),
@@ -140,7 +160,7 @@ class Builder:
 
     def alternates(self, page: str, slug: str | None = None, available: list[str] | None = None) -> dict[str, str]:
         """Same page in the other languages; falls back to that language's section index."""
-        fallback = {"post": "blog", "project": "projects"}.get(page, "home")
+        fallback = {"post": "blog", "project": "projects", "insights": "projects"}.get(page, "home")
         return {
             lang: url_for(lang, page, slug) if available is None or lang in available else url_for(lang, fallback)
             for lang in self.languages
@@ -159,6 +179,7 @@ class Builder:
             self.build_language(lang, registry)
 
         self.build_root()
+        self.copy_local_data()
         self.build_redirects(registry)
         self.build_sitemap()
 
@@ -171,6 +192,13 @@ class Builder:
             if src.exists():
                 shutil.copytree(src, self.out_dir / name)
 
+    def copy_local_data(self) -> None:
+        """Local preview only: serve fetched pipeline output where the live site has it."""
+        for project in load_projects(self.site["default_language"]):
+            src = config.LOCAL_DATA_DIR / project.slug
+            if project.insights and src.is_dir():
+                shutil.copytree(src, self.out_dir / project.insights.data_url.strip("/"), dirs_exist_ok=True)
+
     def build_language(self, lang: str, registry: list[dict]) -> None:
         t = self.load_i18n(lang)
         posts = load_posts(lang, registry)
@@ -181,6 +209,7 @@ class Builder:
             Page("home", url_for(lang, "home"), t["meta"]["site_title"], t["meta"]["description"],
                  self.alternates("home"), image="/images/og-default.png"),
             lang, t, projects=projects[:3], posts=posts[:3],
+            featured=next((p for p in projects if p.featured), None),
         )
         for name in STATIC_PAGES:
             self.render(
@@ -203,6 +232,14 @@ class Builder:
                      image=project.cover, has_code=project.has_code),
                 lang, t, project=project, body=Markup(project.body_html),
             )
+            if project.insights:
+                insights = project.insights
+                self.render(
+                    "insights.html",
+                    Page("insights", url_for(lang, "insights", project.slug), insights.title, insights.summary,
+                         self.alternates("insights", project.slug, project.languages), image=project.cover),
+                    lang, t, project=project, insights=insights, body=Markup(insights.body_html),
+                )
 
         posts_by_year = [(year, list(group)) for year, group in groupby(posts, key=lambda p: p.date.year)]
         self.render(

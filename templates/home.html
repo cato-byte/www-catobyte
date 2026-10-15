@@ -47,7 +47,44 @@
   </div>
 </section>
 
-<section class="section section-alt" aria-labelledby="now-title">
+{% if featured %}
+<section class="section section-alt" aria-labelledby="featured-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="featured-title">{{ t.home.featured_title }}</h2>
+    </div>
+    <div class="feature">
+      <a class="feature-media" href="{{ url_for(lang, 'project', featured.slug) }}">
+        <img src="{{ featured.cover }}" alt="{{ featured.cover_alt }}" width="1200" height="630">
+      </a>
+      <div class="feature-body">
+        <p class="eyebrow"><span class="status status-{{ featured.status }}">{{ t.projects.status[featured.status] }}</span> · {{ t.projects.updated }} {{ featured.updated | date(lang) }}</p>
+        <h3>{{ featured.title }}</h3>
+        <p class="lede">{{ featured.summary }}</p>
+        {% if featured.highlights %}
+        <ul class="stats">
+          {% for item in featured.highlights %}<li><strong>{{ item.value }}</strong><span>{{ item.label }}</span></li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% if featured.points %}
+        <details>
+          <summary>{{ t.home.featured_inside }}</summary>
+          <ul class="feature-points">
+            {% for point in featured.points %}<li>{{ point }}</li>{% endfor %}
+          </ul>
+        </details>
+        {% endif %}
+        <div class="actions">
+          <a class="button" href="{{ url_for(lang, 'project', featured.slug) }}">{{ t.projects.read }} <span aria-hidden="true">→</span></a>
+          {% if featured.insights %}<a class="button button-ghost" href="{{ url_for(lang, 'insights', featured.slug) }}">{{ t.insights.explore }}</a>{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<section class="section" aria-labelledby="now-title">
   <div class="container">
     <h2 id="now-title">{{ t.home.now_title }}</h2>
     <ul class="now-list">
@@ -62,7 +99,7 @@
 </section>
 
 {% if projects %}
-<section class="section" aria-labelledby="projects-title">
+<section class="section section-alt" aria-labelledby="projects-title">
   <div class="container">
     <div class="section-head">
       <h2 id="projects-title">{{ t.home.projects_title }}</h2>
@@ -75,7 +112,7 @@
 </section>
 {% endif %}
 
-<section class="section section-alt" aria-labelledby="skills-title">
+<section class="section" aria-labelledby="skills-title">
   <div class="container">
     <h2 id="skills-title">{{ t.home.skills_title }}</h2>
     {{ skills(site) }}
@@ -83,7 +120,7 @@
 </section>
 
 {% if posts %}
-<section class="section" aria-labelledby="writing-title">
+<section class="section section-alt" aria-labelledby="writing-title">
   <div class="container">
     <div class="section-head">
       <h2 id="writing-title">{{ t.home.writing_title }}</h2>

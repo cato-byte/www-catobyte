@@ -8,3 +8,5 @@ __pycache__/
 pages/
 post/
 util/config.py
+# Pipeline output fetched for local preview (scripts/fetch_project_data.sh), never committed
+local_data/

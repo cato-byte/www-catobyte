@@ -197,3 +197,64 @@ def test_about_page_lists_every_employer(pages):
     for lang in LANGS:
         text = pages[Path(lang) / "about.html"].get_text()
         assert all(company in text for company in companies), lang
+
+
+def _projects_with_insights(lang):
+    return [p for p in load_projects(lang) if p.insights]
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_insights_pages_exist_and_are_linked_from_their_project(dist, pages, lang):
+    projects = _projects_with_insights(lang)
+    assert projects, "the registry project should have an insights page"
+    for project in projects:
+        url = f"/{lang}/projects/{project.slug}/insights.html"
+        page = pages[Path(url.lstrip("/"))]
+        root = page.find(attrs={"data-insights": True})
+        assert root and root["data-src"].startswith("/") and root["data-src"].endswith("/data/")
+        # Chart labels for the script. Read from disk: another test strips <script> from the shared soups.
+        raw = (dist / url.lstrip("/")).read_text("utf-8")
+        json.loads(re.search(r'<script type="application/json" id="insights-i18n">(.*?)</script>', raw, re.S).group(1))
+        assert page.find(attrs={"data-viz": "map"})
+        assert pages[Path(lang) / "projects" / f"{project.slug}.html"].find("a", href=url), lang
+
+
+def test_insights_pages_use_only_known_charts(pages):
+    known = set(re.findall(r"^  VIZ\.(\w+) =", (config.ROOT / "js" / "insights.js").read_text("utf-8"), re.M))
+    for rel, soup in pages.items():
+        for node in soup.find_all(attrs={"data-viz": True}):
+            assert node["data-viz"] in known, f"{rel}: unknown chart {node['data-viz']}"
+
+
+def test_insights_page_stats_and_reasons_exist_in_every_language():
+    script = (config.ROOT / "js" / "insights.js").read_text("utf-8")
+    for lang in LANGS:
+        for project in _projects_with_insights(lang):
+            for stat in re.findall(r'data-stat="(\w+)"', project.insights.body_html):
+                assert re.search(rf"\b{stat}:", script), f"{lang}: data-stat {stat} is never computed"
+
+
+def test_home_features_the_flagship_project(pages):
+    for lang in LANGS:
+        featured = next(p for p in load_projects(lang) if p.featured)
+        home = pages[Path(lang) / "index.html"]
+        section = home.find("section", attrs={"aria-labelledby": "featured-title"})
+        assert section and section.find("a", href=f"/{lang}/projects/{featured.slug}/insights.html"), lang
+
+
+def test_deploy_never_uploads_pipeline_data():
+    script = (config.ROOT / "scripts" / "deploy.sh").read_text("utf-8")
+    assert '--exclude "*/projects/*/data/*"' in script
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_study_guides_render_question_cards(pages, lang):
+    for entry in load_registry():
+        if lang not in entry["languages"] or not entry["post_id"].endswith("study_guide"):
+            continue
+        soup = pages[Path(lang) / "blog" / f"{entry['post_id']}.html"]
+        cards = soup.select("details.qa")
+        if entry["post_id"] == "pyspark_study_guide":
+            continue  # written before the question-card format
+        assert len(cards) >= 100, f"{entry['post_id']} ({lang}): {len(cards)} questions"
+        assert soup.find("nav", class_="qa-toc")
