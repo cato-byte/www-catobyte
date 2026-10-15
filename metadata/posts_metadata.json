@@ -207,5 +207,81 @@
         },
         "creation_date": "2025-10-15",
         "publication_date": "2025-10-15"
+    },
+    {
+        "post_id": "aws_practicioner_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "aws_practicioner_study_guide.md",
+                "title": "AWS Certified Cloud Practitioner Study Guide"
+            },
+            "es": {
+                "file_name": "aws_practicioner_study_guide.md",
+                "title": "Guía de estudio AWS Certified Cloud Practitioner"
+            },
+            "fr": {
+                "file_name": "aws_practicioner_study_guide.md",
+                "title": "Fiche d'étude AWS Certified Cloud Practitioner"
+            }
+        },
+        "creation_date": "2026-10-16",
+        "publication_date": "2026-10-16"
+    },
+    {
+        "post_id": "dbt_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "dbt_study_guide.md",
+                "title": "dbt Study Guide"
+            },
+            "es": {
+                "file_name": "dbt_study_guide.md",
+                "title": "Guía de estudio de dbt"
+            },
+            "fr": {
+                "file_name": "dbt_study_guide.md",
+                "title": "Fiche d'étude dbt"
+            }
+        },
+        "creation_date": "2026-10-16",
+        "publication_date": "2026-10-16"
+    },
+    {
+        "post_id": "python_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "python_study_guide.md",
+                "title": "Python Study Guide"
+            },
+            "es": {
+                "file_name": "python_study_guide.md",
+                "title": "Guía de estudio de Python"
+            },
+            "fr": {
+                "file_name": "python_study_guide.md",
+                "title": "Fiche d'étude Python"
+            }
+        },
+        "creation_date": "2026-10-16",
+        "publication_date": "2026-10-16"
+    },
+    {
+        "post_id": "postgres_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "postgres_study_guide.md",
+                "title": "PostgreSQL Study Guide"
+            },
+            "es": {
+                "file_name": "postgres_study_guide.md",
+                "title": "Guía de estudio de PostgreSQL"
+            },
+            "fr": {
+                "file_name": "postgres_study_guide.md",
+                "title": "Fiche d'étude PostgreSQL"
+            }
+        },
+        "creation_date": "2026-10-16",
+        "publication_date": "2026-10-16"
     }
 ]
