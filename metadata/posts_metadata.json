@@ -283,5 +283,252 @@
         },
         "creation_date": "2026-10-16",
         "publication_date": "2026-10-16"
+    },
+    {
+        "post_id": "databricks_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "databricks_study_guide.md",
+                "title": "Databricks Study Guide"
+            },
+            "es": {
+                "file_name": "databricks_study_guide.md",
+                "title": "Guía de estudio de Databricks"
+            },
+            "fr": {
+                "file_name": "databricks_study_guide.md",
+                "title": "Fiche d'étude Databricks"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "airflow_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "airflow_study_guide.md",
+                "title": "Apache Airflow Study Guide"
+            },
+            "es": {
+                "file_name": "airflow_study_guide.md",
+                "title": "Guía de estudio de Apache Airflow"
+            },
+            "fr": {
+                "file_name": "airflow_study_guide.md",
+                "title": "Fiche d'étude Apache Airflow"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "snowflake_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "snowflake_study_guide.md",
+                "title": "Snowflake Study Guide"
+            },
+            "es": {
+                "file_name": "snowflake_study_guide.md",
+                "title": "Guía de estudio de Snowflake"
+            },
+            "fr": {
+                "file_name": "snowflake_study_guide.md",
+                "title": "Fiche d'étude Snowflake"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "aws_glue_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "aws_glue_study_guide.md",
+                "title": "AWS Glue Study Guide"
+            },
+            "es": {
+                "file_name": "aws_glue_study_guide.md",
+                "title": "Guía de estudio de AWS Glue"
+            },
+            "fr": {
+                "file_name": "aws_glue_study_guide.md",
+                "title": "Fiche d'étude AWS Glue"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "aws_athena_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "aws_athena_study_guide.md",
+                "title": "Amazon Athena Study Guide"
+            },
+            "es": {
+                "file_name": "aws_athena_study_guide.md",
+                "title": "Guía de estudio de Amazon Athena"
+            },
+            "fr": {
+                "file_name": "aws_athena_study_guide.md",
+                "title": "Fiche d'étude Amazon Athena"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "aws_rds_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "aws_rds_study_guide.md",
+                "title": "Amazon RDS Study Guide"
+            },
+            "es": {
+                "file_name": "aws_rds_study_guide.md",
+                "title": "Guía de estudio de Amazon RDS"
+            },
+            "fr": {
+                "file_name": "aws_rds_study_guide.md",
+                "title": "Fiche d'étude Amazon RDS"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "hadoop_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "hadoop_study_guide.md",
+                "title": "Hadoop Study Guide"
+            },
+            "es": {
+                "file_name": "hadoop_study_guide.md",
+                "title": "Guía de estudio de Hadoop"
+            },
+            "fr": {
+                "file_name": "hadoop_study_guide.md",
+                "title": "Fiche d'étude Hadoop"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "data_warehousing_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "data_warehousing_study_guide.md",
+                "title": "Data Warehousing Study Guide"
+            },
+            "es": {
+                "file_name": "data_warehousing_study_guide.md",
+                "title": "Guía de estudio de Data Warehousing"
+            },
+            "fr": {
+                "file_name": "data_warehousing_study_guide.md",
+                "title": "Fiche d'étude Data Warehousing"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "data_architecture_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "data_architecture_study_guide.md",
+                "title": "Data Architecture Study Guide"
+            },
+            "es": {
+                "file_name": "data_architecture_study_guide.md",
+                "title": "Guía de estudio de Arquitectura de datos"
+            },
+            "fr": {
+                "file_name": "data_architecture_study_guide.md",
+                "title": "Fiche d'étude Architecture des données"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "cicd_data_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "cicd_data_study_guide.md",
+                "title": "CI/CD for Data Study Guide"
+            },
+            "es": {
+                "file_name": "cicd_data_study_guide.md",
+                "title": "Guía de estudio de CI/CD para datos"
+            },
+            "fr": {
+                "file_name": "cicd_data_study_guide.md",
+                "title": "Fiche d'étude CI/CD pour les données"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "data_architecture_patterns",
+        "languages": {
+            "en": {
+                "file_name": "data_architecture_patterns.md",
+                "title": "Data Architecture Patterns: Kimball, Microservices, Medallion and More"
+            },
+            "es": {
+                "file_name": "data_architecture_patterns.md",
+                "title": "Patrones de arquitectura de datos: Kimball, microservicios, medallion y más"
+            },
+            "fr": {
+                "file_name": "data_architecture_patterns.md",
+                "title": "Modèles d'architecture des données : Kimball, microservices, médaillon et plus"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "testing_and_performance_big_data",
+        "languages": {
+            "en": {
+                "file_name": "testing_and_performance_big_data.md",
+                "title": "Testing and Performance in Big Data Pipelines"
+            },
+            "es": {
+                "file_name": "testing_and_performance_big_data.md",
+                "title": "Pruebas y rendimiento en pipelines de big data"
+            },
+            "fr": {
+                "file_name": "testing_and_performance_big_data.md",
+                "title": "Tests et performances des pipelines big data"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "cicd_automation_for_data",
+        "languages": {
+            "en": {
+                "file_name": "cicd_automation_for_data.md",
+                "title": "CI/CD and Automation for Data: What Matters, with GitHub Actions Examples"
+            },
+            "es": {
+                "file_name": "cicd_automation_for_data.md",
+                "title": "CI/CD y automatización para datos: lo que importa, con ejemplos de GitHub Actions"
+            },
+            "fr": {
+                "file_name": "cicd_automation_for_data.md",
+                "title": "CI/CD et automatisation pour les données : l'essentiel, avec des exemples GitHub Actions"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
     }
 ]

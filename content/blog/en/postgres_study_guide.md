@@ -5,7 +5,7 @@
 
 ![PostgreSQL study guide: about 200 questions](../../images/postgres_study_guide_title_img.png)
 
-About 200 questions on PostgreSQL and SQL for data engineering interviews: architecture, data types, querying, window functions, indexes, transactions and MVCC, performance tuning, data modelling, administration and advanced features such as JSONB and partitioning. Examples target PostgreSQL 16 and 17. Open a question to see its answer, or use the filter to search the whole guide.
+About 200 questions on PostgreSQL and SQL for data engineering interviews: architecture, data types, querying, window functions, indexes, transactions and MVCC, performance tuning, data modeling, administration and advanced features such as JSONB and partitioning. Examples target PostgreSQL 16 and 17. Open a question to see its answer, or use the filter to search the whole guide.
 
 <!-- QA -->
 
@@ -462,8 +462,8 @@ FROM yearly_revenue;
 
 - **B-tree** (default): equality and range searches (`=`, `<`, `>`, `BETWEEN`, `ORDER BY`, prefix `LIKE 'abc%'`) on sortable data.
 - **Hash:** equality only. Rarely better than B-tree, but small for long values.
-- **GIN** (generalised inverted index): values that contain several components, such as arrays, JSONB and full-text search vectors, for "contains" queries.
-- **GiST** (generalised search tree): geometric data, ranges, full-text search and nearest-neighbour searches (with PostGIS, for example).
+- **GIN** (generalized inverted index): values that contain several components, such as arrays, JSONB and full-text search vectors, for "contains" queries.
+- **GiST** (generalized search tree): geometric data, ranges, full-text search and nearest-neighbor searches (with PostGIS, for example).
 - **SP-GiST:** space-partitioned data such as quadtrees, IP addresses or phone numbers.
 - **BRIN** (block range index): very large tables whose values follow the physical order, such as an append-only timestamp column. Tiny and cheap to maintain.
 
@@ -578,14 +578,14 @@ Old row versions left by updates and deletes that no transaction can see any mor
 #### What are the transaction isolation levels in PostgreSQL?
 
 - **Read Committed** (default): each statement sees data committed before it started.
-- **Repeatable Read:** the whole transaction sees one snapshot, taken at its first statement. Concurrent conflicting updates cause serialisation errors.
-- **Serializable:** like Repeatable Read, plus detection of anomalies (serialisable snapshot isolation), so the result equals some serial order. Applications must retry on serialisation failures.
+- **Repeatable Read:** the whole transaction sees one snapshot, taken at its first statement. Concurrent conflicting updates cause serialization errors.
+- **Serializable:** like Repeatable Read, plus detection of anomalies (serialisable snapshot isolation), so the result equals some serial order. Applications must retry on serialization failures.
 
 Read Uncommitted is accepted but behaves like Read Committed.
 
 #### What anomalies do isolation levels prevent?
 
-Dirty reads (never possible in PostgreSQL), non-repeatable reads (prevented from Repeatable Read), phantom reads (also prevented by PostgreSQL's Repeatable Read) and serialisation anomalies such as write skew (prevented only by Serializable).
+Dirty reads (never possible in PostgreSQL), non-repeatable reads (prevented from Repeatable Read), phantom reads (also prevented by PostgreSQL's Repeatable Read) and serialization anomalies such as write skew (prevented only by Serializable).
 
 #### What is a deadlock, and how does PostgreSQL handle it?
 
@@ -646,7 +646,7 @@ It samples tables and updates the statistics (`pg_statistic`) the planner uses t
 
 #### What is HOT (heap-only tuple) update?
 
-An optimisation where an update that doesn't change indexed columns, and fits on the same page, creates the new version without updating indexes. A lower `fillfactor` leaves room for HOT updates on update-heavy tables.
+An optimization where an update that doesn't change indexed columns, and fits on the same page, creates the new version without updating indexes. A lower `fillfactor` leaves room for HOT updates on update-heavy tables.
 
 #### What is the difference between `COMMIT` and `synchronous_commit = off`?
 
@@ -686,7 +686,7 @@ The memory each sort or hash operation may use before spilling to disk. Too low 
 
 #### What is `pg_stat_statements`?
 
-An extension that records execution statistics for every normalised query: calls, total and mean time, rows, buffer hits. It's the first place to look for slow or frequent queries.
+An extension that records execution statistics for every normalized query: calls, total and mean time, rows, buffer hits. It's the first place to look for slow or frequent queries.
 
 #### How do you find currently running slow queries?
 
@@ -743,9 +743,9 @@ Wasted space from dead tuples that vacuum hasn't reclaimed or the operating syst
 
 #### What would you check first when a query suddenly becomes slow?
 
-Its plan (`EXPLAIN ANALYZE`) compared with before, statistics freshness (last analyse), data volume changes, locks and waits in `pg_stat_activity`, bloat, and whether parameters or a new index changed the plan.
+Its plan (`EXPLAIN ANALYZE`) compared with before, statistics freshness (last analyze), data volume changes, locks and waits in `pg_stat_activity`, bloat, and whether parameters or a new index changed the plan.
 
-### Data modelling, normalisation and OLAP
+### Data modeling, normalization and OLAP
 
 #### Name the three main normal forms.
 
@@ -757,13 +757,13 @@ Its plan (`EXPLAIN ANALYZE`) compared with before, statistics freshness (last an
 
 Boyce-Codd normal form, a stricter 3NF: every determinant (a column set that determines another column) must be a candidate key.
 
-#### What is denormalisation, and when is it justified?
+#### What is denormalization, and when is it justified?
 
 Deliberately adding redundancy (duplicated columns, pre-joined or pre-aggregated tables) to speed up reads, for analytics and reporting where queries dominate and data is loaded in controlled batches.
 
 #### What is the difference between OLTP and OLAP?
 
-OLTP (online transaction processing) handles many short reads and writes on current data, with normalised schemas and row-oriented storage. OLAP (online analytical processing) runs complex queries over large historical datasets, with denormalised schemas (star schemas) and columnar storage.
+OLTP (online transaction processing) handles many short reads and writes on current data, with normalized schemas and row-oriented storage. OLAP (online analytical processing) runs complex queries over large historical datasets, with denormalized schemas (star schemas) and columnar storage.
 
 #### Which are the main OLAP operations in an OLAP system?
 
@@ -781,7 +781,7 @@ A dimensional model with a central fact table (measures and foreign keys) surrou
 
 #### What is a snowflake schema?
 
-A star schema whose dimensions are normalised into several related tables (product → category → department). It saves space but needs more joins.
+A star schema whose dimensions are normalized into several related tables (product → category → department). It saves space but needs more joins.
 
 #### What is the grain of a fact table?
 
@@ -838,9 +838,9 @@ SELECT d::date AS day, extract(isodow FROM d) AS weekday, extract(quarter FROM d
 FROM generate_series('2020-01-01'::date, '2030-12-31', interval '1 day') AS d;
 ```
 
-#### What is Data Vault modelling?
+#### What is Data Vault modeling?
 
-A modelling method for integrating many sources with full history: hubs (business keys), links (relationships) and satellites (descriptive attributes with load dates). It favours auditability and parallel loading, and usually feeds star schemas for reporting.
+A modeling method for integrating many sources with full history: hubs (business keys), links (relationships) and satellites (descriptive attributes with load dates). It favors auditability and parallel loading, and usually feeds star schemas for reporting.
 
 #### When would you not use PostgreSQL for analytics?
 
@@ -887,7 +887,7 @@ With `scram-sha-256` (the default since PostgreSQL 14) rather than md5, connecti
 
 #### How do you prevent SQL injection?
 
-Use parameterised queries (placeholders bound by the driver) instead of string concatenation. In dynamic SQL inside functions, use `format()` with `%I` for identifiers and `%L` for literals, or `EXECUTE ... USING`.
+Use parameterized queries (placeholders bound by the driver) instead of string concatenation. In dynamic SQL inside functions, use `format()` with `%I` for identifiers and `%L` for literals, or `EXECUTE ... USING`.
 
 #### What is the difference between logical and physical backups?
 
@@ -947,7 +947,7 @@ FROM pg_stat_database;
 
 #### What is `statement_timeout`, and where should you set it?
 
-The maximum time a statement may run before being cancelled. Set it per role or per application (for example 30 seconds for a web application) to protect the server from runaway queries.
+The maximum time a statement may run before being canceled. Set it per role or per application (for example 30 seconds for a web application) to protect the server from runaway queries.
 
 #### What does Amazon RDS for PostgreSQL manage for you?
 
@@ -986,7 +986,7 @@ For semi-structured or sparse attributes that vary between rows, or raw payloads
 
 #### What is full-text search in PostgreSQL?
 
-Searching documents with `tsvector` (normalised lexemes) and `tsquery`, with language-specific stemming, ranking (`ts_rank`) and GIN indexes:
+Searching documents with `tsvector` (normalized lexemes) and `tsquery`, with language-specific stemming, ranking (`ts_rank`) and GIN indexes:
 
 ```sql
 SELECT * FROM article
@@ -1003,7 +1003,7 @@ Functions return a value and are called in queries. They run inside the caller's
 
 #### What are function volatility categories?
 
-`IMMUTABLE` (same result for the same arguments forever, required for expression indexes), `STABLE` (constant within one statement) and `VOLATILE` (may change on every call, the default). Marking them correctly lets the planner optimise.
+`IMMUTABLE` (same result for the same arguments forever, required for expression indexes), `STABLE` (constant within one statement) and `VOLATILE` (may change on every call, the default). Marking them correctly lets the planner optimize.
 
 #### What is a trigger?
 
