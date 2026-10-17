@@ -13,7 +13,7 @@ About 200 questions and short answers I used to prepare the AWS Certified Cloud 
 
 #### What is cloud computing?
 
-The on-demand delivery of IT resources (compute, storage, databases, networking, software) over the internet with pay-as-you-go pricing. Instead of buying and running data centres, you rent capacity from a provider and release it when you no longer need it.
+The on-demand delivery of IT resources (compute, storage, databases, networking, software) over the internet with pay-as-you-go pricing. Instead of buying and running data centers, you rent capacity from a provider and release it when you no longer need it.
 
 #### What are the six advantages of cloud computing according to AWS?
 
@@ -21,13 +21,13 @@ The on-demand delivery of IT resources (compute, storage, databases, networking,
 2. Benefit from massive economies of scale.
 3. Stop guessing capacity.
 4. Increase speed and agility.
-5. Stop spending money running and maintaining data centres.
+5. Stop spending money running and maintaining data centers.
 6. Go global in minutes.
 
 #### What are the different cloud deployment models supported by AWS?
 
 - **Cloud (cloud-native):** everything runs in the public cloud.
-- **On-premises (private cloud):** resources in your own data centre, often with virtualisation and resource-management tools. AWS Outposts brings AWS infrastructure on premises.
+- **On-premises (private cloud):** resources in your own data center, often with virtualization and resource-management tools. AWS Outposts brings AWS infrastructure on premises.
 - **Hybrid:** cloud resources connected to on-premises infrastructure, for example during a migration or for data that must stay on site.
 
 #### What do IaaS, PaaS and SaaS mean? Give AWS examples.
@@ -62,7 +62,7 @@ AWS buys hardware, power and network at a scale no single customer can, so its c
 
 #### What is high availability?
 
-The ability of a system to keep working with minimal downtime when components fail. On AWS it usually means running across several Availability Zones so the loss of one data centre doesn't stop the application.
+The ability of a system to keep working with minimal downtime when components fail. On AWS it usually means running across several Availability Zones so the loss of one data center doesn't stop the application.
 
 #### What is fault tolerance?
 
@@ -85,7 +85,7 @@ The speed at which you can provide resources and try new ideas. Resources that t
 
 #### What does "go global in minutes" mean?
 
-You can deploy an application in AWS Regions around the world with a few clicks or API calls, giving users lower latency without building data centres in other countries.
+You can deploy an application in AWS Regions around the world with a few clicks or API calls, giving users lower latency without building data centers in other countries.
 
 #### What is a managed service?
 
@@ -97,7 +97,7 @@ You run code or use a service without provisioning or managing servers. Capacity
 
 #### What is the AWS Cloud Adoption Framework (AWS CAF)?
 
-Guidance that helps organisations plan a cloud transformation. It groups capabilities into six perspectives: Business, People, Governance (business-focused) and Platform, Security, Operations (technical).
+Guidance that helps organizations plan a cloud transformation. It groups capabilities into six perspectives: Business, People, Governance (business-focused) and Platform, Security, Operations (technical).
 
 #### What are the 7 Rs of migration?
 
@@ -107,11 +107,11 @@ Retire, Retain, Rehost ("lift and shift"), Relocate (for example VMware Cloud on
 
 #### How is AWS global infrastructure structured?
 
-In Regions (separate geographic areas), each made of several Availability Zones (isolated groups of data centres). Edge locations and Regional edge caches serve CloudFront and Route 53 close to users. Local Zones, Wavelength Zones and Outposts extend AWS closer to users or on premises.
+In Regions (separate geographic areas), each made of several Availability Zones (isolated groups of data centers). Edge locations and Regional edge caches serve CloudFront and Route 53 close to users. Local Zones, Wavelength Zones and Outposts extend AWS closer to users or on premises.
 
 #### What is the difference between an AWS Region and an Availability Zone?
 
-A Region is a geographic area, such as eu-west-3 (Paris), that contains several Availability Zones. An Availability Zone (AZ) is one or more discrete data centres with redundant power, networking and connectivity, physically separated from the other AZs of the Region but linked to them by low-latency networking.
+A Region is a geographic area, such as eu-west-3 (Paris), that contains several Availability Zones. An Availability Zone (AZ) is one or more discrete data centers with redundant power, networking and connectivity, physically separated from the other AZs of the Region but linked to them by low-latency networking.
 
 #### How many Availability Zones does a Region have?
 
@@ -138,7 +138,7 @@ Infrastructure embedded in telecom providers' 5G networks, so applications can r
 
 #### What is AWS Outposts?
 
-Racks of AWS-managed hardware installed in your own data centre, running AWS services with the same APIs and tools. Used for low latency to on-premises systems, local data processing or data residency.
+Racks of AWS-managed hardware installed in your own data center, running AWS services with the same APIs and tools. Used for low latency to on-premises systems, local data processing or data residency.
 
 #### Are services global or regional?
 
@@ -146,11 +146,11 @@ Most services are regional: resources live in one Region. A few are global: IAM,
 
 #### What is the AWS Well-Architected Framework?
 
-A set of best practices and questions for designing and reviewing workloads on AWS, organised into six pillars. The Well-Architected Tool in the console runs a structured review of a workload.
+A set of best practices and questions for designing and reviewing workloads on AWS, organized into six pillars. The Well-Architected Tool in the console runs a structured review of a workload.
 
 #### What are the six pillars of the Well-Architected Framework?
 
-Operational excellence, Security, Reliability, Performance efficiency, Cost optimisation and Sustainability.
+Operational excellence, Security, Reliability, Performance efficiency, Cost optimization and Sustainability.
 
 #### What does the Operational excellence pillar focus on?
 
@@ -168,13 +168,13 @@ A workload performing its intended function correctly and consistently: automati
 
 Using resources efficiently as demand and technology change: choosing the right resource types, using managed and serverless services, going global in minutes and experimenting often.
 
-#### What does the Cost optimisation pillar focus on?
+#### What does the Cost optimization pillar focus on?
 
-Delivering business value at the lowest price: paying only for what you use, measuring efficiency, avoiding spending on undifferentiated work, and analysing and attributing expenditure.
+Delivering business value at the lowest price: paying only for what you use, measuring efficiency, avoiding spending on undifferentiated work, and analyzing and attributing expenditure.
 
 #### What does the Sustainability pillar focus on?
 
-Minimising the environmental impact of workloads: understanding your impact, maximising utilisation, using managed services and more efficient hardware, and reducing the resources downstream users need.
+Minimizing the environmental impact of workloads: understanding your impact, maximizing utilization, using managed services and more efficient hardware, and reducing the resources downstream users need.
 
 #### What does "design for failure" mean?
 
@@ -196,7 +196,7 @@ Defining infrastructure in versioned templates or code (CloudFormation, AWS CDK)
 
 #### What is the shared responsibility model in AWS?
 
-Security is shared between AWS and the customer. AWS is responsible for security **of** the cloud (hardware, global infrastructure, facilities, the virtualisation layer, managed-service software). The customer is responsible for security **in** the cloud (data, identities and permissions, operating systems and applications they run, network and firewall configuration, encryption choices).
+Security is shared between AWS and the customer. AWS is responsible for security **of** the cloud (hardware, global infrastructure, facilities, the virtualization layer, managed-service software). The customer is responsible for security **in** the cloud (data, identities and permissions, operating systems and applications they run, network and firewall configuration, encryption choices).
 
 #### How does the shared responsibility model change between EC2, RDS and S3?
 
@@ -206,9 +206,9 @@ The more managed the service, the less the customer does. On EC2 you patch the g
 
 The customer. AWS patches the hypervisor and physical hosts. Tools like AWS Systems Manager Patch Manager help automate guest patching.
 
-#### Who is responsible for physical security of data centres?
+#### Who is responsible for physical security of data centers?
 
-AWS. Customers never get physical access to AWS data centres.
+AWS. Customers never get physical access to AWS data centers.
 
 #### Which responsibilities are shared by both?
 
@@ -216,7 +216,7 @@ Patch management (AWS patches infrastructure, the customer patches guest systems
 
 #### What is AWS Identity and Access Management (IAM)?
 
-The global service that controls who can sign in to an AWS account (authentication) and what they can do (authorisation). It manages users, groups, roles and policies at no extra charge.
+The global service that controls who can sign in to an AWS account (authentication) and what they can do (authorization). It manages users, groups, roles and policies at no extra charge.
 
 #### What is the root user, and how should it be protected?
 
@@ -309,7 +309,7 @@ Account rules for IAM user passwords: minimum length, required character types, 
 
 #### What is AWS Organizations?
 
-A service for centrally managing multiple AWS accounts: group them into organisational units (OUs), apply policies, and consolidate billing. A management account owns the organisation.
+A service for centrally managing multiple AWS accounts: group them into organisational units (OUs), apply policies, and consolidate billing. A management account owns the organization.
 
 #### What are Service Control Policies (SCPs)?
 
@@ -353,7 +353,7 @@ A web application firewall that filters HTTP(S) requests to CloudFront, Applicat
 
 #### What is Amazon GuardDuty?
 
-An intelligent threat-detection service that continuously analyses CloudTrail events, VPC Flow Logs and DNS logs (and optionally other sources) with machine learning and threat intelligence to find suspicious activity, such as compromised credentials or crypto-mining.
+An intelligent threat-detection service that continuously analyzes CloudTrail events, VPC Flow Logs and DNS logs (and optionally other sources) with machine learning and threat intelligence to find suspicious activity, such as compromised credentials or crypto-mining.
 
 #### What is Amazon Inspector?
 
@@ -369,13 +369,13 @@ A central view of security alerts and compliance posture across accounts. It agg
 
 #### What is Amazon Detective?
 
-A service that analyses and visualises security data to investigate the root cause of a security finding or suspicious activity.
+A service that analyzes and visualizes security data to investigate the root cause of a security finding or suspicious activity.
 
 #### What is AWS Artifact?
 
 A self-service portal for AWS compliance reports (SOC, ISO, PCI DSS) and agreements (such as the Business Associate Addendum for HIPAA).
 
-#### What is the AWS Security Center and the compliance programme?
+#### What is the AWS Security Center and the compliance program?
 
 AWS maintains certifications and attestations (ISO 27001, SOC 1/2/3, PCI DSS, HIPAA eligibility, GDPR support) for its infrastructure. Customers inherit the infrastructure controls but must make their own workloads compliant.
 
@@ -400,10 +400,10 @@ An Amazon Machine Image is a template containing the operating system, software 
 #### What are the EC2 instance families?
 
 - **General purpose** (M, T): balanced CPU, memory and networking.
-- **Compute optimised** (C): high-performance processors, for batch processing, gaming, scientific modelling.
-- **Memory optimised** (R, X): large in-memory datasets.
+- **Compute optimized** (C): high-performance processors, for batch processing, gaming, scientific modeling.
+- **Memory optimized** (R, X): large in-memory datasets.
 - **Accelerated computing** (P, G, Inf, Trn): GPUs or custom chips for machine learning and graphics.
-- **Storage optimised** (I, D): high, sequential read/write on local storage, for data warehouses and OLTP.
+- **Storage optimized** (I, D): high, sequential read/write on local storage, for data warehouses and OLTP.
 
 #### What are T instances and burstable performance?
 
@@ -429,7 +429,7 @@ Compute Savings Plans apply to any instance family, size, Region and operating s
 
 #### When do you need a Dedicated Host?
 
-When software licences are tied to physical cores or sockets (bring your own licence), or when compliance requires visibility and control of the physical server.
+When software licences are tied to physical cores or sockets (bring your own license), or when compliance requires visibility and control of the physical server.
 
 #### What is a security group?
 
@@ -648,7 +648,7 @@ A service that migrates databases to AWS with minimal downtime, between the same
 
 #### What is Amazon Athena?
 
-A serverless interactive query service to analyse data in S3 with standard SQL. You pay per amount of data scanned, so columnar formats and partitioning reduce cost.
+A serverless interactive query service to analyze data in S3 with standard SQL. You pay per amount of data scanned, so columnar formats and partitioning reduce cost.
 
 #### What is AWS Glue?
 
@@ -764,7 +764,7 @@ A monitoring and observability service: metrics, alarms, logs (CloudWatch Logs),
 
 #### What is AWS CloudTrail?
 
-A service that records API calls and account activity (who did what, when, from where) for governance, compliance and auditing. Logs can be delivered to S3 and analysed with CloudTrail Lake.
+A service that records API calls and account activity (who did what, when, from where) for governance, compliance and auditing. Logs can be delivered to S3 and analyzed with CloudTrail Lake.
 
 #### What is the difference between CloudWatch and CloudTrail?
 
@@ -784,11 +784,11 @@ Infrastructure as code: you describe resources in JSON or YAML templates, and Cl
 
 #### What is the AWS Cloud Development Kit (CDK)?
 
-A framework to define cloud infrastructure in programming languages (TypeScript, Python, Java, C#, Go). It synthesises CloudFormation templates.
+A framework to define cloud infrastructure in programming languages (TypeScript, Python, Java, C#, Go). It synthesizes CloudFormation templates.
 
 #### What is AWS Trusted Advisor?
 
-A service that inspects your account and recommends improvements in five categories: cost optimisation, performance, security, fault tolerance and service quotas. Basic and Developer Support plans get core checks only. Business and higher plans get the full set.
+A service that inspects your account and recommends improvements in five categories: cost optimization, performance, security, fault tolerance and service quotas. Basic and Developer Support plans get core checks only. Business and higher plans get the full set.
 
 #### What is the AWS Health Dashboard?
 
@@ -834,7 +834,7 @@ A free tool to estimate the cost of an architecture before building it.
 
 #### What is AWS Cost Explorer?
 
-A tool to visualise, analyse and forecast costs and usage over time, with filters by service, account or tag, and recommendations for Savings Plans and rightsizing.
+A tool to visualize, analyze and forecast costs and usage over time, with filters by service, account or tag, and recommendations for Savings Plans and rightsizing.
 
 #### What is AWS Budgets?
 
@@ -850,11 +850,11 @@ Tags (key-value pairs such as `project=lakehouse`) activated in the billing cons
 
 #### What is consolidated billing in AWS Organizations?
 
-One bill for all accounts of an organisation, paid by the management account. Usage is combined for volume pricing discounts, and Reserved Instances and Savings Plans discounts can be shared across accounts.
+One bill for all accounts of an organization, paid by the management account. Usage is combined for volume pricing discounts, and Reserved Instances and Savings Plans discounts can be shared across accounts.
 
 #### What is AWS Compute Optimizer?
 
-A service that uses machine learning on utilisation metrics to recommend optimal EC2 instance types, Auto Scaling groups, EBS volumes, Lambda functions and ECS on Fargate configurations.
+A service that uses machine learning on utilization metrics to recommend optimal EC2 instance types, Auto Scaling groups, EBS volumes, Lambda functions and ECS on Fargate configurations.
 
 #### What are the AWS Support plans?
 
@@ -876,7 +876,7 @@ A community question-and-answer site, moderated with AWS experts, which replaced
 
 #### What is the AWS Marketplace?
 
-A curated digital catalogue of third-party software, data and services that run on AWS, purchasable with billing through your AWS account.
+A curated digital catalog of third-party software, data and services that run on AWS, purchasable with billing through your AWS account.
 
 #### What is AWS Professional Services and the AWS Partner Network?
 

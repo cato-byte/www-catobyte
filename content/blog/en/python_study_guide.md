@@ -13,7 +13,7 @@ About 200 questions on Python for data engineering interviews: the language itse
 
 #### What are the main characteristics of Python?
 
-An interpreted, dynamically typed, strongly typed, garbage-collected language that supports procedural, object-oriented and functional styles. It favours readability (significant indentation) and has a large standard library and ecosystem.
+An interpreted, dynamically typed, strongly typed, garbage-collected language that supports procedural, object-oriented and functional styles. It favors readability (significant indentation) and has a large standard library and ecosystem.
 
 #### What does "dynamically typed" and "strongly typed" mean for Python?
 
@@ -155,7 +155,7 @@ As a hash table: lookup, insertion and deletion are O(1) on average. Since Pytho
 
 #### What is the time complexity of common list operations?
 
-Indexing and `append` are O(1) (amortised for append), `insert(0, x)` and `pop(0)` are O(n), `x in list` is O(n), sorting is O(n log n). Use `collections.deque` for fast operations at both ends and sets for membership tests.
+Indexing and `append` are O(1) (amortized for append), `insert(0, x)` and `pop(0)` are O(n), `x in list` is O(n), sorting is O(n log n). Use `collections.deque` for fast operations at both ends and sets for membership tests.
 
 #### What does `dict.get()` do, and how is it different from `dict[key]`?
 
@@ -287,7 +287,7 @@ It creates a new function with some arguments fixed: `parse_fr = partial(parse_d
 
 #### What does `functools.lru_cache` (or `cache`) do?
 
-It memoises a function's results by its arguments (which must be hashable):
+It memoizes a function's results by its arguments (which must be hashable):
 
 ```python
 from functools import cache
@@ -299,7 +299,7 @@ def fib(n):
 
 #### What is recursion, and what is Python's recursion limit?
 
-A function calling itself. CPython limits depth (1000 by default, `sys.getrecursionlimit()`) and has no tail-call optimisation, so deep recursion is usually rewritten as a loop.
+A function calling itself. CPython limits depth (1000 by default, `sys.getrecursionlimit()`) and has no tail-call optimization, so deep recursion is usually rewritten as a loop.
 
 #### What are docstrings?
 
@@ -354,7 +354,7 @@ The first parameter of instance methods, bound to the instance the method is cal
 
 #### What is `__init__`, and how does it differ from `__new__`?
 
-`__new__` creates and returns the instance (rarely overridden, mostly for immutable types and singletons). `__init__` initialises an instance that already exists.
+`__new__` creates and returns the instance (rarely overridden, mostly for immutable types and singletons). `__init__` initializes an instance that already exists.
 
 #### What is the difference between class attributes and instance attributes?
 
@@ -388,11 +388,11 @@ class Lakehouse(Warehouse):
 
 #### What is the method resolution order (MRO)?
 
-The order Python searches classes for an attribute under multiple inheritance, computed with C3 linearisation. Inspect it with `Class.__mro__`.
+The order Python searches classes for an attribute under multiple inheritance, computed with C3 linearization. Inspect it with `Class.__mro__`.
 
 #### What are dunder (magic) methods?
 
-Methods with double underscores that hook into language behaviour: `__repr__`, `__str__`, `__len__`, `__eq__`, `__hash__`, `__lt__`, `__iter__`, `__getitem__`, `__enter__`, `__call__`, `__add__`.
+Methods with double underscores that hook into language behavior: `__repr__`, `__str__`, `__len__`, `__eq__`, `__hash__`, `__lt__`, `__iter__`, `__getitem__`, `__enter__`, `__call__`, `__add__`.
 
 #### What is the difference between `__str__` and `__repr__`?
 
@@ -418,7 +418,7 @@ Classes deriving from `abc.ABC` with methods marked `@abstractmethod`. They can'
 
 #### What is duck typing?
 
-Using an object according to its behaviour rather than its type: "if it walks like a duck…". Any object with a `read()` method can be used where a file is expected.
+Using an object according to its behavior rather than its type: "if it walks like a duck…". Any object with a `read()` method can be used where a file is expected.
 
 #### What is a Protocol?
 
@@ -495,7 +495,7 @@ for country, rows in groupby(sorted(data, key=key), key=key):
 
 #### What is a decorator?
 
-A callable that takes a function and returns a replacement, applied with `@`. It adds behaviour (logging, timing, retries, caching, access control) without changing the function's code.
+A callable that takes a function and returns a replacement, applied with `@`. It adds behavior (logging, timing, retries, caching, access control) without changing the function's code.
 
 #### How do you write a decorator that keeps the original function's metadata?
 
@@ -675,7 +675,7 @@ with open("out.csv", "w", newline="", encoding="utf-8") as f:
 
 #### How do you work with JSON?
 
-`json.loads`/`json.dumps` for strings, `json.load`/`json.dump` for files. Pass `default=` to serialise unsupported types such as dates, and `ensure_ascii=False` to keep accented characters readable.
+`json.loads`/`json.dumps` for strings, `json.load`/`json.dump` for files. Pass `default=` to serialize unsupported types such as dates, and `ensure_ascii=False` to keep accented characters readable.
 
 #### How do you parse and format dates?
 
@@ -782,13 +782,13 @@ Bound the worker pool size, or use `asyncio.Semaphore`, and add backoff with ret
 
 #### What makes Python code faster in practice?
 
-Better algorithms and data structures (sets and dicts for lookups), built-in functions and comprehensions instead of manual loops, vectorised libraries (NumPy, pandas, Polars) for bulk numeric work, avoiding repeated work (caching), and moving heavy work to compiled code or a distributed engine.
+Better algorithms and data structures (sets and dicts for lookups), built-in functions and comprehensions instead of manual loops, vectorized libraries (NumPy, pandas, Polars) for bulk numeric work, avoiding repeated work (caching), and moving heavy work to compiled code or a distributed engine.
 
 #### Why is iterating over a pandas DataFrame row by row slow?
 
-Each row becomes a Python object and the work happens in the interpreter. Vectorised operations run in optimised C code over whole columns at once.
+Each row becomes a Python object and the work happens in the interpreter. Vectorized operations run in optimized C code over whole columns at once.
 
-#### What is memory leak-like behaviour in Python, and how do you find it?
+#### What is memory leak-like behavior in Python, and how do you find it?
 
 Memory that keeps growing because references are kept (global caches, lists that grow, reference cycles with `__del__`). Investigate with `tracemalloc`, `gc` and `objgraph`.
 
@@ -810,7 +810,7 @@ For CPU-bound work that fits on one machine and in memory. Use Spark when data o
 
 #### What is pickling, and what are its risks?
 
-Serialising Python objects to bytes with `pickle`. Never unpickle untrusted data: it can execute arbitrary code. Use JSON or Parquet for data exchange.
+Serializing Python objects to bytes with `pickle`. Never unpickle untrusted data: it can execute arbitrary code. Use JSON or Parquet for data exchange.
 
 #### Why can't a lambda be sent to a process pool?
 
@@ -865,7 +865,7 @@ registry-lakehouse = "registry_lakehouse.cli:main"
 
 #### What is pytest, and why is it preferred to unittest?
 
-A testing framework where tests are plain functions with plain `assert`s, with detailed failure messages, fixtures, parametrisation and a large plugin ecosystem.
+A testing framework where tests are plain functions with plain `assert`s, with detailed failure messages, fixtures, parametrization and a large plugin ecosystem.
 
 #### What are pytest fixtures?
 
@@ -879,7 +879,7 @@ def spark():
     session.stop()
 ```
 
-#### What is parametrisation in pytest?
+#### What is parametrization in pytest?
 
 Running one test with several inputs:
 
@@ -919,7 +919,7 @@ A typing construct that describes dictionaries with a fixed set of keys and valu
 
 #### What are generics in type hints?
 
-Parameterised types such as `list[int]` or `dict[str, float]`, and your own generic classes and functions. Python 3.12 has a compact syntax: `def first[T](xs: list[T]) -> T: ...`.
+Parameterized types such as `list[int]` or `dict[str, float]`, and your own generic classes and functions. Python 3.12 has a compact syntax: `def first[T](xs: list[T]) -> T: ...`.
 
 #### How do you manage configuration and secrets in a Python application?
 
@@ -1013,7 +1013,7 @@ with requests.get(url, stream=True, timeout=60) as r:
 
 #### How do you connect to a database from Python safely?
 
-With a driver (psycopg for PostgreSQL) or SQLAlchemy, using parameterised queries, never string formatting, to avoid SQL injection:
+With a driver (psycopg for PostgreSQL) or SQLAlchemy, using parameterized queries, never string formatting, to avoid SQL injection:
 
 ```python
 cur.execute("select * from companies where country = %s", (country,))
@@ -1041,11 +1041,11 @@ Check the schema (columns and types), nulls in required fields, value ranges, un
 
 #### What is PySpark, and how does it relate to Python?
 
-The Python API for Apache Spark. Python code builds a query plan that runs on the JVM across a cluster, so DataFrame operations are distributed and optimised. Python UDFs run in Python workers and are much slower than built-in functions.
+The Python API for Apache Spark. Python code builds a query plan that runs on the JVM across a cluster, so DataFrame operations are distributed and optimized. Python UDFs run in Python workers and are much slower than built-in functions.
 
 #### Why are Python UDFs slow in PySpark, and what are the alternatives?
 
-Each row is serialised between the JVM and Python. Prefer built-in functions in `pyspark.sql.functions`, then pandas UDFs (vectorised with Arrow) if custom Python is unavoidable.
+Each row is serialized between the JVM and Python. Prefer built-in functions in `pyspark.sql.functions`, then pandas UDFs (vectorized with Arrow) if custom Python is unavoidable.
 
 #### How do you handle encoding problems when reading files?
 

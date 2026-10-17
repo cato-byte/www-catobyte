@@ -100,11 +100,11 @@ El orden en que Python resuelve los nombres: Local, ámbitos de las funciones co
 
 #### ¿Qué diferencia hay entre un módulo y un paquete?
 
-Un módulo es un único fichero `.py`. Un paquete es un directorio de módulos, normalmente con un `__init__.py`, que se importa con nombres con puntos.
+Un módulo es un único archivo `.py`. Un paquete es un directorio de módulos, normalmente con un `__init__.py`, que se importa con nombres con puntos.
 
 #### ¿Qué hace `if __name__ == "__main__":`?
 
-Su bloque solo se ejecuta cuando el fichero se lanza como script, no cuando se importa como módulo. Se usa para los puntos de entrada de línea de comandos.
+Su bloque solo se ejecuta cuando el archivo se lanza como script, no cuando se importa como módulo. Se usa para los puntos de entrada de línea de comandos.
 
 ### Cadenas, colecciones y comprensiones
 
@@ -124,7 +124,7 @@ La inmutabilidad hace que las cadenas sean hashables y seguras de compartir. Hac
 
 #### ¿Qué diferencia hay entre `str` y `bytes`?
 
-`str` es texto Unicode. `bytes` es una secuencia de bytes en bruto. Se convierte con `text.encode("utf-8")` y `data.decode("utf-8")`, indicando siempre la codificación al leer ficheros.
+`str` es texto Unicode. `bytes` es una secuencia de bytes en bruto. Se convierte con `text.encode("utf-8")` y `data.decode("utf-8")`, indicando siempre la codificación al leer archivos.
 
 #### ¿Cómo funcionan las rebanadas (slices)?
 
@@ -418,7 +418,7 @@ Clases que derivan de `abc.ABC` con métodos marcados con `@abstractmethod`. No 
 
 #### ¿Qué es el duck typing?
 
-Usar un objeto según su comportamiento y no según su tipo: "si camina como un pato…". Cualquier objeto con un método `read()` puede usarse donde se espera un fichero.
+Usar un objeto según su comportamiento y no según su tipo: "si camina como un pato…". Cualquier objeto con un método `read()` puede usarse donde se espera un archivo.
 
 #### ¿Qué es un Protocol?
 
@@ -452,7 +452,7 @@ Un método que hace que las instancias se puedan llamar como funciones, útil pa
 
 #### ¿Qué diferencia hay entre un iterable y un iterador?
 
-Un iterable puede producir un iterador (`__iter__`): listas, diccionarios, ficheros. Un iterador produce los elementos uno a uno mediante `__next__` y lanza `StopIteration` al final. Un iterador solo se puede recorrer una vez.
+Un iterable puede producir un iterador (`__iter__`): listas, diccionarios, archivos. Un iterador produce los elementos uno a uno mediante `__next__` y lanza `StopIteration` al final. Un iterador solo se puede recorrer una vez.
 
 #### ¿Qué es un generador?
 
@@ -473,7 +473,7 @@ def read_batches(path, size=10_000):
 
 #### ¿Por qué son útiles los generadores en ingeniería de datos?
 
-Procesan los datos como flujos, con memoria constante, sea cual sea el tamaño de la entrada: leer ficheros enormes línea a línea, paginar API, encadenar transformaciones de forma perezosa.
+Procesan los datos como flujos, con memoria constante, sea cual sea el tamaño de la entrada: leer archivos enormes línea a línea, paginar API, encadenar transformaciones de forma perezosa.
 
 #### ¿Qué hace `yield from`?
 
@@ -536,7 +536,7 @@ def retry(times=3):
 
 #### ¿Qué es un gestor de contexto?
 
-Un objeto que se usa con `with` y que prepara y libera un recurso de forma fiable: `__enter__` se ejecuta al principio y `__exit__` al final, aunque se produzca una excepción. Los ficheros, los bloqueos y las conexiones a bases de datos son gestores de contexto.
+Un objeto que se usa con `with` y que prepara y libera un recurso de forma fiable: `__enter__` se ejecuta al principio y `__exit__` al final, aunque se produzca una excepción. Los archivos, los bloqueos y las conexiones a bases de datos son gestores de contexto.
 
 #### ¿Cómo se escribe un gestor de contexto con `contextlib`?
 
@@ -559,7 +559,7 @@ Un valor verdadero suprime la excepción lanzada en el bloque `with`, y uno fals
 
 #### ¿Qué es `contextlib.ExitStack`?
 
-Un gestor de contexto que gestiona un número variable de otros gestores de contexto, por ejemplo para abrir una lista variable de ficheros.
+Un gestor de contexto que gestiona un número variable de otros gestores de contexto, por ejemplo para abrir una lista variable de archivos.
 
 #### ¿Qué es la evaluación perezosa?
 
@@ -597,7 +597,7 @@ Una función definida con `async def`, que puede pausarse en los puntos `await`.
 
 `return` termina la función y devuelve un valor. `yield` convierte la función en un generador que produce una serie de valores a lo largo del tiempo, reanudándose donde se quedó.
 
-### Errores, ficheros y biblioteca estándar
+### Errores, archivos y biblioteca estándar
 
 #### ¿Cómo funciona la gestión de excepciones en Python?
 
@@ -641,9 +641,9 @@ Python 3.11 añadió `ExceptionGroup` para lanzar varias excepciones a la vez (p
 
 "Es más fácil pedir perdón que permiso" (intentar la operación y capturar el error) frente a "mira antes de saltar" (comprobar antes). EAFP es lo idiomático en Python y evita las condiciones de carrera entre la comprobación y la acción.
 
-#### ¿Cómo se lee un fichero grande sin cargarlo en memoria?
+#### ¿Cómo se lee un archivo grande sin cargarlo en memoria?
 
-Recorriendo el objeto fichero, que produce una línea cada vez:
+Recorriendo el objeto archivo, que produce una línea cada vez:
 
 ```python
 with open("big.csv", encoding="utf-8") as f:
@@ -651,15 +651,15 @@ with open("big.csv", encoding="utf-8") as f:
         process(line)
 ```
 
-#### ¿Por qué hay que usar siempre `with` al abrir ficheros?
+#### ¿Por qué hay que usar siempre `with` al abrir archivos?
 
-Garantiza que el fichero se cierra aunque se produzca una excepción, liberando el descriptor y volcando las escrituras pendientes.
+Garantiza que el archivo se cierra aunque se produzca una excepción, liberando el descriptor y volcando las escrituras pendientes.
 
 #### ¿Qué es `pathlib`?
 
-Una API orientada a objetos para rutas de ficheros: `Path("data") / "raw" / "file.csv"`, `.exists()`, `.glob("*.csv")`, `.read_text()`, `.suffix`, `.stem`, `.mkdir(parents=True, exist_ok=True)`.
+Una API orientada a objetos para rutas de archivos: `Path("data") / "raw" / "file.csv"`, `.exists()`, `.glob("*.csv")`, `.read_text()`, `.suffix`, `.stem`, `.mkdir(parents=True, exist_ok=True)`.
 
-#### ¿Cómo se leen y escriben ficheros CSV con la biblioteca estándar?
+#### ¿Cómo se leen y escriben archivos CSV con la biblioteca estándar?
 
 ```python
 import csv
@@ -675,7 +675,7 @@ with open("out.csv", "w", newline="", encoding="utf-8") as f:
 
 #### ¿Cómo se trabaja con JSON?
 
-`json.loads`/`json.dumps` para cadenas y `json.load`/`json.dump` para ficheros. Pasa `default=` para serializar tipos no admitidos como las fechas, y `ensure_ascii=False` para que los caracteres acentuados sigan siendo legibles.
+`json.loads`/`json.dumps` para cadenas y `json.load`/`json.dump` para archivos. Pasa `default=` para serializar tipos no admitidos como las fechas, y `ensure_ascii=False` para que los caracteres acentuados sigan siendo legibles.
 
 #### ¿Cómo se analizan y formatean las fechas?
 
@@ -719,17 +719,17 @@ Con `subprocess.run`, pasando una lista de argumentos (sin shell) y comprobando 
 result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
 ```
 
-#### ¿Cómo se calcula el hash de datos o ficheros en Python?
+#### ¿Cómo se calcula el hash de datos o archivos en Python?
 
-Con `hashlib`: `hashlib.sha256(data).hexdigest()`. Para ficheros, lee por bloques y llama a `update()` para mantener la memoria constante.
+Con `hashlib`: `hashlib.sha256(data).hexdigest()`. Para archivos, lee por bloques y llama a `update()` para mantener la memoria constante.
 
 #### ¿Para qué sirve `tempfile`?
 
-Para crear ficheros y directorios temporales que se limpian automáticamente: `with tempfile.TemporaryDirectory() as tmp: ...`.
+Para crear archivos y directorios temporales que se limpian automáticamente: `with tempfile.TemporaryDirectory() as tmp: ...`.
 
-#### ¿Cómo se comprimen o descomprimen ficheros en Python?
+#### ¿Cómo se comprimen o descomprimen archivos en Python?
 
-Con los módulos `gzip`, `bz2`, `lzma` y `zipfile`. `gzip.open(path, "rt", encoding="utf-8")` lee un fichero de texto comprimido línea a línea.
+Con los módulos `gzip`, `bz2`, `lzma` y `zipfile`. `gzip.open(path, "rt", encoding="utf-8")` lee un archivo de texto comprimido línea a línea.
 
 ### Concurrencia y rendimiento
 
@@ -740,7 +740,7 @@ El Global Interpreter Lock de CPython permite que solo un hilo ejecute bytecode 
 #### ¿Qué diferencia hay entre threading, multiprocessing y asyncio?
 
 - **threading:** varios hilos en un proceso. Bueno para tareas limitadas por E/S (red, disco), limitado por el GIL para trabajo de CPU.
-- **multiprocessing:** varios procesos, cada uno con su intérprete. Bueno para trabajo limitado por CPU, con más sobrecoste y datos pasados mediante pickle.
+- **multiprocessing:** varios procesos, cada uno con su intérprete. Bueno para trabajo limitado por CPU, con más sobrecosto y datos pasados mediante pickle.
 - **asyncio:** concurrencia cooperativa en un solo hilo con un bucle de eventos, para muchísimas operaciones de E/S concurrentes.
 
 #### ¿Qué es `concurrent.futures`?
@@ -772,7 +772,7 @@ asyncio.run(main(urls))
 
 Dos hilos que acceden a datos compartidos y producen un resultado que depende del orden de ejecución. Se evita con bloqueos (`threading.Lock`), colas seguras para hilos (`queue.Queue`) o evitando el estado mutable compartido.
 
-#### ¿Cómo se limita la concurrencia al llamar a una API con límite de peticiones?
+#### ¿Cómo se limita la concurrencia al llamar a una API con límite de solicitudes?
 
 Limitando el tamaño del pool de trabajadores, o con `asyncio.Semaphore`, y añadiendo reintentos con espera creciente ante las respuestas 429.
 
@@ -798,7 +798,7 @@ El recuento de referencias libera la mayoría de los objetos en cuanto su contad
 
 #### ¿Qué es `__pycache__`?
 
-La carpeta donde Python guarda en caché el bytecode compilado (ficheros `.pyc`) de los módulos importados, para acelerar las importaciones posteriores.
+La carpeta donde Python guarda en caché el bytecode compilado (archivos `.pyc`) de los módulos importados, para acelerar las importaciones posteriores.
 
 #### ¿Qué diferencia hay entre CPython y PyPy?
 
@@ -840,11 +840,11 @@ Una instalación de Python aislada con sus propios paquetes (`python -m venv .ve
 
 #### ¿Qué es `pyproject.toml`?
 
-El fichero de configuración estándar de los proyectos Python: sistema de construcción, metadatos, dependencias, puntos de entrada y configuración de herramientas (pytest, ruff, mypy).
+El archivo de configuración estándar de los proyectos Python: sistema de construcción, metadatos, dependencias, puntos de entrada y configuración de herramientas (pytest, ruff, mypy).
 
 #### ¿Cómo se hace reproducible la instalación de dependencias?
 
-Fijando versiones exactas en un fichero de bloqueo (`uv lock`, `pip-tools`, Poetry), instalando a partir de él en CI y producción, y actualizando las dependencias de forma deliberada.
+Fijando versiones exactas en un archivo de bloqueo (`uv lock`, `pip-tools`, Poetry), instalando a partir de él en CI y producción, y actualizando las dependencias de forma deliberada.
 
 #### ¿Qué es `uv`?
 
@@ -923,7 +923,7 @@ Tipos parametrizados como `list[int]` o `dict[str, float]`, y tus propias clases
 
 #### ¿Cómo se gestionan la configuración y los secretos en una aplicación Python?
 
-Leyéndolos de variables de entorno o de un gestor de secretos al arrancar, validándolos (por ejemplo con pydantic-settings), dejando los ficheros `.env` fuera del control de versiones y sin escribir nunca credenciales en el código.
+Leyéndolos de variables de entorno o de un gestor de secretos al arrancar, validándolos (por ejemplo con pydantic-settings), dejando los archivos `.env` fuera del control de versiones y sin escribir nunca credenciales en el código.
 
 #### ¿Qué es pydantic?
 
@@ -969,7 +969,7 @@ Se detectan con `isna()`, se eliminan con `dropna()`, se rellenan con `fillna()`
 
 #### ¿Qué es Apache Parquet y por qué se prefiere a CSV?
 
-Un formato de fichero en columnas, comprimido y tipado. Las consultas leen solo las columnas que necesitan, los ficheros son mucho más pequeños, los tipos se conservan y las estadísticas permiten saltarse datos. CSV es texto por filas sin tipos.
+Un formato de archivo en columnas, comprimido y tipado. Las consultas leen solo las columnas que necesitan, los archivos son mucho más pequeños, los tipos se conservan y las estadísticas permiten saltarse datos. CSV es texto por filas sin tipos.
 
 #### ¿Qué es Apache Arrow?
 
@@ -985,7 +985,7 @@ Una base de datos analítica SQL embebida. Consulta Parquet, CSV y DataFrames di
 
 #### ¿Cómo se llama a una API REST de forma robusta desde Python?
 
-Usando una sesión, fijando timeouts, reintentando los errores transitorios con espera exponencial, gestionando la paginación, respetando los límites de peticiones y validando las respuestas:
+Usando una sesión, fijando timeouts, reintentando los errores transitorios con espera exponencial, gestionando la paginación, respetando los límites de solicitudes y validando las respuestas:
 
 ```python
 import requests
@@ -999,7 +999,7 @@ resp = session.get(url, params={"page": 1}, timeout=30)
 resp.raise_for_status()
 ```
 
-#### ¿Cómo se descarga un fichero grande sin cargarlo en memoria?
+#### ¿Cómo se descarga un archivo grande sin cargarlo en memoria?
 
 En streaming, por bloques:
 
@@ -1027,7 +1027,7 @@ Con `COPY` (el `cursor.copy()` de psycopg) en lugar de inserciones fila a fila, 
 
 Un conjunto de herramientas para bases de datos con una capa Core (lenguaje de expresiones SQL, pool de conexiones, engines) y un ORM. pandas usa engines de SQLAlchemy para `read_sql` y `to_sql`.
 
-#### ¿Cómo se leen ficheros de Amazon S3 en Python?
+#### ¿Cómo se leen archivos de Amazon S3 en Python?
 
 Con boto3 (`s3.get_object`, `download_file`, paginadores para listar), o mediante fsspec y s3fs para que pandas, Polars y PyArrow lean rutas `s3://` directamente. Las credenciales deben venir de roles o del entorno, nunca del código.
 
@@ -1047,7 +1047,7 @@ La API de Python de Apache Spark. El código Python construye un plan de consult
 
 Cada fila se serializa entre la JVM y Python. Prefiere las funciones integradas de `pyspark.sql.functions`, y después las pandas UDF (vectorizadas con Arrow) si el código Python a medida es inevitable.
 
-#### ¿Cómo se resuelven los problemas de codificación al leer ficheros?
+#### ¿Cómo se resuelven los problemas de codificación al leer archivos?
 
 Indicando explícitamente la `encoding` correcta, usando `errors="replace"` solo a sabiendas, detectando un BOM con `encoding="utf-8-sig"` y reparando el mojibake (`'TravesÃ­a'.encode('latin-1').decode('utf-8')`) con una protección para las cadenas en las que la conversión falla.
 
@@ -1055,15 +1055,15 @@ Indicando explícitamente la `encoding` correcta, usando `errors="replace"` solo
 
 Con un orquestador como Airflow, Dagster o Prefect (dependencias, reintentos, alertas, backfills), o con un planificador en la nube que lanza funciones serverless o contenedores en los casos sencillos.
 
-#### ¿Cómo se procesa un fichero JSON demasiado grande para cargarlo de una vez?
+#### ¿Cómo se procesa un archivo JSON demasiado grande para cargarlo de una vez?
 
 Mejor en JSON delimitado por saltos de línea, leído línea a línea. Para un único array JSON enorme, usa un analizador en streaming como ijson para recorrer los elementos sin cargarlo todo.
 
 #### ¿Qué diferencia hay entre ETL y ELT desde el punto de vista de un desarrollador Python?
 
-En ETL, el código Python transforma los datos antes de cargarlos. En ELT, Python sobre todo extrae y carga datos en bruto, y las transformaciones se ejecutan como SQL en el almacén (a menudo con dbt). Python se queda con lo que SQL hace mal: API, ficheros, análisis complejos.
+En ETL, el código Python transforma los datos antes de cargarlos. En ELT, Python sobre todo extrae y carga datos en bruto, y las transformaciones se ejecutan como SQL en el almacén (a menudo con dbt). Python se queda con lo que SQL hace mal: API, archivos, análisis complejos.
 
-#### ¿Cómo se escribe un fichero Parquet particionado por una columna?
+#### ¿Cómo se escribe un archivo Parquet particionado por una columna?
 
 ```python
 import pyarrow as pa, pyarrow.parquet as pq
@@ -1074,7 +1074,7 @@ Esto crea carpetas como `out/country=FR/`, que los motores de consulta pueden po
 
 ### Problemas de programación
 
-#### Analiza un fichero de registro e informa de cuánto tiempo estuvo encendido un dispositivo y cuándo hubo errores.
+#### Analiza un archivo de registro e informa de cuánto tiempo estuvo encendido un dispositivo y cuándo hubo errores.
 
 Cada línea tiene la forma `Jul 11 16:11:51:490 [139681125603136] dut: Device State: ON`. Solo importan los mensajes `ON`, `ERR` y `OFF`. El informe debe decir cuánto tiempo estuvo encendido el dispositivo y listar las marcas de tiempo de los errores.
 
@@ -1107,7 +1107,7 @@ def device_report(path: str) -> str:
     return "\n".join(lines)
 ```
 
-La marca de tiempo son los tres primeros campos de la línea (mes, día, hora), no solo el tercer campo. Analizarla con `strptime` (`%f` acepta los milisegundos) da un datetime, y restar dos datetimes da un `timedelta`. Fíjate también en `errors.append()` (las listas no tienen `add`), en recorrer directamente el objeto fichero y en comprobar el estado al final de la línea para que `ON` no coincida dentro de otra palabra.
+La marca de tiempo son los tres primeros campos de la línea (mes, día, hora), no solo el tercer campo. Analizarla con `strptime` (`%f` acepta los milisegundos) da un datetime, y restar dos datetimes da un `timedelta`. Fíjate también en `errors.append()` (las listas no tienen `add`), en recorrer directamente el objeto archivo y en comprobar el estado al final de la línea para que `ON` no coincida dentro de otra palabra.
 
 #### Invierte una cadena y comprueba si es un palíndromo sin tener en cuenta mayúsculas ni signos de puntuación.
 
@@ -1240,7 +1240,7 @@ def luhn_valid(number: str) -> bool:
     return total % 10 == 0
 ```
 
-#### Calcula un total acumulado y una media móvil de 3 elementos.
+#### Calcula un total acumulado y un promedio móvil de 3 elementos.
 
 ```python
 from itertools import accumulate

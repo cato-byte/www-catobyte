@@ -17,7 +17,7 @@ dbt (data build tool) is a transformation framework: you write `SELECT` statemen
 
 #### What are common use cases for dbt?
 
-Building a data warehouse or lakehouse layer by layer (staging, intermediate, marts), cleaning and standardising raw data, building dimensional models for BI, historising slowly changing data with snapshots, testing data quality, documenting datasets with lineage, and defining shared business metrics in the semantic layer.
+Building a data warehouse or lakehouse layer by layer (staging, intermediate, marts), cleaning and standardizing raw data, building dimensional models for BI, historizing slowly changing data with snapshots, testing data quality, documenting datasets with lineage, and defining shared business metrics in the semantic layer.
 
 #### How does dbt differ from traditional ETL tools?
 
@@ -77,7 +77,7 @@ SQL (with Jinja) everywhere, and Python on Snowflake (Snowpark), Databricks and 
 
 #### What is a Python model in dbt?
 
-A `.py` file defining `model(dbt, session)` that returns a DataFrame. It can reference other models with `dbt.ref()` and is materialised as a table or incremental model.
+A `.py` file defining `model(dbt, session)` that returns a DataFrame. It can reference other models with `dbt.ref()` and is materialized as a table or incremental model.
 
 ```python
 def model(dbt, session):
@@ -94,7 +94,7 @@ A new dbt engine written in Rust, introduced in 2025, that parses and compiles p
 
 A layer, built on MetricFlow, where metrics (revenue, active users) are defined once in YAML on top of semantic models, then queried consistently by BI and other tools through APIs, so every tool computes the metric the same way.
 
-#### What does "modular data modelling" mean in dbt?
+#### What does "modular data modeling" mean in dbt?
 
 Splitting transformations into small, reusable models with one responsibility each (staging per source, intermediate logic, final marts), connected with `ref`, instead of large monolithic queries.
 
@@ -148,7 +148,7 @@ select * from {{ ref('int_orders') }}
 
 #### What is the difference between configs and properties?
 
-Configs control how dbt builds a node (materialisation, schema, tags, hooks). Properties describe it (description, columns, tests, docs). Properties live in YAML files; configs can live in YAML, the model file or `dbt_project.yml`.
+Configs control how dbt builds a node (materialization, schema, tags, hooks). Properties describe it (description, columns, tests, docs). Properties live in YAML files; configs can live in YAML, the model file or `dbt_project.yml`.
 
 #### What are tags used for?
 
@@ -287,7 +287,7 @@ A common structure: staging cleans each source, intermediate holds reusable join
 
 To detect broken or late ingestion before models run on stale data, often as the first step of a scheduled job.
 
-### Models and materialisations
+### Models and materializations
 
 #### How do you create a dbt model?
 
@@ -314,8 +314,8 @@ Through `ref()`. When a model calls `{{ ref('stg_orders') }}`, dbt records the e
 - **table**: the result is stored and rebuilt on each run.
 - **incremental**: on later runs, only new or changed rows are inserted or merged.
 - **ephemeral**: not built at all, inlined as a CTE into downstream models.
-- **materialized_view**: a database materialised view, where supported.
-Snapshots and seeds are separate resource types with their own behaviour.
+- **materialized_view**: a database materialized view, where supported.
+Snapshots and seeds are separate resource types with their own behavior.
 
 #### When should you use a view versus a table?
 
@@ -327,11 +327,11 @@ For light, reusable logic that you don't want as a separate object in the wareho
 
 #### How would you create custom materialization in dbt?
 
-With a `{% materialization name, adapter='default' %}` block in a macro file. It typically gets the target relation, runs pre-hooks, builds the SQL with `{% call statement('main') %}`, handles existing relations, runs post-hooks and returns `{'relations': [target_relation]}`. Custom materialisations are rare: most needs are covered by built-ins and incremental strategies.
+With a `{% materialization name, adapter='default' %}` block in a macro file. It typically gets the target relation, runs pre-hooks, builds the SQL with `{% call statement('main') %}`, handles existing relations, runs post-hooks and returns `{'relations': [target_relation]}`. Custom materializations are rare: most needs are covered by built-ins and incremental strategies.
 
 #### What is a mart model?
 
-A final model built for consumers, usually a fact (`fct_orders`) or dimension (`dim_customers`) table, or a wide denormalised table for a specific team.
+A final model built for consumers, usually a fact (`fct_orders`) or dimension (`dim_customers`) table, or a wide denormalized table for a specific team.
 
 #### What naming conventions are common in dbt?
 
@@ -386,7 +386,7 @@ Declarations such as `not_null`, `unique`, `primary_key`, `foreign_key` and `che
 
 #### What does the `--defer` flag do?
 
-With `--state` pointing to production artefacts, it makes `ref()` resolve to production relations for models you haven't built in your environment, so you can run one model in dev without rebuilding all its parents.
+With `--state` pointing to production artifacts, it makes `ref()` resolve to production relations for models you haven't built in your environment, so you can run one model in dev without rebuilding all its parents.
 
 #### What is `dbt clone`?
 
@@ -394,7 +394,7 @@ A command that creates copies (zero-copy clones where supported, otherwise views
 
 #### What is `dbt show`?
 
-A command to preview the results of a model or inline query without materialising it: `dbt show --select stg_orders --limit 10`.
+A command to preview the results of a model or inline query without materializing it: `dbt show --select stg_orders --limit 10`.
 
 #### What is `dbt retry`?
 
@@ -523,7 +523,7 @@ Write plain SQL first, extract a macro only when logic repeats or must vary by a
 
 #### What are the two types of tests in dbt?
 
-**Data tests** check the data in the warehouse: generic tests (reusable, parameterised, declared in YAML) and singular tests (one-off SQL queries in `tests/`). **Unit tests**, added in dbt 1.8, check a model's SQL logic against small mocked inputs before it runs on real data.
+**Data tests** check the data in the warehouse: generic tests (reusable, parameterized, declared in YAML) and singular tests (one-off SQL queries in `tests/`). **Unit tests**, added in dbt 1.8, check a model's SQL logic against small mocked inputs before it runs on real data.
 
 #### What types of tests can you run in dbt?
 
@@ -846,17 +846,17 @@ YAML declarations of downstream uses of dbt models (dashboards, ML models, appli
 
 It lists the nodes matching a selection without running them, which is useful to check selectors.
 
-#### What is the `manifest.json` artefact?
+#### What is the `manifest.json` artifact?
 
 A JSON file in `target/` describing the whole project (nodes, configurations, dependencies). It is used for state comparison (`state:modified`), documentation and external tools.
 
 #### What is `run_results.json`?
 
-An artefact with the result, timing and status of each node in the last invocation, used for monitoring and `dbt retry`.
+An artifact with the result, timing and status of each node in the last invocation, used for monitoring and `dbt retry`.
 
 #### What is the semantic layer architecture of dbt?
 
-Semantic models are defined in YAML on top of dbt models, declaring entities (join keys), dimensions and measures. Metrics are defined on those measures. MetricFlow turns a metric request (metric, dimensions, filters, grain) into optimised SQL for the warehouse, and the dbt platform exposes it through APIs and integrations to BI tools.
+Semantic models are defined in YAML on top of dbt models, declaring entities (join keys), dimensions and measures. Metrics are defined on those measures. MetricFlow turns a metric request (metric, dimensions, filters, grain) into optimized SQL for the warehouse, and the dbt platform exposes it through APIs and integrations to BI tools.
 
 #### What is a semantic model?
 
@@ -874,7 +874,7 @@ So the definition lives once, in version control, with tests and review, and eve
 
 Lineage that shows which upstream columns feed each column, not just which models depend on which. The dbt platform and dbt Fusion provide it.
 
-#### What are dbt artefacts used for in observability?
+#### What are dbt artifacts used for in observability?
 
 Tools parse `manifest.json` and `run_results.json` to track run duration, test failures and freshness over time, and the `dbt_artifacts` package loads them into the warehouse for analysis.
 
@@ -898,7 +898,7 @@ Git with feature branches and pull requests, code review, CI that builds and tes
 
 #### What is Slim CI?
 
-Running only modified models and their dependants in CI, by comparing with production artefacts: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Unchanged parents are read from production instead of rebuilt.
+Running only modified models and their dependants in CI, by comparing with production artifacts: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Unchanged parents are read from production instead of rebuilt.
 
 #### What does `state:modified` select?
 
@@ -920,7 +920,7 @@ With an orchestrator (Airflow, Dagster, Prefect, cron, GitHub Actions, Databrick
 
 #### What does a typical production job look like?
 
-`dbt deps`, `dbt source freshness`, `dbt build` (seeds, snapshots, models and tests in order), then `dbt docs generate`, with alerts on failure and artefacts saved for the next CI comparison.
+`dbt deps`, `dbt source freshness`, `dbt build` (seeds, snapshots, models and tests in order), then `dbt docs generate`, with alerts on failure and artifacts saved for the next CI comparison.
 
 #### How do you deploy dbt in the dbt platform (dbt Cloud)?
 
@@ -954,7 +954,7 @@ Run `dbt compile` and execute the compiled SQL directly in the warehouse, previe
 
 #### How does dbt compile queries?
 
-dbt parses the project and builds the DAG, then for each node renders the Jinja: it resolves `ref`, `source`, `var`, `config` and macro calls into plain SQL for the current target. The compiled `SELECT` is written to `target/compiled/`. At run time the materialisation wraps it in DDL/DML (`create table as`, `merge`) and sends it to the warehouse through the adapter.
+dbt parses the project and builds the DAG, then for each node renders the Jinja: it resolves `ref`, `source`, `var`, `config` and macro calls into plain SQL for the current target. The compiled `SELECT` is written to `target/compiled/`. At run time the materialization wraps it in DDL/DML (`create table as`, `merge`) and sends it to the warehouse through the adapter.
 
 #### What is SQLFluff?
 
@@ -966,7 +966,7 @@ Use an image with dbt Core and the adapter installed, mount or copy the project,
 
 #### What is dbt Mesh?
 
-A pattern for large organisations where several dbt projects reference each other's public models (cross-project `ref`), with contracts, versions and access controls, so domains own their projects independently.
+A pattern for large organizations where several dbt projects reference each other's public models (cross-project `ref`), with contracts, versions and access controls, so domains own their projects independently.
 
 #### How do you trigger dbt after ingestion finishes?
 
@@ -980,7 +980,7 @@ Building production into a new schema or database, testing it, then swapping it 
 
 #### How can you optimize the performance of dbt transformations on large datasets?
 
-Materialise expensive models as tables and use incremental models for large fact tables, filter and aggregate early, avoid `select *` and unnecessary joins, partition and cluster big tables on filter columns, use the warehouse's native features (clustering keys, sort keys), limit data in development, and look at query profiles and `run_results.json` timings to find the slowest models.
+Materialize expensive models as tables and use incremental models for large fact tables, filter and aggregate early, avoid `select *` and unnecessary joins, partition and cluster big tables on filter columns, use the warehouse's native features (clustering keys, sort keys), limit data in development, and look at query profiles and `run_results.json` timings to find the slowest models.
 
 #### Name some optimization techniques for dbt when run in Snowflake.
 
@@ -996,7 +996,7 @@ Increase `threads` within warehouse limits, remove unnecessary models, convert r
 
 #### Why can a long chain of views be slow?
 
-Each query on the final view executes the whole chain of underlying SQL. Materialising key intermediate models as tables stops repeated computation.
+Each query on the final view executes the whole chain of underlying SQL. Materializing key intermediate models as tables stops repeated computation.
 
 #### How do you find the slowest models?
 
@@ -1038,8 +1038,8 @@ qualify row_number() over (partition by customer_id order by updated_at desc) = 
 
 #### How do you monitor and troubleshoot issues with dbt in production?
 
-Alert on job failures and test errors, track test failure trends and run durations, check source freshness before running, keep artefacts for comparison, and document an on-call procedure (inspect logs and compiled SQL, rerun with `dbt retry`, communicate data incidents to consumers).
+Alert on job failures and test errors, track test failure trends and run durations, check source freshness before running, keep artifacts for comparison, and document an on-call procedure (inspect logs and compiled SQL, rerun with `dbt retry`, communicate data incidents to consumers).
 
 #### What would you check when a dbt job suddenly takes twice as long?
 
-Data volume growth in sources, a model that changed materialisation or lost its incremental filter, a full refresh triggered by mistake, warehouse size or queuing, a new join that fans out, and missing partition pruning.
+Data volume growth in sources, a model that changed materialization or lost its incremental filter, a full refresh triggered by mistake, warehouse size or queuing, a new join that fans out, and missing partition pruning.

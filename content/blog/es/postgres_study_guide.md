@@ -34,11 +34,11 @@ Cada conexión cuesta memoria y un proceso, así que miles de conexiones directa
 
 #### ¿Qué es el write-ahead log (WAL)?
 
-Un registro donde se anota cada cambio antes de modificar los ficheros de datos. Tras una caída, PostgreSQL reproduce el WAL para recuperar un estado coherente. El WAL también alimenta la replicación y la recuperación a un momento dado.
+Un registro donde se anota cada cambio antes de modificar los archivos de datos. Tras una caída, PostgreSQL reproduce el WAL para recuperar un estado coherente. El WAL también alimenta la replicación y la recuperación a un momento dado.
 
 #### ¿Qué es un checkpoint?
 
-El momento en que todas las páginas modificadas en memoria se escriben en los ficheros de datos, de modo que el WAL anterior deja de ser necesario para la recuperación ante caídas. Su frecuencia la controlan `checkpoint_timeout` y `max_wal_size`.
+El momento en que todas las páginas modificadas en memoria se escriben en los archivos de datos, de modo que el WAL anterior deja de ser necesario para la recuperación ante caídas. Su frecuencia la controlan `checkpoint_timeout` y `max_wal_size`.
 
 #### ¿Qué diferencia hay entre una base de datos, un esquema y una tabla?
 
@@ -80,7 +80,7 @@ La lista ordenada de esquemas en los que PostgreSQL busca los nombres de objetos
 
 #### ¿Qué diferencia hay entre `DELETE`, `TRUNCATE` y `DROP`?
 
-`DELETE` borra las filas una a una, admite una cláusula `WHERE`, dispara triggers y deja tuplas muertas para vacuum. `TRUNCATE` vacía toda la tabla rápidamente sustituyendo sus ficheros. `DROP` elimina la propia tabla. En PostgreSQL, los tres son transaccionales.
+`DELETE` borra las filas una a una, admite una cláusula `WHERE`, dispara triggers y deja tuplas muertas para vacuum. `TRUNCATE` vacía toda la tabla rápidamente sustituyendo sus archivos. `DROP` elimina la propia tabla. En PostgreSQL, los tres son transaccionales.
 
 #### ¿Qué es una secuencia?
 
@@ -386,7 +386,7 @@ FROM sales;
 
 El subconjunto de la partición que se usa en el cálculo de cada fila. `ROWS` cuenta filas físicas (por ejemplo, las tres filas anteriores). `RANGE` usa distancias de valor en la columna del `ORDER BY`, así que las filas con valores iguales se incluyen juntas. El marco por defecto con `ORDER BY` es `RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`.
 
-#### ¿Cómo se calcula una media móvil de 7 días?
+#### ¿Cómo se calcula un promedio móvil de 7 días?
 
 ```sql
 SELECT day,
@@ -502,7 +502,7 @@ Un recorrido que responde a una consulta solo con el índice. Necesita un índic
 
 #### ¿Qué cuestan los índices?
 
-Ocupan espacio en disco y ralentizan `INSERT`, `UPDATE` y `DELETE`, porque hay que mantener cada índice. Los índices no usados son puro coste: encuéntralos con `pg_stat_user_indexes` (`idx_scan = 0`).
+Ocupan espacio en disco y ralentizan `INSERT`, `UPDATE` y `DELETE`, porque hay que mantener cada índice. Los índices no usados son puro costo: encuéntralos con `pg_stat_user_indexes` (`idx_scan = 0`).
 
 #### ¿Por qué PostgreSQL podría no usar un índice?
 
@@ -547,7 +547,7 @@ Buscando recorridos secuenciales grandes en `pg_stat_user_tables` (`seq_scan`, `
 
 #### ¿Un índice sobre `(a, b)` hace redundante un índice sobre `(a)`?
 
-Casi siempre: el índice compuesto sirve para las consultas sobre `a` sola. Un índice aparte sobre `a` puede ser algo más pequeño y rápido, pero no suele compensar su coste de mantenimiento.
+Casi siempre: el índice compuesto sirve para las consultas sobre `a` sola. Un índice aparte sobre `a` puede ser algo más pequeño y rápido, pero no suele compensar su costo de mantenimiento.
 
 #### ¿Qué son el `fastupdate` y las listas pendientes de los índices GIN?
 
@@ -656,7 +656,7 @@ Por defecto, `COMMIT` espera a que el WAL se escriba en disco, lo que garantiza 
 
 #### ¿Qué muestra `EXPLAIN` y en qué se diferencia `EXPLAIN ANALYZE`?
 
-`EXPLAIN` muestra el plan elegido por el planificador, con costes y número de filas estimados. `EXPLAIN ANALYZE` ejecuta la consulta y añade los tiempos y el número de filas reales. Añade `BUFFERS` para ver las páginas leídas de la caché o del disco.
+`EXPLAIN` muestra el plan elegido por el planificador, con costos y número de filas estimados. `EXPLAIN ANALYZE` ejecuta la consulta y añade los tiempos y el número de filas reales. Añade `BUFFERS` para ver las páginas leídas de la caché o del disco.
 
 ```sql
 EXPLAIN (ANALYZE, BUFFERS) SELECT * FROM company WHERE country_code = 'FR';
@@ -719,11 +719,11 @@ Usando `COPY` en lugar de inserciones fila a fila, cargando dentro de una sola t
 
 #### ¿Qué es el comando `COPY`?
 
-La forma más rápida de cargar o exportar datos en bloque entre tablas y ficheros o flujos: `COPY company FROM '/data/company.csv' WITH (FORMAT csv, HEADER)`. Desde un cliente, usa el `\copy` de psql o el soporte de COPY del driver. PostgreSQL 17 puede saltarse las filas mal formadas con `ON_ERROR ignore`.
+La forma más rápida de cargar o exportar datos en bloque entre tablas y archivos o flujos: `COPY company FROM '/data/company.csv' WITH (FORMAT csv, HEADER)`. Desde un cliente, usa el `\copy` de psql o el soporte de COPY del driver. PostgreSQL 17 puede saltarse las filas mal formadas con `ON_ERROR ignore`.
 
 #### ¿Qué es un pool de conexiones y por qué se usa PgBouncer?
 
-Reutilizar un número pequeño de conexiones a la base de datos para muchos clientes. PgBouncer se sitúa entre las aplicaciones y PostgreSQL, en modo sesión, transacción o sentencia, y reduce el coste de cada conexión.
+Reutilizar un número pequeño de conexiones a la base de datos para muchos clientes. PgBouncer se sitúa entre las aplicaciones y PostgreSQL, en modo sesión, transacción o sentencia, y reduce el costo de cada conexión.
 
 #### ¿Qué es la consulta paralela?
 
@@ -731,7 +731,7 @@ PostgreSQL puede repartir los recorridos secuenciales, los joins y las agregacio
 
 #### ¿Qué es la compilación JIT en PostgreSQL?
 
-La compilación en tiempo de ejecución (con LLVM) de las expresiones de consultas analíticas largas. Acelera los cálculos pesados, pero añade sobrecoste a las consultas cortas. La controlan `jit` y unos umbrales de coste.
+La compilación en tiempo de ejecución (con LLVM) de las expresiones de consultas analíticas largas. Acelera los cálculos pesados, pero añade sobrecosto a las consultas cortas. La controlan `jit` y unos umbrales de costo.
 
 #### ¿Cómo interactúa `LIMIT` con `ORDER BY` y los índices?
 
@@ -879,7 +879,7 @@ CREATE POLICY tenant_isolation ON orders USING (tenant_id = current_setting('app
 
 #### ¿Qué es `pg_hba.conf`?
 
-El fichero de autenticación basada en host: reglas que indican qué usuarios pueden conectarse a qué bases de datos, desde qué direcciones y con qué método (`scram-sha-256`, `cert`, `peer`). `trust` no debe usarse nunca fuera de pruebas locales.
+El archivo de autenticación basada en host: reglas que indican qué usuarios pueden conectarse a qué bases de datos, desde qué direcciones y con qué método (`scram-sha-256`, `cert`, `peer`). `trust` no debe usarse nunca fuera de pruebas locales.
 
 #### ¿Cómo deben guardarse y comprobarse las contraseñas?
 
@@ -891,7 +891,7 @@ Usando consultas parametrizadas (marcadores que vincula el driver) en lugar de c
 
 #### ¿Qué diferencia hay entre las copias de seguridad lógicas y físicas?
 
-Las copias lógicas (`pg_dump`, `pg_dumpall`) exportan ficheros SQL o de archivo con los objetos y los datos. Son portables entre versiones y se pueden restaurar de forma selectiva, pero son lentas en bases de datos grandes. Las copias físicas (`pg_basebackup`, pgBackRest) copian los ficheros de datos y el WAL. Son rápidas en bases grandes y permiten la recuperación a un momento dado.
+Las copias lógicas (`pg_dump`, `pg_dumpall`) exportan archivos SQL o de archivo con los objetos y los datos. Son portables entre versiones y se pueden restaurar de forma selectiva, pero son lentas en bases de datos grandes. Las copias físicas (`pg_basebackup`, pgBackRest) copian los archivos de datos y el WAL. Son rápidas en bases grandes y permiten la recuperación a un momento dado.
 
 #### ¿Cómo se hace y se restaura una copia de una sola base de datos con pg_dump?
 
@@ -1047,7 +1047,7 @@ La extensión espacial de PostgreSQL: tipos geometry y geography, funciones espa
 
 #### ¿Qué es un foreign data wrapper (FDW)?
 
-Una extensión que permite a PostgreSQL consultar fuentes de datos externas como si fueran tablas locales: `postgres_fdw` (otros servidores PostgreSQL), `file_fdw` (ficheros) y otras para MySQL, Oracle, S3 o Parquet.
+Una extensión que permite a PostgreSQL consultar fuentes de datos externas como si fueran tablas locales: `postgres_fdw` (otros servidores PostgreSQL), `file_fdw` (archivos) y otras para MySQL, Oracle, S3 o Parquet.
 
 #### ¿Qué es pgvector?
 

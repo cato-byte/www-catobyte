@@ -21,7 +21,7 @@ Construir un almacén de datos o lakehouse capa a capa (staging, intermedia, mar
 
 #### ¿En qué se diferencia dbt de las herramientas ETL tradicionales?
 
-Las herramientas ETL tradicionales extraen, transforman en su propio motor y luego cargan, a menudo mediante una interfaz gráfica. dbt solo transforma, dentro del almacén que ya contiene los datos cargados (ELT), con SQL en ficheros de texto. Todo es código: versionado en Git, revisado, probado y desplegado como software. La extracción y la carga se dejan a otras herramientas (Fivetran, Airbyte, pipelines propios).
+Las herramientas ETL tradicionales extraen, transforman en su propio motor y luego cargan, a menudo mediante una interfaz gráfica. dbt solo transforma, dentro del almacén que ya contiene los datos cargados (ELT), con SQL en archivos de texto. Todo es código: versionado en Git, revisado, probado y desplegado como software. La extracción y la carga se dejan a otras herramientas (Fivetran, Airbyte, pipelines propios).
 
 #### ¿Cómo se compara dbt con Apache Spark?
 
@@ -41,7 +41,7 @@ Un plugin que permite a dbt hablar con una plataforma de datos concreta, traduci
 
 #### ¿Qué es un modelo de dbt?
 
-Un fichero `.sql` de la carpeta `models/` que contiene una sentencia `SELECT`. dbt la envuelve en el DDL necesario para crear una vista, tabla u otro objeto con el nombre del fichero. En algunas plataformas también se admiten modelos Python (`.py`).
+Un archivo `.sql` de la carpeta `models/` que contiene una sentencia `SELECT`. dbt la envuelve en el DDL necesario para crear una vista, tabla u otro objeto con el nombre del archivo. En algunas plataformas también se admiten modelos Python (`.py`).
 
 #### ¿Qué es el DAG en el contexto de dbt?
 
@@ -49,7 +49,7 @@ El grafo acíclico dirigido de dependencias entre modelos, sources, seeds y snap
 
 #### ¿Cuáles son los retos de dbt?
 
-Solo cubre la transformación, así que hacen falta otras herramientas para la ingesta y la orquestación. Los proyectos grandes pueden volverse lentos de compilar y difíciles de recorrer sin convenciones. Los modelos incrementales y los snapshots requieren un diseño cuidadoso. Jinja puede volver ilegible el SQL si se abusa de él. El rendimiento sigue dependiendo del almacén y del SQL que escribas, y los costes pueden dispararse si se hacen full refresh con demasiada frecuencia.
+Solo cubre la transformación, así que hacen falta otras herramientas para la ingesta y la orquestación. Los proyectos grandes pueden volverse lentos de compilar y difíciles de recorrer sin convenciones. Los modelos incrementales y los snapshots requieren un diseño cuidadoso. Jinja puede volver ilegible el SQL si se abusa de él. El rendimiento sigue dependiendo del almacén y del SQL que escribas, y los costos pueden dispararse si se hacen full refresh con demasiada frecuencia.
 
 #### ¿Qué problemas resuelve dbt frente a los procedimientos almacenados y los scripts?
 
@@ -77,7 +77,7 @@ En SQL (con Jinja) en todas partes, y en Python en Snowflake (Snowpark), Databri
 
 #### ¿Qué es un modelo Python en dbt?
 
-Un fichero `.py` que define `model(dbt, session)` y devuelve un DataFrame. Puede referenciar otros modelos con `dbt.ref()` y se materializa como tabla o como modelo incremental.
+Un archivo `.py` que define `model(dbt, session)` y devuelve un DataFrame. Puede referenciar otros modelos con `dbt.ref()` y se materializa como tabla o como modelo incremental.
 
 ```python
 def model(dbt, session):
@@ -102,7 +102,7 @@ Dividir las transformaciones en modelos pequeños y reutilizables con una sola r
 
 #### ¿Qué es un proyecto de dbt?
 
-Un directorio que contiene un fichero `dbt_project.yml` además de modelos, tests, macros, seeds, snapshots, análisis y documentación. Es la unidad que dbt compila y ejecuta, normalmente un repositorio Git.
+Un directorio que contiene un archivo `dbt_project.yml` además de modelos, tests, macros, seeds, snapshots, análisis y documentación. Es la unidad que dbt compila y ejecuta, normalmente un repositorio Git.
 
 #### ¿Cuál es la estructura de un proyecto?
 
@@ -127,7 +127,7 @@ El nombre y la versión del proyecto, el `profile` que se usa, las rutas (models
 
 #### ¿Qué es `profiles.yml`?
 
-El fichero (por defecto en `~/.dbt/`) que contiene los datos de conexión de cada perfil y target: tipo de adaptador, host, base de datos, esquema, credenciales y threads. Se mantiene fuera del repositorio del proyecto porque contiene secretos. Los valores pueden venir de variables de entorno con `env_var()`.
+El archivo (por defecto en `~/.dbt/`) que contiene los datos de conexión de cada perfil y target: tipo de adaptador, host, base de datos, esquema, credenciales y threads. Se mantiene fuera del repositorio del proyecto porque contiene secretos. Los valores pueden venir de variables de entorno con `env_var()`.
 
 #### ¿Qué es un target en dbt?
 
@@ -139,7 +139,7 @@ El número máximo de modelos que dbt ejecuta a la vez. Las ramas independientes
 
 #### ¿Cómo se configura un modelo?
 
-En tres sitios, del más al menos específico: un bloque `{{ config(...) }}` en el fichero del modelo, un bloque `config:` en las propiedades YAML del modelo y los ajustes por carpeta en `dbt_project.yml`. Gana el más específico.
+En tres sitios, del más al menos específico: un bloque `{{ config(...) }}` en el archivo del modelo, un bloque `config:` en las propiedades YAML del modelo y los ajustes por carpeta en `dbt_project.yml`. Gana el más específico.
 
 ```sql
 {{ config(materialized='table', schema='marts', tags=['daily']) }}
@@ -148,7 +148,7 @@ select * from {{ ref('int_orders') }}
 
 #### ¿Qué diferencia hay entre configs y properties?
 
-Las configs controlan cómo construye dbt un nodo (materialización, esquema, etiquetas, hooks). Las properties lo describen (descripción, columnas, tests, documentación). Las properties viven en ficheros YAML. Las configs pueden estar en YAML, en el fichero del modelo o en `dbt_project.yml`.
+Las configs controlan cómo construye dbt un nodo (materialización, esquema, etiquetas, hooks). Las properties lo describen (descripción, columnas, tests, documentación). Las properties viven en archivos YAML. Las configs pueden estar en YAML, en el archivo del modelo o en `dbt_project.yml`.
 
 #### ¿Para qué sirven las etiquetas (tags)?
 
@@ -190,7 +190,7 @@ Calcula el esquema de cada nodo. Sobrescribirla permite, por ejemplo, usar nombr
 
 #### ¿Qué son los analyses en dbt?
 
-Ficheros SQL de `analyses/` que se compilan (con Jinja y `ref` resueltos) pero que `dbt run` nunca ejecuta. Son útiles para consultas puntuales que se benefician de las referencias de dbt.
+Archivos SQL de `analyses/` que se compilan (con Jinja y `ref` resueltos) pero que `dbt run` nunca ejecuta. Son útiles para consultas puntuales que se benefician de las referencias de dbt.
 
 #### ¿Qué hace `dbt clean`?
 
@@ -245,7 +245,7 @@ Para que cada tabla en bruto se limpie una sola vez, en un único sitio. Si la s
 
 #### ¿Qué es un seed?
 
-Un fichero CSV de la carpeta `seeds/` que `dbt seed` carga en el almacén como tabla. Los modelos lo referencian con `ref()` como a cualquier modelo.
+Un archivo CSV de la carpeta `seeds/` que `dbt seed` carga en el almacén como tabla. Los modelos lo referencian con `ref()` como a cualquier modelo.
 
 #### ¿Cuándo usar seeds y cuándo no?
 
@@ -291,7 +291,7 @@ Para detectar una ingesta rota o retrasada antes de que los modelos se ejecuten 
 
 #### ¿Cómo se crea un modelo de dbt?
 
-Crea un fichero `.sql` en `models/` con un `SELECT` que referencie los nodos de origen con `ref` o `source`, añade si quieres un bloque `config` y una entrada YAML con descripción y tests, y ejecuta `dbt run --select my_model`.
+Crea un archivo `.sql` en `models/` con un `SELECT` que referencie los nodos de origen con `ref` o `source`, añade si quieres un bloque `config` y una entrada YAML con descripción y tests, y ejecuta `dbt run --select my_model`.
 
 ```sql
 -- models/staging/stripe/stg_stripe__payments.sql
@@ -327,7 +327,7 @@ Para lógica ligera y reutilizable que no quieres como objeto separado en el alm
 
 #### ¿Cómo crearías una materialización personalizada en dbt?
 
-Con un bloque `{% materialization name, adapter='default' %}` en un fichero de macros. Normalmente obtiene la relación destino, ejecuta los pre-hooks, construye el SQL con `{% call statement('main') %}`, gestiona las relaciones existentes, ejecuta los post-hooks y devuelve `{'relations': [target_relation]}`. Las materializaciones personalizadas son raras: las integradas y las estrategias incrementales cubren casi todo.
+Con un bloque `{% materialization name, adapter='default' %}` en un archivo de macros. Normalmente obtiene la relación destino, ejecuta los pre-hooks, construye el SQL con `{% call statement('main') %}`, gestiona las relaciones existentes, ejecuta los post-hooks y devuelve `{'relations': [target_relation]}`. Las materializaciones personalizadas son raras: las integradas y las estrategias incrementales cubren casi todo.
 
 #### ¿Qué es un modelo mart?
 
@@ -335,7 +335,7 @@ Un modelo final construido para los consumidores, normalmente una tabla de hecho
 
 #### ¿Qué convenciones de nombres son habituales en dbt?
 
-`stg_<source>__<table>` para staging, `int_<entidad>_<verbo>` para intermediate, `fct_` y `dim_` para los marts, nombres de entidad en plural, snake_case y un modelo por fichero con el mismo nombre que la relación.
+`stg_<source>__<table>` para staging, `int_<entidad>_<verbo>` para intermediate, `fct_` y `dim_` para los marts, nombres de entidad en plural, snake_case y un modelo por archivo con el mismo nombre que la relación.
 
 #### ¿Qué diferencia hay entre un modelo de hechos y uno de dimensión?
 
@@ -414,7 +414,7 @@ Un modelo con `enabled: false`. dbt lo ignora, lo que es útil para modelos espe
 
 #### ¿Qué es la configuración `alias`?
 
-Fija el nombre de la relación en el almacén con independencia del nombre del fichero del modelo.
+Fija el nombre de la relación en el almacén con independencia del nombre del archivo del modelo.
 
 ### Jinja y macros
 
@@ -481,7 +481,7 @@ Con `{% set %}`, por ejemplo `{% set payment_methods = ['card', 'paypal'] %}`, y
 
 #### ¿Para qué sirve `log()` en las macros?
 
-Para mostrar mensajes en la consola o en el fichero de registro durante la compilación, al depurar: `{{ log("value: " ~ my_var, info=true) }}`.
+Para mostrar mensajes en la consola o en el archivo de registro durante la compilación, al depurar: `{{ log("value: " ~ my_var, info=true) }}`.
 
 #### ¿Qué es el objeto `config` en Jinja?
 
@@ -552,7 +552,7 @@ dbt convierte cada uno en una consulta que devuelve las filas que fallan. El tes
 
 #### ¿Qué es un test singular?
 
-Un fichero `.sql` de `tests/` que selecciona las filas que incumplen una regla. Falla si devuelve alguna fila:
+Un archivo `.sql` de `tests/` que selecciona las filas que incumplen una regla. Falla si devuelve alguna fila:
 
 ```sql
 -- tests/assert_no_negative_amounts.sql
@@ -717,7 +717,7 @@ Sustituye particiones enteras (por ejemplo los días presentes en el nuevo lote)
 
 #### ¿Qué hace `incremental_predicates`?
 
-Añade condiciones al merge, por ejemplo limitar la lectura de la tabla destino a las particiones recientes, lo que reduce el coste en tablas grandes.
+Añade condiciones al merge, por ejemplo limitar la lectura de la tabla destino a las particiones recientes, lo que reduce el costo en tablas grandes.
 
 #### ¿Puede un modelo incremental referenciarse a sí mismo?
 
@@ -832,7 +832,7 @@ Selecciona del snapshot en un modelo, renombra `dbt_valid_from` y `dbt_valid_to`
 
 #### ¿Dónde se escriben las descripciones?
 
-En ficheros de propiedades YAML junto a los modelos (`description:` en modelos y columnas), o en bloques `{% docs %}` de ficheros `.md` referenciados con `{{ doc('name') }}` para textos más largos.
+En archivos de propiedades YAML junto a los modelos (`description:` en modelos y columnas), o en bloques `{% docs %}` de archivos `.md` referenciados con `{{ doc('name') }}` para textos más largos.
 
 #### ¿Qué es `persist_docs`?
 
@@ -848,7 +848,7 @@ Lista los nodos que coinciden con una selección sin ejecutarlos, lo que es úti
 
 #### ¿Qué es el artefacto `manifest.json`?
 
-Un fichero JSON de `target/` que describe todo el proyecto (nodos, configuraciones, dependencias). Se usa para comparar estados (`state:modified`), para la documentación y en herramientas externas.
+Un archivo JSON de `target/` que describe todo el proyecto (nodos, configuraciones, dependencias). Se usa para comparar estados (`state:modified`), para la documentación y en herramientas externas.
 
 #### ¿Qué es `run_results.json`?
 
@@ -856,7 +856,7 @@ Un artefacto con el resultado, la duración y el estado de cada nodo de la últi
 
 #### ¿Cuál es la arquitectura de la capa semántica de dbt?
 
-Los modelos semánticos se definen en YAML sobre los modelos de dbt, declarando entidades (claves de unión), dimensiones y medidas. Las métricas se definen sobre esas medidas. MetricFlow convierte una petición de métrica (métrica, dimensiones, filtros, granularidad) en SQL optimizado para el almacén, y la dbt platform la expone mediante API e integraciones con herramientas de BI.
+Los modelos semánticos se definen en YAML sobre los modelos de dbt, declarando entidades (claves de unión), dimensiones y medidas. Las métricas se definen sobre esas medidas. MetricFlow convierte una solicitud de métrica (métrica, dimensiones, filtros, granularidad) en SQL optimizado para el almacén, y la dbt platform la expone mediante API e integraciones con herramientas de BI.
 
 #### ¿Qué es un modelo semántico?
 
@@ -984,7 +984,7 @@ Materializa como tablas los modelos costosos y usa modelos incrementales para la
 
 #### Nombra algunas técnicas de optimización de dbt en Snowflake.
 
-Usa tablas transitorias para los modelos intermedios (sin coste de almacenamiento Fail-safe), agrupa (clustering) las tablas muy grandes por las columnas de filtro habituales, dimensiona los warehouses por trabajo (y separa los de dbt y los de BI), usa `merge` o `delete+insert` con incremental predicates, apóyate en el clonado sin copia para dev y CI (`dbt clone`), fija `query_tag` para atribuir costes y activa la suspensión automática de los warehouses.
+Usa tablas transitorias para los modelos intermedios (sin costo de almacenamiento Fail-safe), agrupa (clustering) las tablas muy grandes por las columnas de filtro habituales, dimensiona los warehouses por trabajo (y separa los de dbt y los de BI), usa `merge` o `delete+insert` con incremental predicates, apóyate en el clonado sin copia para dev y CI (`dbt clone`), fija `query_tag` para atribuir costos y activa la suspensión automática de los warehouses.
 
 #### ¿Cómo compararías dbt y BigQuery?
 
@@ -1002,7 +1002,7 @@ Cada consulta a la vista final ejecuta toda la cadena de SQL subyacente. Materia
 
 Con los tiempos de `run_results.json`, la vista de tiempos de modelos de la dbt platform o el historial de consultas del almacén filtrado por el `query_tag` de dbt.
 
-#### ¿Qué impacto en costes tienen las vistas, las tablas y los modelos incrementales?
+#### ¿Qué impacto en costos tienen las vistas, las tablas y los modelos incrementales?
 
 Las vistas cuestan cómputo cada vez que se consultan. Las tablas cuestan cómputo en cada construcción, más almacenamiento. Los modelos incrementales cuestan poco por ejecución, pero requieren cuidado para seguir siendo correctos.
 

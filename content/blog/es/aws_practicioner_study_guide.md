@@ -58,7 +58,7 @@ El gasto de capital (CapEx) es una inversión inicial en activos físicos, como 
 
 #### ¿Qué significa "economías de escala" en la nube?
 
-AWS compra hardware, energía y red a una escala que ningún cliente alcanza por separado, así que su coste por unidad es menor. Parte del ahorro se traslada a los clientes con bajadas de precio, que AWS ha aplicado muchas veces.
+AWS compra hardware, energía y red a una escala que ningún cliente alcanza por separado, así que su costo por unidad es menor. Parte del ahorro se traslada a los clientes con bajadas de precio, que AWS ha aplicado muchas veces.
 
 #### ¿Qué es la alta disponibilidad?
 
@@ -77,11 +77,11 @@ La recuperación ante desastres (DR) es el conjunto de planes para restaurar una
 1. **Copia de seguridad y restauración:** se hacen copias de los datos y la infraestructura se crea tras el desastre. RTO de horas.
 2. **Piloto encendido (pilot light):** un núcleo mínimo (por ejemplo una base de datos replicada) funciona siempre, el resto se arranca bajo demanda.
 3. **Espera en caliente (warm standby):** una copia reducida pero completamente funcional se ejecuta y se amplía al conmutar.
-4. **Multisitio activo/activo:** producción completa en dos o más regiones. RTO casi nulo, coste máximo.
+4. **Multisitio activo/activo:** producción completa en dos o más regiones. RTO casi nulo, costo máximo.
 
 #### ¿Qué es la agilidad en el contexto de la nube?
 
-La velocidad a la que puedes disponer de recursos y probar ideas nuevas. Recursos que tardaban semanas en llegar están disponibles en minutos, así que el coste y el tiempo de experimentar bajan mucho.
+La velocidad a la que puedes disponer de recursos y probar ideas nuevas. Recursos que tardaban semanas en llegar están disponibles en minutos, así que el costo y el tiempo de experimentar bajan mucho.
 
 #### ¿Qué significa "llegar a todo el mundo en minutos"?
 
@@ -150,7 +150,7 @@ Un conjunto de buenas prácticas y preguntas para diseñar y revisar cargas de t
 
 #### ¿Cuáles son los seis pilares del Well-Architected Framework?
 
-Excelencia operativa, Seguridad, Fiabilidad, Eficiencia del rendimiento, Optimización de costes y Sostenibilidad.
+Excelencia operativa, Seguridad, Fiabilidad, Eficiencia del rendimiento, Optimización de costos y Sostenibilidad.
 
 #### ¿En qué se centra el pilar de Excelencia operativa?
 
@@ -168,7 +168,7 @@ En que una carga de trabajo cumpla su función correctamente y de forma constant
 
 En usar los recursos de forma eficiente a medida que cambian la demanda y la tecnología: elegir los tipos de recursos adecuados, usar servicios gestionados y serverless, desplegar globalmente en minutos y experimentar a menudo.
 
-#### ¿En qué se centra el pilar de Optimización de costes?
+#### ¿En qué se centra el pilar de Optimización de costos?
 
 En aportar valor al menor precio: pagar solo por lo que se usa, medir la eficiencia, no gastar en trabajo sin valor diferencial, y analizar y atribuir el gasto.
 
@@ -186,7 +186,7 @@ Diseñar los componentes para que un fallo o una lentitud en uno no se propague 
 
 #### ¿Qué diferencia hay entre una aplicación sin estado y una con estado?
 
-Un componente sin estado no guarda datos de sesión entre peticiones, así que cualquier instancia puede atender cualquier petición y se pueden añadir o quitar instancias libremente. El estado se guarda en otro sitio (DynamoDB, ElastiCache, S3). Los componentes con estado son más difíciles de escalar horizontalmente.
+Un componente sin estado no guarda datos de sesión entre solicitudes, así que cualquier instancia puede atender cualquier solicitud y se pueden añadir o quitar instancias libremente. El estado se guarda en otro sitio (DynamoDB, ElastiCache, S3). Los componentes con estado son más difíciles de escalar horizontalmente.
 
 #### ¿Qué es la infraestructura como código y por qué la recomienda el Well-Architected Framework?
 
@@ -216,7 +216,7 @@ La gestión de parches (AWS parchea la infraestructura, el cliente sus sistemas 
 
 #### ¿Qué es AWS Identity and Access Management (IAM)?
 
-El servicio global que controla quién puede iniciar sesión en una cuenta de AWS (autenticación) y qué puede hacer (autorización). Gestiona usuarios, grupos, roles y políticas sin coste adicional.
+El servicio global que controla quién puede iniciar sesión en una cuenta de AWS (autenticación) y qué puede hacer (autorización). Gestiona usuarios, grupos, roles y políticas sin costo adicional.
 
 #### ¿Qué es el usuario raíz y cómo debe protegerse?
 
@@ -275,7 +275,7 @@ Un segundo factor además de la contraseña. AWS admite llaves de acceso (passke
 
 #### ¿Qué son las claves de acceso?
 
-Un par formado por un ID de clave de acceso y una clave de acceso secreta, usado para firmar peticiones programáticas (CLI, SDK). Son credenciales de larga duración: no las incluyas nunca en el código, rótalas y, siempre que puedas, usa roles o IAM Identity Center.
+Un par formado por un ID de clave de acceso y una clave de acceso secreta, usado para firmar solicitudes programáticas (CLI, SDK). Son credenciales de larga duración: no las incluyas nunca en el código, rótalas y, siempre que puedas, usa roles o IAM Identity Center.
 
 #### ¿Qué es AWS IAM Identity Center?
 
@@ -329,7 +329,7 @@ KMS es un servicio gestionado multiinquilino en el que AWS opera los módulos de
 
 #### ¿Qué diferencia hay entre el cifrado en reposo y en tránsito?
 
-En reposo protege los datos almacenados (objetos S3, volúmenes EBS, ficheros de base de datos), normalmente con claves de KMS. En tránsito protege los datos que circulan por la red, normalmente con TLS.
+En reposo protege los datos almacenados (objetos S3, volúmenes EBS, archivos de base de datos), normalmente con claves de KMS. En tránsito protege los datos que circulan por la red, normalmente con TLS.
 
 #### ¿Qué es AWS Certificate Manager (ACM)?
 
@@ -341,15 +341,15 @@ Un servicio para guardar, recuperar y rotar automáticamente secretos como contr
 
 #### ¿Qué diferencia hay entre Secrets Manager y Systems Manager Parameter Store?
 
-Ambos guardan configuración y secretos. Secrets Manager añade la rotación automática integrada y el uso compartido entre cuentas, con un coste por secreto. El nivel estándar de Parameter Store es gratuito y sirve para valores de configuración y secretos sencillos sin rotación.
+Ambos guardan configuración y secretos. Secrets Manager añade la rotación automática integrada y el uso compartido entre cuentas, con un costo por secreto. El nivel estándar de Parameter Store es gratuito y sirve para valores de configuración y secretos sencillos sin rotación.
 
 #### ¿Qué es AWS Shield?
 
-Protección gestionada contra ataques DDoS. Shield Standard es automático y gratuito para todos los clientes frente a los ataques habituales de las capas de red y transporte. Shield Advanced es de pago y añade protección frente a ataques mayores, acceso 24/7 al Shield Response Team y protección de costes.
+Protección gestionada contra ataques DDoS. Shield Standard es automático y gratuito para todos los clientes frente a los ataques habituales de las capas de red y transporte. Shield Advanced es de pago y añade protección frente a ataques mayores, acceso 24/7 al Shield Response Team y protección de costos.
 
 #### ¿Qué es AWS WAF?
 
-Un cortafuegos de aplicaciones web que filtra las peticiones HTTP(S) dirigidas a CloudFront, Application Load Balancer, API Gateway y AppSync mediante reglas (conjuntos de IP, límites de frecuencia, patrones de inyección SQL y cross-site scripting, grupos de reglas gestionadas).
+Un cortafuegos de aplicaciones web que filtra las solicitudes HTTP(S) dirigidas a CloudFront, Application Load Balancer, API Gateway y AppSync mediante reglas (conjuntos de IP, límites de frecuencia, patrones de inyección SQL y cross-site scripting, grupos de reglas gestionadas).
 
 #### ¿Qué es Amazon GuardDuty?
 
@@ -456,7 +456,7 @@ Un script que se pasa al lanzar la instancia y se ejecuta en el primer arranque,
 
 #### ¿Qué es AWS Lambda?
 
-Un servicio de cómputo serverless que ejecuta tu función en respuesta a eventos (una llamada a una API, un fichero en S3, un mensaje, una programación). Pagas por petición y por duración en milisegundos. Una invocación puede durar como máximo 15 minutos.
+Un servicio de cómputo serverless que ejecuta tu función en respuesta a eventos (una llamada a una API, un archivo en S3, un mensaje, una programación). Pagas por solicitud y por duración en milisegundos. Una invocación puede durar como máximo 15 minutos.
 
 #### ¿Cuándo elegirías Lambda en lugar de EC2?
 
@@ -518,7 +518,7 @@ Simple Storage Service es un almacenamiento de objetos con una durabilidad de 11
 
 #### ¿Qué son un bucket y un objeto de S3?
 
-Un bucket es un contenedor de objetos con un nombre único a nivel mundial, creado en una región. Un objeto es un fichero con sus metadatos, identificado por una clave, de hasta 5 TB.
+Un bucket es un contenedor de objetos con un nombre único a nivel mundial, creado en una región. Un objeto es un archivo con sus metadatos, identificado por una clave, de hasta 5 TB.
 
 #### ¿Qué son las políticas de ciclo de vida de S3?
 
@@ -542,7 +542,7 @@ La copia automática y asíncrona de objetos a otro bucket de otra región (Cros
 
 #### ¿Qué es el alojamiento de sitios web estáticos en S3?
 
-Servir un sitio web hecho de ficheros estáticos (HTML, CSS, JS, imágenes) directamente desde un bucket, normalmente detrás de CloudFront para tener HTTPS y caché.
+Servir un sitio web hecho de archivos estáticos (HTML, CSS, JS, imágenes) directamente desde un bucket, normalmente detrás de CloudFront para tener HTTPS y caché.
 
 #### ¿Qué es S3 Transfer Acceleration?
 
@@ -558,15 +558,15 @@ Copias de seguridad incrementales de volúmenes EBS en un momento dado, guardada
 
 #### ¿Qué es Amazon EFS?
 
-Elastic File System es un sistema de ficheros NFS gestionado para Linux que crece y se reduce automáticamente y que pueden montar a la vez muchas instancias de varias AZ.
+Elastic File System es un sistema de archivos NFS gestionado para Linux que crece y se reduce automáticamente y que pueden montar a la vez muchas instancias de varias AZ.
 
 #### ¿Qué diferencia hay entre S3, EBS y EFS?
 
-S3 es almacenamiento de objetos al que se accede por API, prácticamente ilimitado, para cualquier número de clientes. EBS es almacenamiento de bloques conectado (normalmente) a una instancia en una AZ, como un disco. EFS es un sistema de ficheros compartido para muchas instancias Linux de varias AZ.
+S3 es almacenamiento de objetos al que se accede por API, prácticamente ilimitado, para cualquier número de clientes. EBS es almacenamiento de bloques conectado (normalmente) a una instancia en una AZ, como un disco. EFS es un sistema de archivos compartido para muchas instancias Linux de varias AZ.
 
 #### ¿Qué es Amazon FSx?
 
-Sistemas de ficheros de terceros totalmente gestionados: FSx for Windows File Server (SMB), FSx for Lustre (computación de alto rendimiento), FSx for NetApp ONTAP y FSx for OpenZFS.
+Sistemas de archivos de terceros totalmente gestionados: FSx for Windows File Server (SMB), FSx for Lustre (computación de alto rendimiento), FSx for NetApp ONTAP y FSx for OpenZFS.
 
 #### ¿Qué es AWS Storage Gateway?
 
@@ -648,7 +648,7 @@ Un servicio que migra bases de datos a AWS con un tiempo de inactividad mínimo,
 
 #### ¿Qué es Amazon Athena?
 
-Un servicio de consultas interactivas serverless para analizar datos en S3 con SQL estándar. Pagas por cantidad de datos escaneados, así que los formatos en columnas y el particionado reducen el coste.
+Un servicio de consultas interactivas serverless para analizar datos en S3 con SQL estándar. Pagas por cantidad de datos escaneados, así que los formatos en columnas y el particionado reducen el costo.
 
 #### ¿Qué es AWS Glue?
 
@@ -710,7 +710,7 @@ Una conexión IPsec cifrada entre una red local y una VPC a través de internet.
 
 #### ¿Qué es AWS Direct Connect?
 
-Una conexión de red privada y dedicada entre tus instalaciones y AWS. Ofrece ancho de banda y latencia constantes y puede reducir los costes de transferencia, pero tarda semanas en instalarse. No está cifrada por defecto.
+Una conexión de red privada y dedicada entre tus instalaciones y AWS. Ofrece ancho de banda y latencia constantes y puede reducir los costos de transferencia, pero tarda semanas en instalarse. No está cifrada por defecto.
 
 #### ¿Qué es AWS Client VPN?
 
@@ -788,7 +788,7 @@ Un framework para definir infraestructura en la nube con lenguajes de programaci
 
 #### ¿Qué es AWS Trusted Advisor?
 
-Un servicio que inspecciona tu cuenta y recomienda mejoras en cinco categorías: optimización de costes, rendimiento, seguridad, tolerancia a fallos y cuotas de servicio. Los planes de soporte Basic y Developer solo tienen las comprobaciones principales. Business y superiores tienen el conjunto completo.
+Un servicio que inspecciona tu cuenta y recomienda mejoras en cinco categorías: optimización de costos, rendimiento, seguridad, tolerancia a fallos y cuotas de servicio. Los planes de soporte Basic y Developer solo tienen las comprobaciones principales. Business y superiores tienen el conjunto completo.
 
 #### ¿Qué es el AWS Health Dashboard?
 
@@ -804,7 +804,7 @@ Herramientas de CI/CD: CodeBuild compila y prueba el código, CodeDeploy automat
 
 #### ¿Qué es AWS X-Ray?
 
-Un servicio que traza las peticiones a través de aplicaciones distribuidas para encontrar cuellos de botella y errores.
+Un servicio que traza las solicitudes a través de aplicaciones distribuidas para encontrar cuellos de botella y errores.
 
 #### ¿Qué es Amazon SQS?
 
@@ -820,33 +820,33 @@ Un bus de eventos serverless que enruta eventos de servicios de AWS, aplicacione
 
 ### Facturación, precios y soporte
 
-#### ¿Cuáles son los tres factores fundamentales del coste en AWS?
+#### ¿Cuáles son los tres factores fundamentales del costo en AWS?
 
 El cómputo, el almacenamiento y la transferencia de datos salientes. La transferencia de datos entrantes suele ser gratuita.
 
 #### ¿Qué es la capa gratuita de AWS (Free Tier)?
 
-Ofertas para probar AWS sin coste dentro de ciertos límites. Incluye ofertas siempre gratuitas (por ejemplo peticiones de Lambda y almacenamiento de DynamoDB hasta un límite), créditos u ofertas de 12 meses para cuentas nuevas según el plan de la cuenta, y pruebas gratuitas cortas de servicios concretos. El uso que supera los límites se factura.
+Ofertas para probar AWS sin costo dentro de ciertos límites. Incluye ofertas siempre gratuitas (por ejemplo solicitudes de Lambda y almacenamiento de DynamoDB hasta un límite), créditos u ofertas de 12 meses para cuentas nuevas según el plan de la cuenta, y pruebas gratuitas cortas de servicios concretos. El uso que supera los límites se factura.
 
 #### ¿Qué es la AWS Pricing Calculator?
 
-Una herramienta gratuita para estimar el coste de una arquitectura antes de construirla.
+Una herramienta gratuita para estimar el costo de una arquitectura antes de construirla.
 
 #### ¿Qué es AWS Cost Explorer?
 
-Una herramienta para visualizar, analizar y prever los costes y el uso a lo largo del tiempo, con filtros por servicio, cuenta o etiqueta, y recomendaciones de Savings Plans y de ajuste de tamaño.
+Una herramienta para visualizar, analizar y prever los costos y el uso a lo largo del tiempo, con filtros por servicio, cuenta o etiqueta, y recomendaciones de Savings Plans y de ajuste de tamaño.
 
 #### ¿Qué es AWS Budgets?
 
-Un servicio para fijar presupuestos de coste, uso o reservas y recibir alertas (o lanzar acciones) cuando el gasto real o previsto supera un umbral.
+Un servicio para fijar presupuestos de costo, uso o reservas y recibir alertas (o lanzar acciones) cuando el gasto real o previsto supera un umbral.
 
 #### ¿Qué es el AWS Cost and Usage Report, ahora Data Exports?
 
 Los datos de facturación más detallados, entregados en S3 con granularidad horaria o diaria, para analizarlos con Athena, QuickSight u otras herramientas.
 
-#### ¿Qué son las etiquetas de asignación de costes?
+#### ¿Qué son las etiquetas de asignación de costos?
 
-Etiquetas (pares clave-valor como `project=lakehouse`) activadas en la consola de facturación para poder agrupar y filtrar los costes por ellas en Cost Explorer y los informes.
+Etiquetas (pares clave-valor como `project=lakehouse`) activadas en la consola de facturación para poder agrupar y filtrar los costos por ellas en Cost Explorer y los informes.
 
 #### ¿Qué es la facturación unificada de AWS Organizations?
 
@@ -882,6 +882,6 @@ Un catálogo digital seleccionado de software, datos y servicios de terceros que
 
 AWS Professional Services es el equipo de consultoría propio de AWS. La AWS Partner Network (APN) es la comunidad mundial de socios consultores y tecnológicos que ayudan a los clientes a construir en AWS.
 
-#### ¿Cómo se pueden reducir los costes en AWS?
+#### ¿Cómo se pueden reducir los costos en AWS?
 
 Ajustar el tamaño de las instancias, apagar los recursos que no se usan, usar Savings Plans o instancias reservadas para cargas estables y spot para las interrumpibles, elegir clases de almacenamiento más baratas con reglas de ciclo de vida, usar serverless para cargas variables, reducir la transferencia de datos (por ejemplo con CloudFront y puntos de enlace de VPC) y controlar el gasto con etiquetas, Budgets y Cost Explorer.
