@@ -104,6 +104,11 @@ def asset_version() -> str:
     return digest.hexdigest()[:10]
 
 
+def _skip_image_archive(directory: str, names: list[str]) -> list[str]:
+    """images/archive keeps replaced covers in the repo; it is never published."""
+    return ["archive"] if Path(directory) == config.ROOT / "images" else []
+
+
 @dataclass
 class Page:
     kind: str
@@ -190,7 +195,7 @@ class Builder:
         for name in config.STATIC_DIRS:
             src = config.ROOT / name
             if src.exists():
-                shutil.copytree(src, self.out_dir / name)
+                shutil.copytree(src, self.out_dir / name, ignore=_skip_image_archive)
 
     def copy_local_data(self) -> None:
         """Local preview only: serve fetched pipeline output where the live site has it."""

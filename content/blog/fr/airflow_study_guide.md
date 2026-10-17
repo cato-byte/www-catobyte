@@ -433,7 +433,7 @@ Un backend interchangeable qui stocke les valeurs XCom ailleurs (S3, GCS, Azure 
 
 #### Comment lire un XCom dans un template ?
 
-```
+```jinja2
 {{ ti.xcom_pull(task_ids='extract', key='return_value') }}
 ```
 

@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Imagen creada por ChatGPT, OpenAI. 12 de Noviembre de 2024 ](../../images/a_simple_introduction_to_machine_learning_title_img.webp)
+![Gráfico de dispersión de precios de casas según su tamaño con una línea de regresión](../../images/a_simple_introduction_to_machine_learning_title_img.png)
 
 
 ### 1. ¿Qué es el Machine Learning o Aprendizaje automático?

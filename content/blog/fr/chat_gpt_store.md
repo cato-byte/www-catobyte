@@ -4,7 +4,7 @@
 
 <!-- TITRE_IMAGE -->
 
-![Image créée par ChatGPT, OpenAI. 1er février 2024 ](../../images/chat_gpt_store_title_img.png)
+![Une vitrine avec des étagères d'icônes d'applications](../../images/chat_gpt_store_title_img.png)
 
 Le 10 janvier, OpenAI a annoncé la création de la boutique ChatGPT. Dans cet article, je vais essayer d’expliquer en quoi consiste ce nouveau développement. Pour le contexte, je vais passer en revue certaines annonces précédentes qui sont essentielles pour comprendre la boutique.
 

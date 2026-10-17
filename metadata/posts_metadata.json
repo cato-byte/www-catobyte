@@ -194,15 +194,15 @@
         "languages": {
             "en": {
                 "file_name": "pyspark_study_guide.md",
-                "title": "Pyspark Study Guide"
+                "title": "PySpark Study Guide"
             },
             "es": {
                 "file_name": "pyspark_study_guide.md",
-                "title": "Guía de estudio de Pyspark"
+                "title": "Guía de estudio de PySpark"
             },
             "fr": {
                 "file_name": "pyspark_study_guide.md",
-                "title": "Guide d'etude Pyspark"
+                "title": "Fiche d'étude PySpark"
             }
         },
         "creation_date": "2025-10-15",
@@ -526,6 +526,25 @@
             "fr": {
                 "file_name": "cicd_automation_for_data.md",
                 "title": "CI/CD et automatisation pour les données : l'essentiel, avec des exemples GitHub Actions"
+            }
+        },
+        "creation_date": "2026-10-17",
+        "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "ai_agents_and_data_engineering",
+        "languages": {
+            "en": {
+                "file_name": "ai_agents_and_data_engineering.md",
+                "title": "AI Agents and Data Engineering in 2026: What Teams Actually Do, What It Costs and What Changes"
+            },
+            "es": {
+                "file_name": "ai_agents_and_data_engineering.md",
+                "title": "Agentes de IA e ingeniería de datos en 2026: lo que los equipos hacen de verdad, lo que cuesta y lo que cambia"
+            },
+            "fr": {
+                "file_name": "ai_agents_and_data_engineering.md",
+                "title": "Agents IA et data engineering en 2026 : ce que font vraiment les équipes, ce que cela coûte et ce qui change"
             }
         },
         "creation_date": "2026-10-17",

@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Imagen creada por ChatGPT, OpenAI. 7 de octubre de 2024](../../images/nlp_introduction_title_img.webp)
+![Dos burbujas de diálogo conectadas a través de una red neuronal](../../images/nlp_introduction_title_img.png)
 
 ¿Alguna vez te has preguntado como herramientas como los asistentes de IA entienden tus preguntas y ordenes y producir una respuesta que a primera vista al menos parece coherente? ¿Como puede una máquina que en su nivel más elemental realiza cálculos sobre bytes lograr estos sorprendentes resultados?
 

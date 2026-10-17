@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Image créée par ChatGPT, OpenAI. 7 octobre 2024](../../images/nlp_introduction_title_img.webp)
+![Deux bulles de dialogue reliées par un réseau de neurones](../../images/nlp_introduction_title_img.png)
 
 Vous êtes-vous déjà demandé comment des outils comme les assistants IA comprennent vos questions et vos commandes et produisent une réponse qui, à première vue, semble au moins cohérente ? Comment une machine qui, à son niveau le plus élémentaire, effectue des calculs sur des octets, peut-elle obtenir des résultats aussi étonnants ?
 

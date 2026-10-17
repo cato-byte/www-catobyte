@@ -433,7 +433,7 @@ Un backend intercambiable que guarda los valores de XCom en otro lugar (S3, GCS,
 
 #### ¿Cómo se lee un XCom en una plantilla?
 
-```
+```jinja2
 {{ ti.xcom_pull(task_ids='extract', key='return_value') }}
 ```
 

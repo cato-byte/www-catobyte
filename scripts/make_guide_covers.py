@@ -22,6 +22,8 @@ WHITE = (255, 255, 255)
 GUIDE = "~200 questions · catobyte.co"
 ARTICLE = "Article · catobyte.co"
 COVERS = {
+    "pyspark_study_guide": ("PS", (226, 90, 27), "PySpark", "DataFrames, Spark SQL, joins, shuffles and performance tuning", GUIDE),
+    "postgres_study_guide": ("PG", (51, 103, 145), "PostgreSQL", "SQL, indexes, transactions and MVCC, performance and administration", GUIDE),
     "databricks_study_guide": ("DB", (255, 54, 33), "Databricks", "Lakehouse, Delta Lake, Unity Catalog, jobs and performance", GUIDE),
     "airflow_study_guide": ("AF", (1, 124, 238), "Apache Airflow", "DAGs, operators, scheduling, sensors and deployment", GUIDE),
     "snowflake_study_guide": ("SF", (41, 181, 232), "Snowflake", "Warehouses, storage, loading, security and cost", GUIDE),
@@ -35,6 +37,7 @@ COVERS = {
     "data_architecture_patterns": ("Arch", (37, 84, 217), "Data architecture", "Kimball, microservices, medallion and how to choose", ARTICLE),
     "testing_and_performance_big_data": ("Test", (15, 138, 95), "Big data testing", "Proving pipelines right, then making them fast", ARTICLE),
     "cicd_automation_for_data": ("CI/CD", (36, 41, 47), "Data CI/CD", "Automating data pipelines, with GitHub Actions examples", ARTICLE),
+    "ai_agents_and_data_engineering": ("AI", (124, 58, 237), "AI agents and data", "What teams delegate, the risks and what changes for the role", ARTICLE),
 }
 
 
@@ -81,9 +84,16 @@ def cover(path: Path, tile: str, colour, title: str, subtitle: str, footer: str)
 
 
 if __name__ == "__main__":
-    # Existing files are kept (an article cover may have been replaced by hand); --force redraws all.
+    # Existing files are kept. --force redraws the study guide covers; --force <stem> ... redraws only
+    # the named covers. Article placeholders are only redrawn by name, since most have been replaced
+    # by illustrations made in an external tool.
     force = "--force" in sys.argv
+    only = {arg for arg in sys.argv[1:] if not arg.startswith("--")}
     for stem, spec in COVERS.items():
+        if only and stem not in only:
+            continue
+        if force and not only and spec[-1] == ARTICLE:
+            continue
         path = ROOT / "images" / f"{stem}_title_img.png"
         if force or not path.exists():
             cover(path, *spec)
