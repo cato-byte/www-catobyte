@@ -258,3 +258,8 @@ def test_study_guides_render_question_cards(pages, lang):
             continue  # written before the question-card format
         assert len(cards) >= 100, f"{entry['post_id']} ({lang}): {len(cards)} questions"
         assert soup.find("nav", class_="qa-toc")
+
+
+def test_image_archive_is_not_published(dist):
+    assert (dist / "images").is_dir()
+    assert not (dist / "images" / "archive").exists()

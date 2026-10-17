@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Image created by ChatGPT, OpenAI. 1st February 2024 ](../../images/chat_gpt_store_title_img.png)
+![A storefront with shelves of app icons](../../images/chat_gpt_store_title_img.png)
 
 
 On January 10, OpenAI announced the creation of the ChatGPT Store. In this article, I will attempt to explain what this new development entails.To provide context, I'll review some previous announcements that are key to understanding the Store.

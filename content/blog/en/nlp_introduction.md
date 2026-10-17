@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Image created by ChatGPT, OpenAI. 7th October 2024 ](../../images/nlp_introduction_title_img.webp)
+![Two speech bubbles connected through a neural network](../../images/nlp_introduction_title_img.png)
 
 
 Have you ever wondered how computers can understand and generate human language? Let's explore this fascinating topic together. So, what does NLP stand for? It stands for Natural Language Processing, which refers to the use of computational techniques to derive meaning from text input and to create streams of text that are comprehensible to humans. In this article, we’ll explore some core concepts of NLP, including tokenization, part-of-speech (POS) tagging, and named entity recognition (NER).

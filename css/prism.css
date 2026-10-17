@@ -1,18 +1,54 @@
-/* PrismJS 1.29.0
-https://prismjs.com/download.html#themes=prism-okaidia&languages=markup+css+clike+bash+csharp+java+json+json5+python+scala+shell-session+sparql+turtle&plugins=line-highlight+line-numbers+show-language+normalize-whitespace+toolbar+copy-to-clipboard */
+/* PrismJS 1.29.0 plugins (line-highlight, line-numbers, show-language, normalize-whitespace, toolbar,
+   copy-to-clipboard) with a catobyte theme instead of okaidia: code blocks use the site's own palette,
+   one variant for light mode and one for dark mode. Extra languages (sql, yaml, toml, jinja2, hcl,
+   docker, ini, diff, csv) are appended at the end of js/prism.js. */
+
+:root {
+  --code-bg: #f5f7fb;
+  --code-border: #e2e8f0;
+  --code-text: #1e293b;
+  --code-muted: #64748b;      /* comments */
+  --code-punct: #475569;      /* punctuation, operators */
+  --code-keyword: #2554d9;    /* site accent */
+  --code-string: #0f7a52;
+  --code-number: #b45309;
+  --code-function: #7c3aed;
+  --code-type: #0e7490;       /* classes, builtins */
+  --code-property: #be185d;   /* properties, keys, tags, constants */
+  --code-toolbar-bg: #e8eefc;
+  --code-toolbar-text: #1b3fa8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --code-bg: #0f1729;
+    --code-border: #24314d;
+    --code-text: #dbe3f1;
+    --code-muted: #7586a3;
+    --code-punct: #9aa8bf;
+    --code-keyword: #7ea2ff;
+    --code-string: #8fd6a8;
+    --code-number: #f2b880;
+    --code-function: #c4a7ff;
+    --code-type: #6fd3e3;
+    --code-property: #f59bb3;
+    --code-toolbar-bg: #1b2a4d;
+    --code-toolbar-text: #a9c0ff;
+  }
+}
+
 code[class*=language-],
 pre[class*=language-] {
-    color: #f8f8f2;
-    background: 0 0;
-    text-shadow: 0 1px rgba(0, 0, 0, .3);
-    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-    font-size: 1em;
+    color: var(--code-text);
+    background: none;
+    font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+    font-size: .875rem;
     text-align: left;
     white-space: pre;
     word-spacing: normal;
     word-break: normal;
     word-wrap: normal;
-    line-height: 1.5;
+    line-height: 1.6;
     -moz-tab-size: 4;
     -o-tab-size: 4;
     tab-size: 4;
@@ -24,85 +60,94 @@ pre[class*=language-] {
 
 pre[class*=language-] {
     width: 100%;
-    margin: 15px auto;
-    padding: 1em;
+    padding: 1rem 1.1rem;
     margin: .5em 0;
     overflow: auto;
-    border-radius: .3em;
+    border-radius: var(--radius-sm, 8px);
     position: relative;
-}
-
-:not(pre)>code[class*=language-],
-pre[class*=language-] {
-    background: #272822
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
 }
 
 :not(pre)>code[class*=language-] {
-    padding: .1em;
-    border-radius: .3em;
-    white-space: normal
+    padding: .1em .35em;
+    border-radius: 5px;
+    white-space: normal;
+    background: var(--code-bg);
 }
 
 .token.cdata,
 .token.comment,
 .token.doctype,
 .token.prolog {
-    color: #8292a2
+    color: var(--code-muted);
+    font-style: italic
 }
 
-.token.punctuation {
-    color: #f8f8f2
+.token.punctuation,
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: var(--code-punct)
 }
 
 .token.namespace {
-    opacity: .7
+    opacity: .75
 }
 
-.token.constant,
-.token.deleted,
-.token.property,
-.token.symbol,
-.token.tag {
-    color: #f92672
-}
-
-.token.boolean,
-.token.number {
-    color: #ae81ff
-}
-
-.token.attr-name,
-.token.builtin,
-.token.char,
-.token.inserted,
-.token.selector,
-.token.string {
-    color: #a6e22e
-}
-
-.language-css .token.string,
-.style .token.string,
-.token.entity,
-.token.operator,
-.token.url,
-.token.variable {
-    color: #f8f8f2
-}
-
+.token.keyword,
 .token.atrule,
-.token.attr-value,
-.token.class-name,
-.token.function {
-    color: #e6db74
-}
-
-.token.keyword {
-    color: #66d9ef
-}
-
+.token.rule,
 .token.important,
-.token.regex {
-    color: #fd971f
+.token.selector {
+    color: var(--code-keyword)
+}
+
+.token.string,
+.token.char,
+.token.attr-value,
+.token.regex,
+.token.inserted {
+    color: var(--code-string)
+}
+
+.token.number,
+.token.boolean,
+.token.null,
+.token.date,
+.token.datetime {
+    color: var(--code-number)
+}
+
+.token.function,
+.token.decorator,
+.token.annotation {
+    color: var(--code-function)
+}
+
+.token.class-name,
+.token.builtin,
+.token.type,
+.token.variable {
+    color: var(--code-type)
+}
+
+.token.property,
+.token.key,
+.token.tag,
+.token.constant,
+.token.symbol,
+.token.attr-name,
+.token.deleted {
+    color: var(--code-property)
+}
+
+/* Templating delimiters (Jinja in Airflow and dbt) */
+.token.delimiter {
+    color: var(--code-function);
+    font-weight: 600
 }
 
 .token.bold,
@@ -129,8 +174,8 @@ pre[data-line] {
     right: 0;
     padding: inherit 0;
     margin-top: 1em;
-    background: hsla(24, 20%, 50%, .08);
-    background: linear-gradient(to right, hsla(24, 20%, 50%, .1) 70%, hsla(24, 20%, 50%, 0));
+    background: color-mix(in srgb, var(--code-keyword) 8%, transparent);
+    background: linear-gradient(to right, color-mix(in srgb, var(--code-keyword) 12%, transparent) 70%, transparent);
     pointer-events: none;
     line-height: inherit;
     white-space: pre
@@ -151,14 +196,13 @@ pre[data-line] {
     left: .6em;
     min-width: 1em;
     padding: 0 .5em;
-    background-color: hsla(24, 20%, 50%, .4);
-    color: #f4f1ef;
+    background-color: var(--code-keyword);
+    color: var(--code-bg);
     font: bold 65%/1.5 sans-serif;
     text-align: center;
     vertical-align: .3em;
     border-radius: 999px;
     text-shadow: none;
-    box-shadow: 0 1px #fff
 }
 
 .line-highlight[data-end]:after {
@@ -203,7 +247,7 @@ pre[class*=language-].line-numbers>code {
     left: -3.8em;
     width: 3em;
     letter-spacing: -1px;
-    border-right: 1px solid #999;
+    border-right: 1px solid var(--code-border);
     -webkit-user-select: none;
     -moz-user-select: none;
     -ms-user-select: none;
@@ -217,7 +261,7 @@ pre[class*=language-].line-numbers>code {
 
 .line-numbers-rows>span:before {
     content: counter(linenumber);
-    color: #999;
+    color: var(--code-muted);
     display: block;
     padding-right: .8em;
     text-align: right
@@ -230,17 +274,25 @@ div.code-toolbar {
 
 div.code-toolbar>pre[class*=language-] {
     margin: 0;
+    padding-top: 2.4rem; /* room for the language label and copy button */
 }
 
 div.code-toolbar>.toolbar {
     position: absolute;
     z-index: 10;
-    top: .4em;
-    right: .4em;
+    top: .5em;
+    right: .5em;
     display: flex;
     gap: 6px;
-    transition: opacity .3s ease-in-out;
-    opacity: 0;
+    transition: opacity .2s ease-in-out;
+    opacity: .55;
+}
+
+/* Touch screens have no hover: keep the language label and copy button fully visible. */
+@media (hover: none) {
+    div.code-toolbar>.toolbar {
+        opacity: 1
+    }
 }
 
 div.code-toolbar:hover>.toolbar {
@@ -277,13 +329,15 @@ div.code-toolbar>.toolbar>.toolbar-item>button {
 div.code-toolbar>.toolbar>.toolbar-item>a,
 div.code-toolbar>.toolbar>.toolbar-item>button,
 div.code-toolbar>.toolbar>.toolbar-item>span {
-    color: #bbb;
-    font-size: .8em;
-    padding: 0 .5em;
-    background: #f5f2f0;
-    background: rgba(224, 224, 224, .2);
-    box-shadow: 0 2px 0 0 rgba(0, 0, 0, .2);
-    border-radius: .5em
+    color: var(--code-toolbar-text);
+    font-family: var(--font-sans, system-ui, sans-serif);
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+    padding: .15em .6em;
+    background: var(--code-toolbar-bg);
+    border: 1px solid var(--code-border);
+    border-radius: 999px
 }
 
 div.code-toolbar>.toolbar>.toolbar-item>a:focus,

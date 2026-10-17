@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Image créée par ChatGPT, OpenAI. 12 novembre 2024 ](../../images/a_simple_introduction_to_machine_learning_title_img.webp)
+![Nuage de points des prix des maisons selon leur surface avec une droite de régression](../../images/a_simple_introduction_to_machine_learning_title_img.png)
 
 
 ### 1. Qu’est-ce que l’apprentissage automatique ?

@@ -4,7 +4,7 @@
 
 <!-- TITLE_IMAGE -->
 
-![Image created by ChatGPT, OpenAI. 12 November 2024 ](../../images/a_simple_introduction_to_machine_learning_title_img.webp)
+![Scatter plot of house prices against size with a regression line](../../images/a_simple_introduction_to_machine_learning_title_img.png)
 
 
 ### 1. What is Machine Learning?
