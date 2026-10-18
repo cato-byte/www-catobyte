@@ -15,6 +15,10 @@
     {% if post.cover_alt %}<figcaption>{{ post.cover_alt }}</figcaption>{% endif %}
   </figure>
   {% endif %}
+  {% if post.guide_sections %}
+  {% set intro = body.split('<!-- qa-nav -->', 1)[0] | safe %}
+  {% include "learning_guide.html" %}
+  {% else %}
   <div class="container prose">
     {% if post.qa_sections %}
     {% set intro, questions = body.split('<!-- qa-nav -->', 1) %}
@@ -36,6 +40,7 @@
     {{ body }}
     {% endif %}
   </div>
+  {% endif %}
 </article>
 
 {% if others %}

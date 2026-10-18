@@ -1,0 +1,105 @@
+{# A study guide written as learning units (see sitegen/markdown.py): learning path, sidebar, units, practice tools. #}
+{% set L = t.guides.learn %}
+{% set all_sections = post.guide_sections %}
+<div class="container guide-layout">
+  <aside class="guide-nav" aria-label="{{ L.path }}">
+    <nav>
+      {% for stage, sections in post.stages %}
+      <p class="guide-nav-stage">{{ stage }}</p>
+      <ol>
+        {% for section in sections %}
+        <li><a href="#{{ section.id }}" data-nav-section="{{ section.id }}">{{ section.title | safe }}</a>
+          {% if section.units | selectattr('title') | list | length > 1 %}
+          <ol class="guide-nav-units">
+            {% for unit in section.units if unit.title %}<li><a href="#{{ unit.id }}">{{ unit.title }}</a></li>{% endfor %}
+          </ol>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ol>
+      {% endfor %}
+    </nav>
+  </aside>
+
+  <div class="prose guide-main">
+    {{ intro }}
+    <nav class="qa-toc learning-path" aria-labelledby="qa-toc-title">
+      <p id="qa-toc-title">{{ L.path }}</p>
+      <p class="muted learning-path-intro">{{ L.path_intro }}</p>
+      <ol class="learning-path-stages">
+        {% for stage, sections in post.stages %}
+        <li>
+          <span class="learning-path-stage">{{ stage }}</span>
+          <ul>
+            {% for section in sections %}<li><a href="#{{ section.id }}">{{ section.title | safe }}</a> <small>({{ section.question_count }})</small></li>{% endfor %}
+          </ul>
+        </li>
+        {% endfor %}
+      </ol>
+    </nav>
+
+    <div class="qa-tools qa-tools-learning" hidden
+         data-mark-review="{{ L.mark_review }}" data-mark-ok="{{ L.mark_ok }}"
+         data-mixed-status="{{ L.mixed_status }}" data-storage="guide:{{ post.slug }}">
+      <div class="qa-mode" role="group" aria-label="{{ L.mode_label }}">
+        <button type="button" data-mode="learn" aria-pressed="true">{{ L.mode_learn }}</button>
+        <button type="button" data-mode="review" aria-pressed="false">{{ L.mode_review }}</button>
+      </div>
+      <button type="button" data-qa="mixed">{{ L.mixed }}</button>
+      <button type="button" data-qa="mixed-end" hidden>{{ L.mixed_end }}</button>
+      <button type="button" data-qa="open">{{ t.blog.expand_all }}</button>
+      <button type="button" data-qa="close">{{ t.blog.collapse_all }}</button>
+      <p class="muted qa-status" data-qa-status aria-live="polite"></p>
+    </div>
+    <p class="muted qa-marks-note" hidden>{{ L.marks_note }}</p>
+
+    <div class="qa-guide qa-learning">
+      {% for section in all_sections %}
+      <section class="guide-section" data-section="{{ section.id }}" aria-labelledby="{{ section.id }}">
+        <p class="guide-section-stage">{{ section.stage }}</p>
+        <h2 id="{{ section.id }}">{{ section.title | safe }}</h2>
+        {{ section.lead | safe }}
+
+        {% for unit in section.units %}
+        <section class="unit"{% if unit.id %} aria-labelledby="{{ unit.id }}"{% endif %}>
+          {% if unit.title %}<h3 id="{{ unit.id }}" class="unit-title">{{ unit.title | safe }}</h3>{% endif %}
+
+          {% if unit.has_intro %}
+          <p class="unit-skip"><a href="#{{ unit.id }}-questions">{{ L.skip }} <span aria-hidden="true">↓</span></a></p>
+          {% if unit.goals %}<details class="unit-block unit-goals"><summary class="unit-label">{{ L.goals }}</summary>{{ unit.goals | safe }}</details>{% endif %}
+          {% if unit.concept %}<div class="unit-concept">{{ unit.concept | safe }}</div>{% endif %}
+          {% if unit.example %}<details class="unit-block unit-example"><summary class="unit-label">{{ L.example }}</summary>{{ unit.example | safe }}</details>{% endif %}
+          {% endif %}
+
+          {% if unit.questions %}
+          <div class="unit-questions" id="{{ unit.id or section.id }}-questions">
+            {% if unit.has_intro %}<p class="unit-label">{{ L.questions }}</p>{% endif %}
+            {% for q in unit.questions %}
+            <details class="qa" id="{{ q.id }}"><summary data-n="{{ q.number }}">{{ q.title | safe }}</summary><div class="qa-answer">{{ q.answer | safe }}
+              {% if unit.has_intro %}<p class="qa-back"><a href="#{{ unit.id }}">↑ {{ L.back_to_concept | replace('{unit}', unit.title | striptags) }}</a></p>{% endif %}
+            </div></details>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if unit.challenge %}
+          <details class="unit-block unit-challenge"><summary class="unit-label">{{ L.challenge }}</summary>{{ unit.challenge | safe }}
+            {% if unit.solution %}<details class="unit-solution"><summary>{{ L.solution }}</summary>{{ unit.solution | safe }}</details>{% endif %}
+          </details>
+          {% endif %}
+
+          {% if unit.takeaways %}<details class="unit-block unit-takeaways"><summary class="unit-label">{{ L.takeaways }}</summary>{{ unit.takeaways | safe }}</details>{% endif %}
+        </section>
+        {% endfor %}
+
+        {% set prev = all_sections[loop.index0 - 1] if not loop.first else none %}
+        {% set nxt = all_sections[loop.index] if not loop.last else none %}
+        <nav class="section-pager" aria-label="{{ L.previous }} / {{ L.next }}">
+          {% if prev %}<a class="pager-prev" href="#{{ prev.id }}"><small>← {{ L.previous }}</small>{{ prev.title | safe }}</a>{% else %}<span></span>{% endif %}
+          {% if nxt %}<a class="pager-next" href="#{{ nxt.id }}"><small>{{ L.next }} →</small>{{ nxt.title | safe }}</a>{% endif %}
+        </nav>
+      </section>
+      {% endfor %}
+    </div>
+  </div>
+</div>

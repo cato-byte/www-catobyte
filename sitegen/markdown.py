@@ -9,6 +9,13 @@ Content conventions (kept from the original blog so old posts render unchanged):
   * Study guides: after a `<!-- QA -->` line, every `###` is a category and every `####` a
     question. Each question and its answer become a collapsible <details class="qa"> card; the
     categories are returned in `qa_sections` so the template can render a table of contents.
+  * Learning guides add comment markers to that QA part; a guide with any of them is returned as
+    `guide_sections` (sections of learning units) for the template to lay out:
+      <!-- stage: Foundations -->   groups the following `###` sections in the learning path
+      <!-- unit: Title -->          starts a learning unit inside the current section
+      <!-- goals -->, <!-- concept -->, <!-- example -->     the unit's introduction, before its questions
+      <!-- challenge -->, <!-- solution -->, <!-- takeaways -->   after its questions
+    `####` questions work as before; questions with no unit marker form an untitled unit.
 """
 
 import csv
@@ -29,6 +36,57 @@ _TITLE_RE = re.compile(r"^#{1,2}\s+(.+?)\s*$")
 _IMAGE_RE = re.compile(r"^!\[(.*?)\]\((.*?)\)\s*$")
 _FIGURE_RE = re.compile(r'<p><img src="([^"]*)" alt="([^"]*)" ([^>]*)/></p>')
 _DATA_MARKER_RE = re.compile(r"<!--\s*(table|bars):\s*([\w.\-]+)\s*-->")
+_UNIT_BLOCKS = ("goals", "concept", "example", "challenge", "solution", "takeaways")
+_LEARN_MARKER_RE = re.compile(rf"^<!--\s*(stage|unit|{'|'.join(_UNIT_BLOCKS)})\s*(?::\s*(.*?))?\s*-->$")
+
+
+@dataclass
+class Question:
+    id: str
+    title: str  # inline HTML
+    answer: str
+    number: int
+
+
+@dataclass
+class Unit:
+    id: str
+    title: str
+    questions: list[Question] = field(default_factory=list)
+    goals: str = ""
+    concept: str = ""
+    example: str = ""
+    challenge: str = ""
+    solution: str = ""
+    takeaways: str = ""
+
+    @property
+    def has_intro(self) -> bool:
+        return bool(self.goals or self.concept or self.example)
+
+
+@dataclass
+class Section:
+    id: str
+    title: str
+    stage: str = ""
+    lead: str = ""
+    units: list[Unit] = field(default_factory=list)
+
+    @property
+    def question_count(self) -> int:
+        return sum(len(u.questions) for u in self.units)
+
+
+def group_stages(sections: list[Section]) -> list[tuple[str, list[Section]]]:
+    """Consecutive sections that share a stage, in document order."""
+    stages: list[tuple[str, list[Section]]] = []
+    for section in sections:
+        if stages and stages[-1][0] == section.stage:
+            stages[-1][1].append(section)
+        else:
+            stages.append((section.stage, [section]))
+    return stages
 
 
 @dataclass
@@ -41,6 +99,7 @@ class Rendered:
     has_code: bool = False
     word_count: int = 0
     qa_sections: list[tuple[str, str, int]] = field(default_factory=list)  # (id, title, questions)
+    guide_sections: list[Section] = field(default_factory=list)  # learning guides only
 
     @property
     def question_count(self) -> int:
@@ -173,10 +232,102 @@ def _qa_cards(html_text: str) -> tuple[str, list[tuple[str, str, int]]]:
     return '<div class="qa-guide">' + "".join(out) + "</div>", sections
 
 
+def _render_fragment(source: str) -> str:
+    return _post_process(_md.render(source)).strip() if source.strip() else ""
+
+
+def _is_learning_guide(lines: list[str]) -> bool:
+    return any(_LEARN_MARKER_RE.match(line.strip()) for line in lines)
+
+
+def _learning_sections(lines: list[str]) -> list[Section]:
+    """Parse the QA part of a learning guide into sections, units and questions (see module docstring)."""
+    sections: list[Section] = []
+    seen: dict[str, int] = {}
+    stage = ""
+    target: tuple[object, str] | None = None  # (object, attribute) that collects the current lines
+    buffer: list[str] = []
+    in_fence = False
+    number = 0
+
+    def anchor(text: str) -> str:
+        slug = slugify(text) or "section"
+        seen[slug] = seen.get(slug, 0) + 1
+        return slug if seen[slug] == 1 else f"{slug}-{seen[slug]}"
+
+    def flush() -> None:
+        text = "\n".join(buffer)
+        buffer.clear()
+        if target is None:
+            if text.strip():
+                raise ValueError(f"learning guide text outside a section, unit block or question: {text.strip()[:60]!r}")
+            return
+        obj, attr = target
+        setattr(obj, attr, _render_fragment(text))
+
+    def current_unit() -> Unit:
+        if not sections:
+            raise ValueError("learning guide marker or question before the first ### section")
+        if not sections[-1].units:
+            sections[-1].units.append(Unit(id="", title=""))
+        return sections[-1].units[-1]
+
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith(("```", "~~~")):
+            in_fence = not in_fence
+        marker = None if in_fence else _LEARN_MARKER_RE.match(stripped)
+        heading = None if in_fence else re.match(r"^(#{3,4})\s+(.+?)\s*#*$", stripped)
+        if not marker and not heading:
+            buffer.append(line)
+            continue
+        flush()
+        if heading and len(heading.group(1)) == 3:
+            sections.append(Section(id=anchor(heading.group(2)), title=_md.renderInline(heading.group(2)).strip(),
+                                    stage=stage))
+            target = (sections[-1], "lead")
+        elif heading:
+            number += 1
+            raw = heading.group(2)
+            question = Question(id=anchor(raw), title=_md.renderInline(raw).strip(), answer="", number=number)
+            current_unit().questions.append(question)
+            target = (question, "answer")
+        elif marker.group(1) == "stage":
+            stage = marker.group(2) or ""
+            target = None
+        elif marker.group(1) == "unit":
+            if not sections:
+                raise ValueError("learning guide unit before the first ### section")
+            title = marker.group(2) or ""
+            sections[-1].units.append(Unit(id=anchor(title), title=_md.renderInline(title).strip()))
+            target = None
+        else:
+            target = (current_unit(), marker.group(1))
+    flush()
+    return sections
+
+
 def render_markdown(source: str, *, extract_title: bool = True, data_dir: Path | None = None) -> Rendered:
     """Render a post or project body. Projects keep their title in front matter (extract_title=False)."""
     title, cover, cover_alt, body_lines = _extract_front(source.splitlines(), extract_title)
     qa_at = next((i for i, line in enumerate(body_lines) if line.strip() == QA_MARKER), None)
+    if qa_at is not None and _is_learning_guide(body_lines[qa_at + 1:]):
+        tokens, intro_html = _render_body("\n".join(body_lines[:qa_at]), data_dir)
+        sections = _learning_sections(body_lines[qa_at + 1:])
+        fragments = [intro_html] + [
+            html_part for s in sections for u in s.units
+            for html_part in (u.goals, u.concept, u.example, u.challenge, u.solution, u.takeaways,
+                              *(q.title + q.answer for q in u.questions))
+        ]
+        all_html = "\n".join(fragments)
+        return Rendered(
+            title=title, body_html=intro_html + "\n" + QA_NAV_SLOT + "\n", cover=cover, cover_alt=cover_alt,
+            summary=_first_paragraph_text(tokens),
+            has_code='class="language-' in all_html,
+            word_count=len(re.sub(r"<[^>]+>", " ", all_html).split()),
+            qa_sections=[(s.id, re.sub(r"<[^>]+>", "", s.title), s.question_count) for s in sections],
+            guide_sections=sections,
+        )
     if qa_at is not None:
         intro = _render_body("\n".join(body_lines[:qa_at]), data_dir)
         guide_tokens = _md.parse("\n".join(body_lines[qa_at + 1:]))

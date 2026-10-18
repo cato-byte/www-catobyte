@@ -9,7 +9,7 @@ from pathlib import Path
 import yaml
 
 from .config import POST_DIRS, POSTS_REGISTRY, PROJECTS_DIR
-from .markdown import render_markdown
+from .markdown import Section, group_stages, render_markdown
 
 _FRONT_MATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 WORDS_PER_MINUTE = 220
@@ -34,10 +34,15 @@ class Post:
     languages: list[str]
     kind: str = "post"  # "post" (content/blog) or "guide" (content/guides), which live in their own sections
     qa_sections: list[tuple[str, str, int]] = field(default_factory=list)
+    guide_sections: list[Section] = field(default_factory=list)  # learning guides: units with concepts and practice
 
     @property
     def question_count(self) -> int:
         return sum(n for _, _, n in self.qa_sections)
+
+    @property
+    def stages(self) -> list[tuple[str, list[Section]]]:
+        return group_stages(self.guide_sections)
 
 
 @dataclass
@@ -134,6 +139,7 @@ def load_posts(lang: str, registry: list[dict] | None = None, post_dirs: dict[st
                 languages=sorted(entry["languages"]),
                 kind=kind,
                 qa_sections=rendered.qa_sections,
+                guide_sections=rendered.guide_sections,
             )
         )
     return sorted(posts, key=lambda p: p.date, reverse=True)
