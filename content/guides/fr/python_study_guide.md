@@ -5,11 +5,40 @@
 
 ![Fiche d'étude Python : environ 200 questions](../../images/python_study_guide_title_img.png)
 
-Environ 200 questions Python pour les entretiens de data engineer : le langage, la bibliothèque standard, la programmation orientée objet, les générateurs et décorateurs, la concurrence, les tests et le packaging, Python pour le travail sur les données, et une série d'exercices de code avec leurs solutions. Les exemples ciblent Python 3.12. Ouvrez une question pour voir sa réponse, ou utilisez le filtre pour chercher dans toute la fiche.
+Environ 200 questions Python pour les entretiens de data engineer : le langage, la bibliothèque standard, la programmation orientée objet, les générateurs et décorateurs, la concurrence, les tests et le packaging, Python pour le travail sur les données, et une série d'exercices de code avec leurs solutions. Les exemples ciblent Python 3.12.
+
+La fiche suit un parcours d'apprentissage en quatre étapes. Chaque section est découpée en unités courtes : objectifs d'apprentissage, explication du concept et exemple commenté, puis questions (d'abord de mémorisation, ensuite d'application), un exercice pratique et les points à retenir. Pour **apprendre**, lisez chaque unité du début à la fin. Pour **réviser**, passez en mode révision ou utilisez « Aller aux questions », marquez les réponses à revoir et essayez une révision mixte entre les sections.
 
 <!-- QA -->
+<!-- stage: Fondamentaux -->
 
 ### Bases du langage et types de données
+
+<!-- unit: Le modèle objet de Python -->
+
+<!-- goals -->
+
+- Expliquer le typage dynamique et fort, et le principe « tout est objet ».
+- Distinguer objets mutables et immuables, identité et égalité, et le passage des arguments.
+
+<!-- concept -->
+
+En Python, les noms sont des étiquettes sur des objets, pas des boîtes à valeurs. Un nom peut être réassigné à un objet de n'importe quel type (typage dynamique), mais un objet ne change jamais de type en silence (typage fort). Chaque objet a une identité, un type et une valeur.
+La mutabilité décide de ce qui se passe quand deux noms partagent un objet. Modifier un objet mutable par un nom se voit par l'autre ; un objet immuable ne peut qu'être remplacé. Les arguments suivent la même règle : le paramètre est une étiquette de plus sur l'objet de l'appelant.
+
+<!-- example -->
+
+```python
+def add_tag(tags):
+    tags.append("new")      # mutates the caller's list
+
+my_tags = ["a"]
+add_tag(my_tags)
+print(my_tags)              # ['a', 'new']
+
+x = 1000; y = 1000
+print(x == y, x is y)       # True, and identity is an implementation detail
+```
 
 #### Quelles sont les principales caractéristiques de Python ?
 
@@ -39,6 +68,44 @@ Les nombres, les fonctions, les classes et les modules sont tous des objets, ave
 
 Par affectation (« appel par référence d'objet ») : le paramètre est lié au même objet que l'argument. Modifier un argument mutable est visible par l'appelant, réaffecter le paramètre ne l'est pas.
 
+<!-- challenge -->
+
+Une fonction reçoit un dict de réglages, fait `settings["debug"] = True` pour son propre usage, et d'autres parties du programme se mettent à journaliser en mode debug. Pourquoi, et comment corriger ?
+
+<!-- solution -->
+
+La fonction a modifié le dict de l'appelant, partagé par tous. Le copier avant de le modifier (`local = {**settings, "debug": True}`) ou passer l'indicateur comme argument séparé.
+
+<!-- takeaways -->
+
+- Les noms sont des étiquettes sur des objets.
+- Modifier un objet partagé affecte tous les noms.
+- `==` pour les valeurs, `is` pour l'identité (et `None`).
+
+<!-- unit: Nombres et valeur de vérité -->
+
+<!-- goals -->
+
+- Connaître les types intégrés de Python et ce qui est considéré comme faux.
+- Gérer correctement division, précision des flottants et grands entiers.
+
+<!-- concept -->
+
+Les types intégrés de Python couvrent l'essentiel des besoins sans import : nombres, texte, séquences, dictionnaires et ensembles. Chaque objet a aussi une valeur de vérité, ce qui rend les conditions concises mais peut cacher des bugs, car zéro et les collections vides sont faux tout comme `None`.
+Les nombres ont leurs pièges. La division vraie donne toujours un flottant ; la division entière arrondit vers le bas, même pour les négatifs. Les flottants sont des approximations binaires : l'argent exige `Decimal`, tandis que les entiers grandissent autant que la mémoire le permet.
+
+<!-- example -->
+
+```python
+from decimal import Decimal
+print(7 / 2, 7 // 2, -7 // 2)            # 3.5 3 -4
+print(0.1 + 0.2 == 0.3)                  # False
+print(Decimal("0.1") + Decimal("0.2"))   # 0.3
+count = 0
+if not count:                            # also true for None, [], ""
+    print("zero or missing?")
+```
+
 #### Qu'est-ce que `None` ?
 
 L'unique instance de `NoneType`, qui représente l'absence de valeur. Les fonctions sans instruction `return` renvoient `None`.
@@ -58,6 +125,49 @@ Les float sont des nombres binaires IEEE 754, et 0,1 n'a pas de représentation 
 #### Quelle taille peut atteindre un int en Python ?
 
 Arbitraire : les entiers Python ont une précision illimitée, bornée seulement par la mémoire.
+
+<!-- challenge -->
+
+`if not discount:` traite une remise de 0 comme une remise absente, et les commandes sans remise reçoivent les 10 % par défaut. Corrigez la condition.
+
+<!-- solution -->
+
+Tester explicitement l'absence : `if discount is None: discount = 0.10`, pour qu'une vraie valeur de 0 reste 0.
+
+<!-- takeaways -->
+
+- Zéro, le vide et `None` sont tous faux.
+- `//` arrondit vers le bas ; `/` renvoie des flottants.
+- Utilisez `Decimal` pour l'arithmétique décimale exacte.
+
+<!-- unit: Syntaxe moderne -->
+
+<!-- goals -->
+
+- Utiliser l'opérateur walrus et le pattern matching structurel.
+- Choisir entre listes et tuples, et faire des copies superficielles ou profondes.
+
+<!-- concept -->
+
+Les versions récentes de Python ont ajouté une syntaxe qui supprime du code répétitif courant. L'opérateur walrus assigne dans une expression, ce qui allège les boucles « lire et tester ». Le pattern matching vérifie une structure et en extrait des valeurs en même temps, utile pour des messages de formes différentes.
+Deux choix plus anciens comptent toujours au quotidien : listes pour les collections qui changent, tuples pour les enregistrements fixes, et copies qui dupliquent seulement le conteneur extérieur ou toute la structure imbriquée.
+
+<!-- example -->
+
+```python
+import copy
+match event:
+    case {"type": "order", "id": int(order_id)}:
+        handle_order(order_id)
+    case {"type": "refund", "amount": amount} if amount > 0:
+        handle_refund(amount)
+    case _:
+        log.warning("unknown event %r", event)
+
+config = {"retries": [1, 2]}
+shallow = copy.copy(config); deep = copy.deepcopy(config)
+shallow["retries"].append(3)        # also changes config!
+```
 
 #### Qu'est-ce que l'opérateur morse (walrus) ?
 
@@ -90,6 +200,47 @@ Les listes sont mutables et servent aux collections homogènes qui évoluent. Le
 
 Une copie superficielle (`copy.copy`, `list(x)`, `x[:]`) crée un nouveau conteneur qui référence les mêmes objets internes. Une copie profonde (`copy.deepcopy`) copie aussi récursivement les objets internes.
 
+<!-- challenge -->
+
+Un test copie une config imbriquée avec `dict(config)` et modifie une liste imbriquée, puis d'autres tests échouent. Que s'est-il passé ?
+
+<!-- solution -->
+
+`dict(config)` est une copie superficielle : la liste imbriquée est partagée, et la modification a fui dans l'original. Utiliser `copy.deepcopy(config)` pour les structures imbriquées.
+
+<!-- takeaways -->
+
+- `:=` assigne dans une expression.
+- `match` vérifie la structure et extrait des valeurs.
+- Les copies superficielles partagent les objets imbriqués.
+
+<!-- unit: Noms, modules et scripts -->
+
+<!-- goals -->
+
+- Expliquer la règle LEGB, global et nonlocal.
+- Distinguer modules et paquets et utiliser la garde `__main__`.
+
+<!-- concept -->
+
+Quand Python rencontre un nom, il le cherche à quatre endroits dans l'ordre : la fonction locale, les fonctions englobantes, le module, puis les built-ins. Assigner un nom dans une fonction le rend local sauf déclaration contraire, d'où la classique erreur « referenced before assignment ».
+Le code s'organise en modules (fichiers) et paquets (répertoires de modules). La garde `__main__` permet à un fichier de servir à la fois de module importable et de script, sans exécuter le code du script à l'import.
+
+<!-- example -->
+
+```python
+counter = 0
+def bump():
+    global counter          # without this: UnboundLocalError
+    counter += 1
+
+def main():
+    bump(); print(counter)
+
+if __name__ == "__main__":  # runs only as a script, not on import
+    main()
+```
+
 #### Qu'est-ce que la règle LEGB ?
 
 L'ordre dans lequel Python résout les noms : Local, portées des fonctions englobantes (Enclosing), Global (module), Built-in (intégrés).
@@ -106,7 +257,44 @@ Un module est un fichier `.py` unique. Un package est un répertoire de modules,
 
 Son bloc ne s'exécute que lorsque le fichier est lancé comme script, pas lorsqu'il est importé comme module. Il sert aux points d'entrée en ligne de commande.
 
+<!-- challenge -->
+
+Importer un module utilitaire dans un test lance un chargement de données de 10 minutes. Pourquoi, et comment corriger ?
+
+<!-- solution -->
+
+Le module lance son chargement au niveau supérieur, exécuté à l'import. Le déplacer dans une fonction `main()` appelée sous `if __name__ == "__main__":`.
+
+<!-- takeaways -->
+
+- Résolution des noms : Local, Enclosing, Global, Built-in.
+- Une assignation rend un nom local sauf déclaration.
+- Protégez le code de script avec `__main__`.
+
 ### Chaînes, collections et compréhensions
+
+<!-- unit: Chaînes et octets -->
+
+<!-- goals -->
+
+- Formater, découper et construire des chaînes efficacement.
+- Distinguer texte et octets et résoudre des problèmes classiques sur les chaînes.
+
+<!-- concept -->
+
+Les chaînes sont des séquences immuables de caractères Unicode. L'immuabilité les rend sûres à partager et utilisables comme clés de dict, mais chaque modification crée une nouvelle chaîne : construire un long texte par concaténations répétées est lent, et l'idiome est de joindre une liste.
+Le texte devient des octets quand il quitte le programme, par fichiers ou réseau : l'encodage est donc explicite. Le slicing, avec sa borne de fin exclue et ses indices négatifs, résout beaucoup de problèmes d'entretien en une ligne.
+
+<!-- example -->
+
+```python
+name, total = "Ana", 1234.5
+print(f"{name:<6}|{total:>10,.2f}|")     # Ana   |  1,234.50|
+parts = [f"{i}" for i in range(5)]
+print(",".join(parts))                   # efficient building
+data = "café".encode("utf-8")            # b'caf\xc3\xa9'
+print("racecar"[::-1])                   # reverse with a slice
+```
 
 #### Comment fonctionnent les f-strings ?
 
@@ -145,6 +333,44 @@ lengths = {name: len(name) for name in names}
 initials = {name[0] for name in names}
 ```
 
+<!-- challenge -->
+
+Une boucle construit un rapport de 50 Mo avec `report += line` et prend plusieurs minutes. Que changez-vous ?
+
+<!-- solution -->
+
+Accumuler les lignes dans une liste et faire `"".join(lines)` une fois à la fin (ou écrire les lignes directement dans un fichier). Chaque `+=` recopie toute la chaîne qui grandit.
+
+<!-- takeaways -->
+
+- Les chaînes sont immuables ; joignez au lieu de concaténer.
+- Encodez explicitement le texte en octets.
+- Slices : `[start:stop:step]`, stop exclu.
+
+<!-- unit: Compréhensions et outils d'itération -->
+
+<!-- goals -->
+
+- Écrire des compréhensions de listes, de dicts et d'ensembles.
+- Choisir les expressions génératrices et utiliser zip et enumerate.
+
+<!-- concept -->
+
+Les compréhensions construisent des collections à partir d'itérables en une expression lisible, avec filtre optionnel. Elles existent pour listes, dicts et ensembles. Remplacer les crochets par des parenthèses donne une expression génératrice, qui produit les éléments paresseusement au lieu de tout construire en mémoire, idéal quand on ne parcourt qu'une fois.
+Deux outils les accompagnent naturellement : `enumerate` donne les positions sans compteur manuel, et `zip` parcourt plusieurs séquences ensemble.
+
+<!-- example -->
+
+```python
+names = ["ana", "luis", "marta"]
+upper = [n.upper() for n in names if len(n) > 3]
+lengths = {n: len(n) for n in names}
+initials = {n[0] for n in names}
+total_chars = sum(len(n) for n in names)        # generator: no list built
+for i, (name, score) in enumerate(zip(names, [9, 7, 8]), start=1):
+    print(i, name, score)
+```
+
 #### Quelle est la différence entre une compréhension de liste et une expression génératrice ?
 
 Une compréhension de liste construit toute la liste en mémoire. Une expression génératrice (entre parenthèses) produit les éléments paresseusement, un par un : `sum(x * x for x in range(10**8))` utilise une mémoire constante.
@@ -160,6 +386,44 @@ L'accès par indice et `append` sont en O(1) (amorti pour append), `insert(0, x)
 #### Que fait `dict.get()`, et en quoi diffère-t-il de `dict[key]` ?
 
 `d[key]` lève `KeyError` si la clé est absente. `d.get(key, default)` renvoie alors `default` (ou `None`).
+
+<!-- challenge -->
+
+`sum([row["amount"] for row in read_rows(path)])` manque de mémoire sur un fichier de 40 Go. Quelle est la correction d'un seul caractère, et pourquoi ?
+
+<!-- solution -->
+
+Supprimer les crochets : `sum(row["amount"] for row in read_rows(path))`. L'expression génératrice produit une valeur à la fois au lieu de construire une liste complète.
+
+<!-- takeaways -->
+
+- Les compréhensions construisent des collections de façon concise.
+- Les expressions génératrices sont paresseuses et légères en mémoire.
+- `enumerate` et `zip` remplacent l'indexation manuelle.
+
+<!-- unit: Dicts et listes -->
+
+<!-- goals -->
+
+- Expliquer les caractéristiques de performance des dicts et des listes.
+- Utiliser get, la fusion de dicts, les opérations ensemblistes et la déduplication qui préserve l'ordre.
+
+<!-- concept -->
+
+Choisir le bon conteneur est la principale décision de performance en Python courant. Dicts et ensembles sont des tables de hachage : appartenance et recherche se font en temps constant ; les listes sont des tableaux, rapides en fin mais lentes à parcourir ou à modifier en tête. Beaucoup de boucles lentes deviennent rapides en remplaçant une recherche dans une liste par un ensemble ou un dict.
+Les dicts conservent aussi l'ordre d'insertion, ce qui simplifie la déduplication qui préserve l'ordre et les problèmes « dernier par clé ».
+
+<!-- example -->
+
+```python
+seen = set(existing_ids)                       # O(1) membership
+new = [r for r in rows if r["id"] not in seen]
+latest = {}
+for r in rows:                                 # keep the newest row per key
+    if r["id"] not in latest or r["ts"] > latest[r["id"]]["ts"]:
+        latest[r["id"]] = r
+merged = defaults | overrides                  # overrides win
+```
 
 #### Qu'est-ce que `collections.defaultdict` ?
 
@@ -210,6 +474,46 @@ Le tri est stable : on peut trier selon plusieurs clés en passes successives.
 
 `zip(a, b)` associe les éléments de plusieurs itérables (en s'arrêtant au plus court, ou en levant une erreur avec `strict=True`). `enumerate(seq, start=0)` produit des paires `(indice, élément)`.
 
+<!-- challenge -->
+
+Un job vérifie `if customer_id in processed_ids` où `processed_ids` est une liste de 2 millions d'ID, et cela prend des heures. Que changez-vous ?
+
+<!-- solution -->
+
+Faire de `processed_ids` un ensemble : l'appartenance passe en O(1) au lieu de parcourir la liste, et les heures deviennent des secondes.
+
+<!-- takeaways -->
+
+- Dicts et ensembles offrent des recherches en O(1).
+- Les listes sont lentes à parcourir et à modifier en tête.
+- Les dicts conservent l'ordre d'insertion.
+
+<!-- unit: Le module collections -->
+
+<!-- goals -->
+
+- Utiliser defaultdict, Counter, namedtuple et deque.
+- Résoudre avec eux des problèmes de comptage, de regroupement et de pile.
+
+<!-- concept -->
+
+Le module `collections` fournit des motifs qu'on écrirait sinon à la main. `defaultdict` crée automatiquement les valeurs manquantes, parfait pour regrouper. `Counter` compte et classe. `namedtuple` donne aux tuples des noms de champs lisibles. `deque` ajoute et retire aux deux extrémités en temps constant : file, pile ou fenêtre glissante.
+Beaucoup de problèmes d'entretien sont l'un de ces motifs déguisé.
+
+<!-- example -->
+
+```python
+from collections import Counter, defaultdict, deque
+words = "the cat and the hat".split()
+print(Counter(words).most_common(2))            # [('the', 2), ('cat', 1)]
+groups = defaultdict(list)
+for w in ["eat", "tea", "tan", "ate"]:
+    groups["".join(sorted(w))].append(w)
+last_three = deque(maxlen=3)
+for x in range(10):
+    last_three.append(x)                        # keeps 7, 8, 9
+```
+
 #### Comment supprimer les doublons d'une liste en gardant l'ordre ?
 
 ```python
@@ -219,8 +523,6 @@ unique = list(dict.fromkeys(items))
 #### Quelles sont les opérations sur les ensembles ?
 
 Union `a | b`, intersection `a & b`, différence `a - b`, différence symétrique `a ^ b` et test d'inclusion `a <= b`. Les tests d'appartenance sont en O(1) en moyenne.
-
-### Fonctions, portées et closures
 
 #### Que sont `*args` et `**kwargs` ?
 
@@ -273,6 +575,41 @@ funcs = [lambda: i for i in range(3)]
 funcs = [lambda i=i: i for i in range(3)]  # fige la valeur courante : [0, 1, 2]
 ```
 
+<!-- challenge -->
+
+Une fonction garde les 1 000 dernières lignes de log avec `lines.append(x)` suivi de `lines.pop(0)`, et ralentit quand le trafic augmente. Qu'utilisez-vous ?
+
+<!-- solution -->
+
+Un `deque(maxlen=1000)` : l'ajout supprime automatiquement l'élément le plus ancien en O(1), alors que `list.pop(0)` décale tous les éléments.
+
+<!-- takeaways -->
+
+- `defaultdict` regroupe ; `Counter` compte.
+- `deque` est en O(1) aux deux extrémités.
+- Beaucoup de problèmes sont ces motifs déguisés.
+
+<!-- unit: Tri -->
+
+<!-- goals -->
+
+- Trier listes et enregistrements selon une ou plusieurs clés.
+- Choisir entre sort et sorted et appliquer le tri aux problèmes d'intervalles.
+
+<!-- concept -->
+
+Python trie avec une fonction clé : on lui dit quoi comparer, il gère le reste, de façon stable et efficace. Des tuples comme clés trient sur plusieurs champs à la fois ; nier un nombre inverse un champ. `sort()` modifie une liste sur place et renvoie `None`, un bug fréquent quand on l'assigne ; `sorted()` renvoie une nouvelle liste depuis n'importe quel itérable.
+Le tri est aussi une étape de résolution : une fois les intervalles triés par début, les chevauchements deviennent des voisins.
+
+<!-- example -->
+
+```python
+from operator import itemgetter
+rows = [{"country": "CO", "revenue": 50}, {"country": "AR", "revenue": 80}, {"country": "CO", "revenue": 90}]
+rows.sort(key=lambda r: (r["country"], -r["revenue"]))     # country asc, revenue desc
+top = sorted(rows, key=itemgetter("revenue"), reverse=True)[:2]
+```
+
 #### Que sont les fonctions de première classe ?
 
 Les fonctions sont des objets : on peut les affecter à des variables, les ranger dans des structures de données, les passer en argument et les renvoyer depuis d'autres fonctions.
@@ -284,6 +621,50 @@ Les fonctions sont des objets : on peut les affecter à des variables, les range
 #### Que fait `functools.partial` ?
 
 Elle crée une nouvelle fonction dont certains arguments sont fixés : `parse_fr = partial(parse_date, fmt="%d/%m/%Y")`.
+
+<!-- challenge -->
+
+`result = rows.sort(key=...)` puis `result[0]` échoue avec `TypeError: 'NoneType' object is not subscriptable`. Pourquoi ?
+
+<!-- solution -->
+
+`list.sort()` trie sur place et renvoie `None`. Soit appeler `rows.sort(...)` puis utiliser `rows`, soit `result = sorted(rows, key=...)`.
+
+<!-- takeaways -->
+
+- Triez avec des fonctions clés ; des tuples pour plusieurs champs.
+- `sort()` renvoie None ; `sorted()` renvoie une liste.
+- Le tri ramène les chevauchements à des comparaisons de voisins.
+
+<!-- stage: Écrire du Python -->
+
+### Fonctions, portées et closures
+
+<!-- unit: Paramètres et arguments -->
+
+<!-- goals -->
+
+- Utiliser *args, **kwargs et les paramètres keyword-only et positional-only.
+- Éviter les valeurs par défaut mutables et renvoyer ou dépaqueter plusieurs valeurs.
+
+<!-- concept -->
+
+Les signatures de fonctions sont une interface, et Python offre un contrôle fin : collecter des arguments supplémentaires, imposer que certains soient nommés pour la lisibilité, ou que d'autres soient positionnels pour pouvoir les renommer plus tard. Le dépaquetage renvoie naturellement plusieurs valeurs.
+Un piège attrape tout le monde une fois : les valeurs par défaut sont créées à la définition de la fonction, pas à l'appel, donc une valeur par défaut mutable est partagée par tous les appels.
+
+<!-- example -->
+
+```python
+def load(path, /, *, batch_size=1000, tags=None):   # path positional-only, rest keyword-only
+    tags = [] if tags is None else list(tags)       # never a mutable default
+    ...
+
+def bounds(values):
+    return min(values), max(values)
+
+low, high = bounds([3, 9, 4])
+first, *middle, last = [1, 2, 3, 4, 5]
+```
 
 #### Que fait `functools.lru_cache` (ou `cache`) ?
 
@@ -318,6 +699,43 @@ def total(prices: list[float], vat: float = 0.2) -> float:
     return sum(prices) * (1 + vat)
 ```
 
+<!-- challenge -->
+
+`def add_item(item, basket=[])` renvoie des paniers contenant des articles d'appels précédents. Corrigez.
+
+<!-- solution -->
+
+Utiliser `basket=None` et créer la liste à l'intérieur : `if basket is None: basket = []`. La liste par défaut avait été créée une fois et partagée entre les appels.
+
+<!-- takeaways -->
+
+- `*args` et `**kwargs` collectent les arguments supplémentaires.
+- `*` impose des mots-clés ; `/` impose des positions.
+- Utilisez `None` au lieu de valeurs par défaut mutables.
+
+<!-- unit: Les fonctions comme valeurs -->
+
+<!-- goals -->
+
+- Utiliser lambdas, fonctions d'ordre supérieur, map, filter, reduce et partial.
+- Comprendre any, all et l'évaluation en court-circuit.
+
+<!-- concept -->
+
+Les fonctions sont des objets : on peut les passer, les renvoyer et les stocker comme n'importe quelle valeur. C'est ce qui rend possibles le tri par clé, les callbacks et les décorateurs. Les petites fonctions jetables peuvent être des lambdas ; l'application partielle fixe certains arguments pour construire des versions spécialisées.
+Les opérateurs logiques partagent cette souplesse : `and` et `or` renvoient l'un de leurs opérandes plutôt qu'un booléen, et `any`/`all` s'arrêtent dès que la réponse est connue.
+
+<!-- example -->
+
+```python
+from functools import partial, reduce
+from datetime import datetime
+parse_fr = partial(datetime.strptime, format="%d/%m/%Y")   # wraps keyword use
+total = reduce(lambda acc, x: acc + x, [1, 2, 3], 0)
+has_errors = any(r["status"] == "error" for r in results)  # stops at the first error
+name = user_input or "anonymous"                           # returns an operand
+```
+
 #### Qu'est-ce que `typing.Optional[X]` ?
 
 Une annotation qui signifie `X | None`. Depuis Python 3.10, on peut écrire directement `X | None`.
@@ -342,11 +760,51 @@ Il récupère les éléments restants : `first, *middle, last = [1, 2, 3, 4]` do
 
 Avec un court-circuit, en renvoyant l'un des opérandes plutôt qu'un booléen : `x or default` renvoie `x` s'il est vrai, sinon `default`.
 
-### Programmation orientée objet
-
 #### Quelle est la différence entre une classe et une instance ?
 
 Une classe est un modèle qui définit attributs et méthodes. Une instance est un objet créé à partir d'elle, avec son propre état : `p = Point(1, 2)`.
+
+<!-- challenge -->
+
+`timeout = config.get("timeout") or 30` met 30 quand la config indique explicitement `0` (pas de timeout). Comment corriger ?
+
+<!-- solution -->
+
+`or` traite 0 comme faux. Tester explicitement l'absence de valeur : `timeout = config.get("timeout"); timeout = 30 if timeout is None else timeout`.
+
+<!-- takeaways -->
+
+- Les fonctions sont des valeurs qu'on passe et renvoie.
+- `partial` fixe des arguments ; les lambdas tiennent en une ligne.
+- `and`/`or` renvoient des opérandes et court-circuitent.
+
+<!-- unit: Closures et portée -->
+
+<!-- goals -->
+
+- Écrire des closures et éviter le piège de la liaison tardive.
+- Utiliser judicieusement récursion et mémoïsation.
+
+<!-- concept -->
+
+Une fonction définie dans une autre se souvient des variables qui l'entourent, même après le retour de la fonction externe. C'est une closure, le mécanisme derrière les décorateurs et les fonctions fabriques. Elle lit ces variables à l'appel, pas à la définition, ce qui surprend dans les boucles.
+La récursion convient aux structures naturellement récursives, mais elle a une limite de profondeur et refait du travail. Mettre en cache les résultats par argument supprime les répétitions.
+
+<!-- example -->
+
+```python
+def make_multiplier(k):
+    def mul(x):
+        return x * k          # remembers k
+    return mul
+
+funcs = [lambda i=i: i for i in range(3)]   # bind i now, not at call time
+print([f() for f in funcs])                 # [0, 1, 2]
+
+from functools import cache
+@cache
+def fib(n): return n if n < 2 else fib(n - 1) + fib(n - 2)
+```
 
 #### Qu'est-ce que `self` ?
 
@@ -371,6 +829,43 @@ class Company:
         return cls(row["id"], row["name"])
 ```
 
+<!-- challenge -->
+
+Une fonction récursive qui parcourt un JSON très imbriqué échoue avec `RecursionError` sur un fichier. Que faites-vous ?
+
+<!-- solution -->
+
+La réécrire de façon itérative avec une pile explicite (liste ou deque) des éléments à visiter, sans limite de profondeur ; augmenter la limite de récursion ne fait que retarder le plantage.
+
+<!-- takeaways -->
+
+- Les closures retiennent les variables englobantes.
+- Elles lisent les variables à l'appel ; liez-les par des valeurs par défaut.
+- La récursion a des limites ; le cache évite le travail répété.
+
+<!-- unit: Documenter et typer les fonctions -->
+
+<!-- goals -->
+
+- Écrire docstrings et type hints, y compris pour les valeurs optionnelles.
+- Distinguer fonctions et méthodes.
+
+<!-- concept -->
+
+La signature d'une fonction dit à l'appelant comment l'utiliser ; docstrings et type hints lui disent ce qu'elle signifie. Les hints ne sont pas imposés à l'exécution, mais éditeurs et vérificateurs de types s'en servent pour détecter les erreurs avant l'exécution, et ils documentent l'intention mieux que les noms seuls.
+Les méthodes sont des fonctions attachées à des classes, l'instance étant passée automatiquement. Le savoir aide quand on passe des méthodes comme callbacks.
+
+<!-- example -->
+
+```python
+def parse_amount(raw: str, default: float | None = None) -> float | None:
+    """Parse '1.234,56' or '1234.56' into a float.
+
+    Returns `default` when the value is empty or invalid.
+    """
+    ...
+```
+
 #### Qu'est-ce que `@property` ?
 
 Un décorateur qui expose une méthode comme un attribut, avec setter et deleter facultatifs, pour ajouter validation ou calcul sans changer l'interface.
@@ -393,6 +888,52 @@ L'ordre dans lequel Python cherche un attribut parmi les classes en cas d'hérit
 #### Que sont les méthodes « dunder » (magiques) ?
 
 Des méthodes entourées de doubles tirets bas qui s'insèrent dans le comportement du langage : `__repr__`, `__str__`, `__len__`, `__eq__`, `__hash__`, `__lt__`, `__iter__`, `__getitem__`, `__enter__`, `__call__`, `__add__`.
+
+<!-- challenge -->
+
+Une fonction est annotée `-> float` mais renvoie `None` sur une mauvaise entrée, et les appelants plantent sur `None + 1`. En quoi les hints aident-ils à l'éviter ?
+
+<!-- solution -->
+
+L'annoter honnêtement `-> float | None` et lancer un vérificateur de types (mypy, pyright), qui signale alors les appelants qui utilisent le résultat sans gérer `None`.
+
+<!-- takeaways -->
+
+- Les docstrings expliquent le comportement ; les hints décrivent les types.
+- Les hints ne sont pas imposés mais alimentent les vérificateurs.
+- `X | None` marque une valeur optionnelle.
+
+### Programmation orientée objet
+
+<!-- unit: Classes et instances -->
+
+<!-- goals -->
+
+- Définir des classes avec __init__, attributs d'instance et de classe.
+- Utiliser staticmethod, classmethod et property.
+
+<!-- concept -->
+
+Une classe regroupe des données et le comportement qui agit dessus. Les instances reçoivent leurs propres attributs dans `__init__`, tandis que les attributs de classe sont partagés par toutes les instances, utile pour des constantes et dangereux pour des données mutables.
+Les décorateurs façonnent l'interface : les class methods servent de constructeurs alternatifs, les static methods regroupent des utilitaires, et les properties exposent des valeurs calculées ou de la validation derrière une simple syntaxe d'attribut.
+
+<!-- example -->
+
+```python
+class Order:
+    vat_rate = 0.19                          # class attribute (shared)
+
+    def __init__(self, net: float):
+        self.net = net                       # instance attribute
+
+    @property
+    def gross(self) -> float:
+        return round(self.net * (1 + self.vat_rate), 2)
+
+    @classmethod
+    def from_dict(cls, d: dict) -> "Order":
+        return cls(net=float(d["net"]))
+```
 
 #### Quelle est la différence entre `__str__` et `__repr__` ?
 
@@ -428,6 +969,49 @@ Utiliser un objet selon son comportement plutôt que son type : « si ça marche
 
 Un attribut de classe qui liste les attributs d'instance autorisés. Il supprime le `__dict__` de chaque instance, ce qui réduit la mémoire et accélère l'accès aux attributs pour de nombreux petits objets.
 
+<!-- challenge -->
+
+Une classe définit `items = []` au niveau de la classe, et toutes les instances finissent par partager les mêmes articles. Corrigez.
+
+<!-- solution -->
+
+Créer la liste par instance dans `__init__` (`self.items = []`). Les attributs mutables au niveau de la classe sont partagés par toutes les instances.
+
+<!-- takeaways -->
+
+- Les attributs d'instance vont dans `__init__` ; ceux de classe sont partagés.
+- Les classmethods sont des constructeurs alternatifs.
+- Les properties cachent un calcul derrière un attribut.
+
+<!-- unit: Héritage et composition -->
+
+<!-- goals -->
+
+- Utiliser l'héritage, super() et les classes de base abstraites.
+- Expliquer le MRO et quand la composition vaut mieux.
+
+<!-- concept -->
+
+L'héritage permet à une classe de réutiliser et spécialiser le comportement d'une autre, `super()` appelant la version du parent. Avec l'héritage multiple, l'ordre de résolution des méthodes décide quelle implémentation l'emporte. Les classes de base abstraites définissent des méthodes que les sous-classes doivent implémenter.
+Les hiérarchies profondes deviennent rigides, cependant. La composition, construire des objets à partir d'autres objets, donne souvent la même réutilisation avec moins de couplage : un pipeline qui a un lecteur et un écrivain se modifie plus facilement qu'un pipeline qui est un cas particulier des deux.
+
+<!-- example -->
+
+```python
+from abc import ABC, abstractmethod
+
+class Sink(ABC):
+    @abstractmethod
+    def write(self, rows: list[dict]) -> None: ...
+
+class S3Sink(Sink):
+    def write(self, rows): ...
+
+class Pipeline:                       # composition: has a sink
+    def __init__(self, sink: Sink):
+        self.sink = sink
+```
+
 #### Qu'est-ce que la composition, et pourquoi la préfère-t-on souvent à l'héritage ?
 
 Construire des objets à partir d'autres objets (« a un ») plutôt qu'étendre des classes (« est un »). Elle donne un couplage plus faible et évite les hiérarchies de classes profondes et fragiles.
@@ -444,11 +1028,50 @@ Un `__hash__` qui ne change pas pendant sa durée de vie et un `__eq__` cohéren
 
 La classe d'une classe (par défaut `type`), qui contrôle la création des classes. Rarement nécessaire : les décorateurs de classe et `__init_subclass__` couvrent la plupart des besoins.
 
+<!-- challenge -->
+
+Une équipe a `CsvS3Pipeline`, `CsvLocalPipeline`, `JsonS3Pipeline`, `JsonLocalPipeline`… et chaque nouveau format ou destination double le nombre de classes. Comment restructurer ?
+
+<!-- solution -->
+
+Composer : un `Pipeline` qui prend en paramètres un `Reader` (CSV, JSON) et un `Sink` (S3, local). Chaque nouveau format ou destination ajoute une classe au lieu de multiplier les combinaisons.
+
+<!-- takeaways -->
+
+- `super()` appelle l'implémentation du parent.
+- Les ABC définissent les méthodes obligatoires.
+- Préférez la composition aux hiérarchies profondes.
+
+<!-- unit: Le data model et les méthodes dunder -->
+
+<!-- goals -->
+
+- Implémenter des méthodes dunder comme __repr__, __eq__, __hash__ et __call__.
+- Utiliser les dataclasses et __slots__.
+
+<!-- concept -->
+
+La syntaxe de Python repose sur des méthodes spéciales. Définir `__repr__` donne une sortie de débogage lisible ; `__eq__` et `__hash__` décident de l'égalité et de la possibilité d'utiliser des objets comme clés de dict ; `__call__` fait se comporter les instances comme des fonctions. Les implémenter rend vos classes aussi naturelles que les types intégrés.
+Les dataclasses génèrent les plus courantes à partir des déclarations de champs, et `__slots__` réduit la mémoire des classes à millions d'instances.
+
+<!-- example -->
+
+```python
+from dataclasses import dataclass
+
+@dataclass(frozen=True, slots=True)
+class CustomerKey:
+    source: str
+    customer_id: int          # frozen → hashable, usable as dict key
+
+key = CustomerKey("crm", 552)
+print(key)                    # CustomerKey(source='crm', customer_id=552)
+seen = {key: True}
+```
+
 #### Qu'est-ce que `__call__` ?
 
 Une méthode qui rend les instances appelables comme des fonctions, utile pour des objets-fonctions configurables.
-
-### Itérateurs, générateurs, décorateurs et gestionnaires de contexte
 
 #### Quelle est la différence entre un itérable et un itérateur ?
 
@@ -482,6 +1105,45 @@ Il délègue à un sous-itérateur et en produit tous les éléments : `yield fr
 #### Qu'est-ce qu'`itertools`, et citez quelques fonctions utiles ?
 
 Un module de briques rapides pour les itérateurs : `chain`, `islice`, `groupby`, `product`, `permutations`, `combinations`, `accumulate`, `count`, `cycle`, `tee`, `zip_longest` et `batched` (Python 3.12).
+
+<!-- challenge -->
+
+Des objets d'une dataclass mutable servent de clés de dict, puis un champ change, et les recherches ne les trouvent plus. Pourquoi, et comment corriger ?
+
+<!-- solution -->
+
+Le hash dépend des champs ; changer un champ change le hash, et le dict cherche au mauvais endroit. Utiliser `frozen=True` pour les objets clés (ou ne pas les modifier).
+
+<!-- takeaways -->
+
+- Les méthodes dunder branchent les classes sur la syntaxe.
+- Un objet hashable ne doit pas changer de hash.
+- Les dataclasses génèrent le code répétitif.
+
+<!-- unit: Interfaces par comportement -->
+
+<!-- goals -->
+
+- Appliquer le duck typing et les Protocols.
+- Comprendre les conventions d'encapsulation de Python et les métaclasses.
+
+<!-- concept -->
+
+Python s'intéresse à ce qu'un objet sait faire, pas à ce qu'il est. Tout objet doté d'une méthode `read` peut être traité comme un fichier : c'est le duck typing. Les Protocols permettent aux vérificateurs de types de le contrôler structurellement, sans héritage.
+La confidentialité est affaire de convention : un tiret bas initial signifie « interne », deux tirets bas transforment le nom pour éviter les collisions. Les métaclasses, qui personnalisent la création des classes elles-mêmes, existent mais sont rarement le bon outil dans du code applicatif.
+
+<!-- example -->
+
+```python
+from typing import Protocol
+
+class SupportsRead(Protocol):
+    def read(self, n: int = -1) -> bytes: ...
+
+def checksum(src: SupportsRead) -> str:     # works with files, BytesIO, S3 streams...
+    import hashlib
+    return hashlib.sha256(src.read()).hexdigest()
+```
 
 #### Comment fonctionne `itertools.groupby`, et quel est le piège ?
 
@@ -532,6 +1194,48 @@ def retry(times=3):
                         raise
         return wrapper
     return decorator
+```
+
+<!-- challenge -->
+
+Une fonction exige `isinstance(f, io.FileIO)` et rejette des flux S3 et des objets `BytesIO` qui fonctionneraient très bien. Comment les accepter ?
+
+<!-- solution -->
+
+Supprimer la vérification `isinstance` et se fier au comportement (appeler `read()`), en typant le paramètre comme un `Protocol` avec `read` : tout objet lisible est accepté et les vérificateurs le contrôlent toujours.
+
+<!-- takeaways -->
+
+- Duck typing : le comportement prime sur le type.
+- Les Protocols vérifient le comportement structurellement.
+- Les noms à tiret bas sont internes par convention.
+
+### Itérateurs, générateurs, décorateurs et gestionnaires de contexte
+
+<!-- unit: Itérateurs et générateurs -->
+
+<!-- goals -->
+
+- Distinguer itérables et itérateurs, et écrire des générateurs.
+- Rendre des classes itérables et déléguer avec yield from.
+
+<!-- concept -->
+
+Tout ce qu'on peut parcourir est un itérable ; le parcourir lui demande un itérateur, qui livre les éléments un par un jusqu'à épuisement. Les générateurs sont la façon simple d'écrire des itérateurs : une fonction avec `yield` se met en pause après chaque élément et reprend à la demande suivante.
+Comme les itérateurs se consomment au fil du parcours, un générateur ne se parcourt qu'une fois. C'est le prix de leur avantage : ils produisent des séquences infinies ou énormes avec presque aucune mémoire.
+
+<!-- example -->
+
+```python
+def flatten(items):
+    for item in items:
+        if isinstance(item, (list, tuple)):
+            yield from flatten(item)     # delegate to the nested generator
+        else:
+            yield item
+
+print(list(flatten([1, [2, [3, 4]], 5])))   # [1, 2, 3, 4, 5]
+gen = flatten([1, [2]]); list(gen); print(list(gen))   # [] — exhausted
 ```
 
 #### Qu'est-ce qu'un gestionnaire de contexte ?
@@ -585,6 +1289,47 @@ La seconde boucle ne produit rien : le générateur est épuisé. Recréez-le, o
 
 Une fonction définie avec `async def`, qui peut s'interrompre aux points `await`. Elle s'exécute dans une boucle d'événements (asyncio) et permet la concurrence pour les tâches limitées par les entrées-sorties.
 
+<!-- challenge -->
+
+Une fonction passe un générateur à deux consommateurs : l'un valide les lignes, l'autre les charge. Le chargeur ne reçoit rien. Pourquoi, et quelles sont deux corrections ?
+
+<!-- solution -->
+
+Le validateur a épuisé le générateur. Soit appeler deux fois la fonction génératrice (itérateurs neufs), soit valider et charger en une seule passe ; `itertools.tee` fonctionne mais met des données en mémoire tampon.
+
+<!-- takeaways -->
+
+- Les itérables produisent des itérateurs ; les itérateurs se consomment.
+- Les générateurs se mettent en pause à `yield` et consomment peu.
+- Un générateur ne se parcourt qu'une fois.
+
+<!-- unit: Pipelines paresseux avec itertools -->
+
+<!-- goals -->
+
+- Construire des pipelines légers en mémoire avec générateurs et itertools.
+- Utiliser correctement groupby, islice et batched.
+
+<!-- concept -->
+
+Chaîner des générateurs crée des pipelines qui traitent les données en flux : lire une ligne, l'analyser, la filtrer, l'écrire, sans jamais garder tout le fichier. `itertools` fournit les raccords : concaténer, découper, regrouper, faire des lots et accumuler sur n'importe quel itérateur.
+Un raccord surprend : `groupby` ne regroupe que les éléments consécutifs de même clé, donc l'entrée doit déjà être triée par cette clé.
+
+<!-- example -->
+
+```python
+from itertools import batched, islice, groupby, accumulate
+
+def read_rows(path):
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            yield line.rstrip("\n").split(";")
+
+for batch in batched(read_rows("big.csv"), 10_000):   # Python 3.12+
+    load(batch)
+print(list(accumulate([3, 5, 2])))                    # [3, 8, 10]
+```
+
 #### Comment lire seulement les n premiers éléments d'un itérateur ?
 
 `itertools.islice(it, n)`, qui fonctionne avec n'importe quel itérateur, y compris infini.
@@ -596,8 +1341,6 @@ Une fonction définie avec `async def`, qui peut s'interrompre aux points `await
 #### Quelle est la différence entre `return` et `yield` dans une fonction ?
 
 `return` termine la fonction et renvoie une valeur. `yield` transforme la fonction en générateur qui produit une série de valeurs au fil du temps, en reprenant là où il s'était arrêté.
-
-### Erreurs, fichiers et bibliothèque standard
 
 #### Comment fonctionne la gestion des exceptions en Python ?
 
@@ -637,6 +1380,55 @@ class SchemaDriftError(PipelineError):
 
 Python 3.11 a ajouté `ExceptionGroup` pour lever plusieurs exceptions à la fois (par exemple depuis des tâches concurrentes) et `except*` pour les traiter par type.
 
+<!-- challenge -->
+
+`groupby(rows, key=lambda r: r["country"])` renvoie « CO » trois fois en groupes séparés. Qu'est-ce qui ne va pas ?
+
+<!-- solution -->
+
+`groupby` ne regroupe que les éléments consécutifs ; les lignes ne sont pas triées par pays. Trier d'abord (`sorted(rows, key=...)`) ou utiliser un `defaultdict(list)` pour regrouper sans trier.
+
+<!-- takeaways -->
+
+- Les pipelines de générateurs traitent en mémoire constante.
+- `itertools` fournit découpage, lots et regroupement.
+- `groupby` exige une entrée triée par la clé.
+
+<!-- unit: Décorateurs -->
+
+<!-- goals -->
+
+- Écrire des décorateurs qui préservent les métadonnées des fonctions.
+- Écrire des décorateurs qui prennent des arguments.
+
+<!-- concept -->
+
+Un décorateur enveloppe une fonction pour ajouter un comportement autour, comme la mesure du temps, les relances, le cache ou la journalisation, sans modifier son code. La syntaxe `@` est un raccourci pour remplacer la fonction par sa version enveloppée.
+Deux détails rendent les décorateurs prêts pour la production : copier le nom et la docstring de la fonction d'origine avec `functools.wraps`, et un niveau d'imbrication supplémentaire quand le décorateur lui-même a besoin de paramètres.
+
+<!-- example -->
+
+```python
+import functools, time
+
+def retry(times: int = 3, delay: float = 1.0):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for attempt in range(1, times + 1):
+                try:
+                    return func(*args, **kwargs)
+                except ConnectionError:
+                    if attempt == times:
+                        raise
+                    time.sleep(delay * attempt)
+        return wrapper
+    return decorator
+
+@retry(times=5)
+def fetch(url): ...
+```
+
 #### Qu'est-ce qu'EAFP par opposition à LBYL ?
 
 « Il est plus facile de demander pardon que la permission » (tenter l'opération et attraper l'erreur) contre « Regarder avant de sauter » (vérifier d'abord). EAFP est idiomatique en Python et évite les conditions de concurrence entre la vérification et l'action.
@@ -654,6 +1446,50 @@ with open("big.csv", encoding="utf-8") as f:
 #### Pourquoi toujours utiliser `with` pour ouvrir des fichiers ?
 
 Il garantit la fermeture du fichier, même en cas d'exception, ce qui libère le descripteur et vide les écritures en attente.
+
+<!-- challenge -->
+
+Après avoir décoré des fonctions avec un `@timed` maison, toutes apparaissent sous le nom « wrapper » dans les journaux et tracebacks. Que manque-t-il ?
+
+<!-- solution -->
+
+`@functools.wraps(func)` sur le wrapper interne, qui copie le nom, la docstring et les autres métadonnées de la fonction d'origine.
+
+<!-- takeaways -->
+
+- Les décorateurs enveloppent des fonctions pour ajouter un comportement.
+- Utilisez toujours `functools.wraps`.
+- Les décorateurs paramétrés ajoutent un niveau d'imbrication.
+
+<!-- unit: Context managers -->
+
+<!-- goals -->
+
+- Utiliser et écrire des context managers, y compris avec contextlib.
+- Maîtriser la gestion des exceptions dans __exit__ et gérer de nombreuses ressources avec ExitStack.
+
+<!-- concept -->
+
+Fichiers, connexions, verrous et transactions doivent être nettoyés même en cas d'erreur. Les context managers le garantissent : la mise en place s'exécute à l'entrée du bloc `with`, le nettoyage à la sortie, quelle que soit la façon d'en sortir.
+`contextlib` transforme un générateur en context manager en quelques lignes. `__exit__` décide si une exception se propage, et `ExitStack` gère un nombre variable de ressources à la fois.
+
+<!-- example -->
+
+```python
+from contextlib import contextmanager, ExitStack
+
+@contextmanager
+def transaction(conn):
+    try:
+        yield conn
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+
+with ExitStack() as stack:
+    files = [stack.enter_context(open(p, encoding="utf-8")) for p in paths]   # all closed at the end
+```
 
 #### Qu'est-ce que `pathlib` ?
 
@@ -690,6 +1526,49 @@ datetime.now(timezone.utc)                     # avec fuseau horaire
 
 `zoneinfo.ZoneInfo("Europe/Paris")` donne les fuseaux horaires IANA.
 
+<!-- challenge -->
+
+Le `__exit__` d'un context manager maison renvoie `True` « par sécurité », et les erreurs dans les blocs `with` disparaissent. Que se passe-t-il ?
+
+<!-- solution -->
+
+Renvoyer une valeur vraie depuis `__exit__` supprime l'exception. Renvoyer `None`/`False` (ou relancer) pour que les erreurs se propagent après le nettoyage.
+
+<!-- takeaways -->
+
+- Les context managers garantissent le nettoyage.
+- `@contextmanager` les construit à partir de générateurs.
+- Un `__exit__` qui renvoie vrai avale les exceptions.
+
+<!-- stage: Travailler avec le monde extérieur -->
+
+### Erreurs, fichiers et bibliothèque standard
+
+<!-- unit: Exceptions -->
+
+<!-- goals -->
+
+- Gérer, lever et chaîner correctement les exceptions.
+- Définir des exceptions personnalisées et choisir entre EAFP et LBYL.
+
+<!-- concept -->
+
+Une bonne gestion d'erreurs n'attrape que ce qu'elle sait traiter et laisse remonter le reste. Des clauses `except` précises, le nettoyage dans `finally` et un `else` pour le code qui ne doit s'exécuter qu'en cas de succès gardent l'intention claire. Un `except` nu cache les bugs et bloque même Ctrl+C.
+Les exceptions personnalisées offrent aux appelants des types significatifs à attraper, le chaînage garde la cause d'origine dans les tracebacks, et les exception groups signalent plusieurs échecs à la fois.
+
+<!-- example -->
+
+```python
+class PipelineError(Exception): ...
+class BadRecordError(PipelineError): ...
+
+def parse(raw: str) -> int:
+    try:
+        return int(raw)
+    except ValueError as exc:
+        raise BadRecordError(f"not a number: {raw!r}") from exc
+```
+
 #### Quelle est la différence entre datetimes naïfs et conscients ?
 
 Un datetime naïf n'a pas de fuseau horaire, un datetime conscient a un `tzinfo`. Les mélanger provoque des erreurs. Stockez et calculez en UTC avec des datetimes conscients, et ne convertissez que pour l'affichage.
@@ -723,6 +1602,45 @@ result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=
 
 Avec `hashlib` : `hashlib.sha256(data).hexdigest()`. Pour les fichiers, lisez par blocs et appelez `update()` pour garder une mémoire constante.
 
+<!-- challenge -->
+
+Un chargeur enveloppe tout dans `try: ... except: pass`, et des données manquantes passent inaperçues pendant des semaines. Comment le réécrire ?
+
+<!-- solution -->
+
+N'attraper que les erreurs attendues (par exemple `ValueError` pour les enregistrements défectueux), les journaliser avec contexte et les compter, et laisser les exceptions inattendues se propager pour que le job échoue visiblement.
+
+<!-- takeaways -->
+
+- N'attrapez que des exceptions précises.
+- Chaînez avec `raise ... from exc`.
+- Des types d'exception personnalisés aident les appelants.
+
+<!-- unit: Fichiers et chemins -->
+
+<!-- goals -->
+
+- Lire de gros fichiers en sécurité avec `with` et l'itération ligne par ligne.
+- Utiliser pathlib, la compression et les fichiers temporaires.
+
+<!-- concept -->
+
+Les fichiers sont l'entrée la plus courante du travail sur les données, et deux habitudes évitent la plupart des problèmes. Les ouvrir avec `with`, pour qu'ils soient fermés même en cas d'erreur. Les parcourir ligne par ligne, pour que la mémoire reste constante quelle que soit la taille.
+`pathlib` fait des chemins des objets qu'on peut joindre, inspecter et filtrer avec glob ; les modules de compression lisent et écrivent des fichiers compressés comme s'ils étaient bruts ; et les fichiers temporaires se nettoient seuls.
+
+<!-- example -->
+
+```python
+from pathlib import Path
+import gzip
+
+raw = Path("data") / "raw"
+for path in sorted(raw.glob("*.log.gz")):
+    with gzip.open(path, "rt", encoding="utf-8") as f:
+        errors = sum(1 for line in f if " ERROR " in line)
+    print(path.name, errors)
+```
+
 #### À quoi sert `tempfile` ?
 
 À créer des fichiers et des répertoires temporaires nettoyés automatiquement : `with tempfile.TemporaryDirectory() as tmp: ...`.
@@ -730,8 +1648,6 @@ Avec `hashlib` : `hashlib.sha256(data).hexdigest()`. Pour les fichiers, lisez pa
 #### Comment compresser ou décompresser des fichiers en Python ?
 
 Avec les modules `gzip`, `bz2`, `lzma` et `zipfile`. `gzip.open(path, "rt", encoding="utf-8")` lit un fichier texte compressé ligne par ligne.
-
-### Concurrence et performances
 
 #### Qu'est-ce que le GIL ?
 
@@ -768,6 +1684,44 @@ async def main(urls):
 asyncio.run(main(urls))
 ```
 
+<!-- challenge -->
+
+Un script appelle `open(path).read().splitlines()` sur des journaux de 30 Go et plante. Réécrivez la partie lecture.
+
+<!-- solution -->
+
+`with open(path, encoding="utf-8") as f: for line in f: process(line)`, qui lit une ligne à la fois et ferme le fichier de façon fiable.
+
+<!-- takeaways -->
+
+- Ouvrez les fichiers avec `with`.
+- Itérez par ligne pour garder une mémoire constante.
+- `pathlib` pour les chemins ; `gzip` pour les fichiers compressés.
+
+<!-- unit: Formats de données et dates -->
+
+<!-- goals -->
+
+- Lire et écrire du CSV et du JSON avec la bibliothèque standard.
+- Analyser des dates et utiliser des datetimes avec fuseau horaire.
+
+<!-- concept -->
+
+La bibliothèque standard gère les formats courants. Le module `csv` traite guillemets et délimiteurs qu'un découpage naïf gère mal ; `json` convertit entre texte et dicts, avec des points d'accroche pour les types qu'il ne connaît pas.
+Les dates demandent du soin : analyser avec des formats explicites, et garder des heures conscientes de leur fuseau, de préférence en UTC, car mélanger datetimes naïfs et conscients provoque des erreurs et des décalages silencieux.
+
+<!-- example -->
+
+```python
+import csv, json
+from datetime import datetime, timezone
+
+with open("in.csv", newline="", encoding="utf-8") as f:
+    rows = list(csv.DictReader(f, delimiter=";"))
+ts = datetime.strptime("17/10/2026 09:41", "%d/%m/%Y %H:%M").replace(tzinfo=timezone.utc)
+print(json.dumps({"rows": len(rows), "loaded_at": ts}, default=str))
+```
+
 #### Qu'est-ce qu'une condition de concurrence, et comment l'éviter avec des threads ?
 
 Deux threads qui accèdent à des données partagées et produisent un résultat qui dépend du hasard de l'ordonnancement. On l'évite avec des verrous (`threading.Lock`), des files thread-safe (`queue.Queue`) ou en évitant l'état mutable partagé.
@@ -788,6 +1742,47 @@ De meilleurs algorithmes et structures de données (ensembles et dictionnaires p
 
 Chaque ligne devient un objet Python et le travail se fait dans l'interpréteur. Les opérations vectorisées s'exécutent en code C optimisé sur des colonnes entières à la fois.
 
+<!-- challenge -->
+
+Un script découpe des lignes CSV avec `line.split(",")`, et certaines lignes ont trop de champs. Pourquoi, et comment corriger ?
+
+<!-- solution -->
+
+Des champs comme `"Pérez, Ana"` contiennent des virgules entre guillemets. Utiliser `csv.reader`/`DictReader`, qui gèrent correctement guillemets et échappements.
+
+<!-- takeaways -->
+
+- Utilisez `csv` au lieu de découper les lignes.
+- `json` gère texte ↔ dicts ; `default=` pour les types personnalisés.
+- Gardez les datetimes avec fuseau, idéalement en UTC.
+
+<!-- unit: Modules standard utiles -->
+
+<!-- goals -->
+
+- Journaliser correctement et construire des interfaces en ligne de commande.
+- Utiliser expressions régulières, sous-processus et hachage.
+
+<!-- concept -->
+
+« Piles incluses » : la plupart des utilitaires sont déjà là. `logging` offre niveaux, formatage et handlers, pour envoyer les messages vers la console en développement et vers des fichiers ou collecteurs en production. `argparse` transforme les scripts en véritables outils en ligne de commande.
+Les expressions régulières extraient la structure du texte ; `subprocess` exécute des commandes externes en sécurité sans shell ; `hashlib` calcule des sommes de contrôle de fichiers et des clés pseudonymisées.
+
+<!-- example -->
+
+```python
+import argparse, logging, re, subprocess, hashlib
+
+log = logging.getLogger(__name__)
+parser = argparse.ArgumentParser(description="Load a day of orders")
+parser.add_argument("--date", required=True)
+args = parser.parse_args()
+log.info("loading %s", args.date)                         # lazy formatting
+m = re.search(r"order=(\d+)", "ts=... order=98123 status=ok")
+subprocess.run(["aws", "s3", "cp", "out.csv", "s3://bucket/"], check=True)
+digest = hashlib.sha256(b"ana@example.com").hexdigest()
+```
+
 #### Qu'est-ce qu'un comportement de type fuite mémoire en Python, et comment le trouver ?
 
 Une mémoire qui ne cesse de croître parce que des références sont conservées (caches globaux, listes qui grandissent, cycles de références avec `__del__`). On l'étudie avec `tracemalloc`, `gc` et `objgraph`.
@@ -807,6 +1802,47 @@ CPython est l'interpréteur de référence, écrit en C. PyPy est une implément
 #### Quand utiliser multiprocessing plutôt que Spark ?
 
 Pour du travail limité par le CPU qui tient sur une machine et en mémoire. Utilisez Spark quand les données ou les calculs dépassent une machine, ou quand la plateforme tourne déjà sous Spark.
+
+<!-- challenge -->
+
+Un script exécute `subprocess.run(f"rm -rf {folder}", shell=True)` avec un nom de dossier saisi par l'utilisateur. Quel est le risque, et la correction ?
+
+<!-- solution -->
+
+L'injection shell : un nom piégé pourrait exécuter des commandes arbitraires. Passer une liste d'arguments sans `shell=True`, valider le chemin, et préférer `shutil.rmtree` à un appel au shell.
+
+<!-- takeaways -->
+
+- Utilisez `logging` avec des loggers par module et un formatage paresseux.
+- `argparse` construit des interfaces en ligne de commande.
+- Lancez les sous-processus avec des listes d'arguments, sans shell.
+
+### Concurrence et performances
+
+<!-- unit: Le GIL et les modèles de concurrence -->
+
+<!-- goals -->
+
+- Expliquer le GIL et comparer threading, multiprocessing et asyncio.
+- Utiliser concurrent.futures et éviter conditions de course et pièges du pickling.
+
+<!-- concept -->
+
+Dans CPython, un seul thread exécute du bytecode Python à la fois. Les threads aident tout de même quand le travail attend réseau ou disque, car l'attente libère le verrou ; le travail gourmand en CPU exige des processus, chacun avec son interpréteur. Asyncio gère de nombreuses attentes dans un seul thread.
+Chaque modèle a ses pièges : des threads qui partagent des données ont besoin de verrous pour éviter les conditions de course ; les processus exigent des fonctions et données sérialisables par pickle ; les threads daemon meurent brutalement à la sortie.
+
+<!-- example -->
+
+```python
+from concurrent.futures import ThreadPoolExecutor, ProcessPoolExecutor
+
+with ThreadPoolExecutor(max_workers=16) as pool:          # I/O-bound: downloads
+    pages = list(pool.map(fetch, urls))
+
+def heavy(chunk): ...                                     # module-level: picklable
+with ProcessPoolExecutor() as pool:                       # CPU-bound: parsing
+    results = list(pool.map(heavy, chunks))
+```
 
 #### Qu'est-ce que pickle, et quels en sont les risques ?
 
@@ -832,11 +1868,53 @@ Appeler une fonction `async def` crée seulement un objet coroutine. `asyncio.ru
 
 Quand les producteurs vont plus vite que les consommateurs, la mémoire grossit jusqu'à la panne. Utilisez des files bornées (`queue.Queue(maxsize=...)`, `asyncio.Queue(maxsize=...)`) pour que les producteurs attendent.
 
-### Typage, packaging, environnements et tests
-
 #### Qu'est-ce qu'un environnement virtuel, et pourquoi en utiliser un ?
 
 Une installation Python isolée avec ses propres paquets (`python -m venv .venv`), pour que chaque projet ait ses propres versions de dépendances sans casser le Python du système ni les autres projets.
+
+<!-- challenge -->
+
+Une équipe accélère un job d'analyse gourmand en CPU avec 16 threads et ne constate aucun gain. Pourquoi, et que suggérez-vous ?
+
+<!-- solution -->
+
+Le GIL ne laisse qu'un thread exécuter du code Python à la fois, donc les threads limités par le CPU ne s'exécutent pas en parallèle. Utiliser un `ProcessPoolExecutor` (ou une bibliothèque vectorisée) pour exploiter plusieurs cœurs.
+
+<!-- takeaways -->
+
+- Threads pour les E/S ; processus pour le CPU.
+- Les données partagées entre threads exigent des verrous.
+- Les pools de processus exigent des fonctions sérialisables au niveau module.
+
+<!-- unit: asyncio -->
+
+<!-- goals -->
+
+- Expliquer coroutines, event loop et asyncio.run.
+- Limiter la concurrence, fixer des timeouts et gérer la backpressure.
+
+<!-- concept -->
+
+Le code asynchrone exécute de nombreuses tâches d'E/S dans un seul thread. Les coroutines se mettent en pause à chaque `await`, laissant l'event loop en exécuter d'autres pendant l'attente. Appeler une fonction async ne fait que créer une coroutine ; la boucle doit l'exécuter, ce que fait `asyncio.run` au niveau supérieur.
+La concurrence a besoin de limites. Les API à débit limité exigent sémaphores et backoff, chaque appel réseau exige un timeout, et les producteurs rapides exigent des files bornées pour que la mémoire ne croisse pas sans fin.
+
+<!-- example -->
+
+```python
+import asyncio, httpx
+
+async def fetch_all(urls, limit=10):
+    sem = asyncio.Semaphore(limit)
+    async with httpx.AsyncClient(timeout=30) as client:
+        async def one(url):
+            async with sem:                      # at most 10 in flight
+                r = await client.get(url)
+                r.raise_for_status()
+                return r.json()
+        return await asyncio.gather(*(one(u) for u in urls))
+
+results = asyncio.run(fetch_all(urls))
+```
 
 #### Qu'est-ce que `pyproject.toml` ?
 
@@ -866,6 +1944,44 @@ registry-lakehouse = "registry_lakehouse.cli:main"
 #### Qu'est-ce que pytest, et pourquoi le préfère-t-on à unittest ?
 
 Un framework de tests où les tests sont de simples fonctions avec de simples `assert`, avec des messages d'échec détaillés, des fixtures, la paramétrisation et un large écosystème de plugins.
+
+<!-- challenge -->
+
+Un scraper asynchrone lance 50 000 requêtes d'un coup avec `gather` et l'API bannit le client. Comment corriger ?
+
+<!-- solution -->
+
+Limiter la concurrence avec un `asyncio.Semaphore` (ou un pool de workers borné), respecter `Retry-After`, relancer les 429 avec backoff exponentiel et fixer un timeout sur chaque requête.
+
+<!-- takeaways -->
+
+- Les coroutines se mettent en pause à `await` ; la boucle exécute les autres.
+- `asyncio.run` démarre l'event loop.
+- Bornez la concurrence ; fixez toujours des timeouts.
+
+<!-- unit: Accélérer le code -->
+
+<!-- goals -->
+
+- Profiler avant d'optimiser et savoir ce qui rend Python rapide.
+- Éviter pandas ligne par ligne, et choisir entre PyPy, multiprocessing et Spark.
+
+<!-- concept -->
+
+La vitesse vient de la mesure, puis de la modification de la partie la plus lente. Les profileurs montrent où passe le temps, souvent à un endroit inattendu. La plupart des gains viennent de meilleurs algorithmes et structures de données, et du transfert des boucles vers du C : built-ins, NumPy, opérations vectorisées de pandas ou Polars.
+D'autres interpréteurs et le parallélisme aident dans des cas précis. Spark sert aux données qui dépassent une machine, pas à accélérer de petits jobs.
+
+<!-- example -->
+
+```bash
+python -m cProfile -s cumtime pipeline.py | head -20
+```
+```python
+# slow: Python loop over rows
+df["total"] = [r.price * r.qty for r in df.itertuples()]
+# fast: vectorized
+df["total"] = df["price"] * df["qty"]
+```
 
 #### Que sont les fixtures pytest ?
 
@@ -901,6 +2017,43 @@ Générer de nombreuses entrées aléatoires pour vérifier qu'une propriété e
 
 La part du code exécutée par les tests (`pytest-cov`). Elle montre les zones non testées, mais une forte couverture ne prouve pas que les tests vérifient les bonnes choses. Visez des tests utiles sur la logique risquée.
 
+<!-- challenge -->
+
+Une transformation pandas utilise `df.apply(func, axis=1)` sur 20 millions de lignes et prend 40 minutes. Que tentez-vous d'abord ?
+
+<!-- solution -->
+
+Réécrire `func` avec des opérations vectorisées sur les colonnes (arithmétique, `np.where`, accesseurs `str` et `dt`) pour que le travail s'exécute en C ; profiler pour confirmer, et envisager Polars si c'est encore lent.
+
+<!-- takeaways -->
+
+- Profilez d'abord.
+- Meilleures structures de données et vectorisation gagnent le plus.
+- Spark sert l'échelle, pas la vitesse des petits jobs.
+
+<!-- unit: Mémoire -->
+
+<!-- goals -->
+
+- Expliquer comment Python gère la mémoire.
+- Repérer les croissances de mémoire de type fuite et comprendre les caches de bytecode.
+
+<!-- concept -->
+
+CPython libère la plupart des objets dès que plus rien n'y fait référence, par comptage de références, et un collecteur de cycles nettoie les groupes d'objets qui ne se référencent qu'entre eux. Les problèmes de mémoire des programmes de longue durée sont donc presque toujours des références maintenues en vie : caches globaux, listes qui grandissent, closures qui retiennent de gros objets.
+Les trouver suppose de mesurer les allocations dans le temps. Les caches de bytecode n'ont rien à voir, même si on les confond souvent avec la mémoire : ils ne font qu'accélérer les imports.
+
+<!-- example -->
+
+```python
+import tracemalloc
+tracemalloc.start()
+run_batch()
+snapshot = tracemalloc.take_snapshot()
+for stat in snapshot.statistics("lineno")[:5]:
+    print(stat)          # top allocation sites
+```
+
 #### Quelle est la différence entre tests unitaires, d'intégration et de bout en bout ?
 
 Les tests unitaires vérifient une fonction ou une classe isolément. Les tests d'intégration vérifient des composants qui fonctionnent ensemble (le code et une base de données). Les tests de bout en bout exécutent tout le système sur des entrées réalistes.
@@ -912,6 +2065,52 @@ Un formateur et un linter (ruff, ou black et flake8), un vérificateur de types 
 #### Comment vérifier les types avec mypy ?
 
 Ajouter des annotations de type et lancer `mypy src/`. Il signale les incohérences de types de façon statique, avant l'exécution. On l'adopte progressivement avec des réglages par module.
+
+<!-- challenge -->
+
+La mémoire d'un worker de longue durée augmente de 100 Mo par heure jusqu'à ce qu'il soit tué. Le code a un `CACHE = {}` au niveau module rempli à chaque requête. Que changez-vous ?
+
+<!-- solution -->
+
+Borner le cache : utiliser `functools.lru_cache(maxsize=...)` ou un cache limité en taille ou en durée, ou le vider périodiquement ; confirmer avec `tracemalloc` qu'il était bien la source.
+
+<!-- takeaways -->
+
+- Le comptage de références libère les objets immédiatement.
+- Les fuites sont généralement des références maintenues.
+- Mesurez les allocations avec `tracemalloc`.
+
+<!-- stage: Pratique de l'ingénierie -->
+
+### Typage, packaging, environnements et tests
+
+<!-- unit: Environnements et packaging -->
+
+<!-- goals -->
+
+- Isoler les projets avec des environnements virtuels et pyproject.toml.
+- Rendre les installations reproductibles et construire des wheels avec entry points.
+
+<!-- concept -->
+
+Chaque projet a besoin de son propre ensemble de paquets, sinon les mises à jour de l'un cassent l'autre. Les environnements virtuels les isolent ; `pyproject.toml` déclare en un seul endroit le projet, ses dépendances et ses outils.
+La reproductibilité vient des lock files qui figent la version de chaque paquet, installés de la même façon en développement, en CI et en production. Les wheels empaquettent votre code pour le déploiement, et les entry points transforment des fonctions en commandes.
+
+<!-- example -->
+
+```toml
+[project]
+name = "orders-etl"
+version = "1.4.0"
+requires-python = ">=3.11"
+dependencies = ["pyarrow>=17", "httpx>=0.27"]
+
+[project.scripts]
+orders-etl = "orders_etl.cli:main"
+```
+```bash
+uv sync --frozen && uv build    # install exactly from uv.lock, then build the wheel
+```
 
 #### Qu'est-ce que `TypedDict` ?
 
@@ -933,8 +2132,6 @@ Une bibliothèque de validation de données qui transforme les données en modè
 
 Une organisation `src/` avec un package découpé par responsabilité (ingestion, transformations, qualité, entrées-sorties), un point d'entrée CLI léger, une configuration séparée du code, des tests qui reflètent le package, et `pyproject.toml` pour les dépendances et les outils.
 
-### Python pour le data engineering
-
 #### Comment lire un gros CSV avec pandas sans manquer de mémoire ?
 
 Lire par blocs, ne sélectionner que les colonnes utiles, fixer des types compacts, ou utiliser un format en colonnes et un moteur paresseux :
@@ -942,6 +2139,50 @@ Lire par blocs, ne sélectionner que les colonnes utiles, fixer des types compac
 ```python
 for chunk in pd.read_csv("big.csv", usecols=["id", "amount"], dtype={"id": "int64"}, chunksize=500_000):
     process(chunk)
+```
+
+<!-- challenge -->
+
+Un job fonctionne sur le portable d'un développeur mais échoue en production après la sortie d'une nouvelle version majeure d'une bibliothèque. Que mettez-vous en place ?
+
+<!-- solution -->
+
+Un lock file (uv, pip-tools ou Poetry) figeant toutes les versions, installé avec `--frozen` en CI et en production, les mises à jour de dépendances passant délibérément par des pull requests.
+
+<!-- takeaways -->
+
+- Un environnement virtuel par projet.
+- `pyproject.toml` déclare le projet.
+- Les lock files rendent les installations reproductibles.
+
+<!-- unit: Tester avec pytest -->
+
+<!-- goals -->
+
+- Écrire des tests pytest avec fixtures, paramétrage et mocks.
+- Choisir les niveaux de test et utiliser judicieusement couverture et tests par propriétés.
+
+<!-- concept -->
+
+pytest garde les tests simples : des fonctions ordinaires avec des `assert` ordinaires et des messages d'échec utiles. Les fixtures fournissent ce dont les tests ont besoin, des données d'exemple aux répertoires temporaires ; le paramétrage exécute un test sur de nombreuses entrées ; les mocks remplacent les dépendances lentes ou externes.
+Une suite équilibrée a beaucoup de tests unitaires rapides, quelques tests d'intégration et peu de tests de bout en bout. La couverture montre les zones non testées ; les tests par propriétés trouvent des cas limites auxquels on n'avait pas pensé.
+
+<!-- example -->
+
+```python
+import pytest
+from orders_etl.parse import parse_amount
+
+@pytest.mark.parametrize("raw, expected", [
+    ("1234.56", 1234.56), ("1.234,56", 1234.56), ("", None), ("abc", None),
+])
+def test_parse_amount(raw, expected):
+    assert parse_amount(raw) == expected
+
+def test_fetch_uses_timeout(mocker):
+    get = mocker.patch("orders_etl.api.httpx.get")
+    fetch_orders("2026-10-17")
+    assert get.call_args.kwargs["timeout"] == 30
 ```
 
 #### Quelle est la différence entre `loc` et `iloc` dans pandas ?
@@ -974,6 +2215,50 @@ Un format de fichier en colonnes, compressé et typé. Les requêtes ne lisent q
 #### Qu'est-ce qu'Apache Arrow ?
 
 Un format standard en mémoire orienté colonnes. Il permet à pandas, Polars, DuckDB, Spark et d'autres d'échanger des données sans les copier ni les convertir. PyArrow est sa bibliothèque Python.
+
+<!-- challenge -->
+
+Les tests d'un client d'API appellent la vraie API : ils sont lents et échouent quand elle est indisponible. Comment les corriger ?
+
+<!-- solution -->
+
+Simuler la couche HTTP dans les tests unitaires (pytest-mock, respx ou responses) avec des réponses enregistrées, et garder un ou deux tests d'intégration contre un bac à sable, exécutés à part.
+
+<!-- takeaways -->
+
+- pytest : asserts simples, fixtures, paramétrage.
+- Simulez les dépendances externes dans les tests unitaires.
+- La couverture est un signal, pas un objectif.
+
+<!-- unit: Vérifications statiques et types -->
+
+<!-- goals -->
+
+- Maintenir la qualité du code avec formateurs, linters et vérificateurs de types.
+- Utiliser mypy, TypedDict et les génériques.
+
+<!-- concept -->
+
+Les vérifications automatiques détectent les erreurs avant l'exécution des tests. Un formateur met fin aux débats de style, un linter signale bugs et mauvais motifs, et un vérificateur de types trouve, grâce à vos hints, les mauvais arguments et les `None` non gérés. Les lancer en pre-commit et en CI en fait une routine.
+Les type hints gagnent en utilité avec des types plus riches : `TypedDict` décrit des enregistrements en forme de dict, et les génériques décrivent conteneurs et fonctions qui travaillent avec n'importe quel type de façon cohérente.
+
+<!-- example -->
+
+```python
+from typing import TypedDict, TypeVar
+
+class OrderRow(TypedDict):
+    order_id: int
+    amount: float
+    country: str
+
+T = TypeVar("T")
+def first_or_none(items: list[T]) -> T | None:
+    return items[0] if items else None
+```
+```bash
+ruff check . && ruff format --check . && mypy src/
+```
 
 #### Qu'est-ce que Polars, et quand l'utiliser plutôt que pandas ?
 
@@ -1011,6 +2296,50 @@ with requests.get(url, stream=True, timeout=60) as r:
             f.write(chunk)
 ```
 
+<!-- challenge -->
+
+Une fonction reçoit des lignes sous forme de dicts, et des fautes de frappe comme `row["ammount"]` atteignent la production. Comment le typage peut-il les attraper ?
+
+<!-- solution -->
+
+Décrire les lignes avec un `TypedDict` (ou une dataclass ou un modèle pydantic) et annoter la fonction ; mypy signale alors les clés inconnues comme `"ammount"` avant l'exécution.
+
+<!-- takeaways -->
+
+- Formatez, lintez et vérifiez les types automatiquement.
+- `TypedDict` type les enregistrements en dict.
+- Les génériques gardent cohérents les types des conteneurs.
+
+<!-- unit: Configuration et structure du projet -->
+
+<!-- goals -->
+
+- Gérer configuration et secrets en sécurité.
+- Valider les réglages avec pydantic et structurer un projet de pipeline.
+
+<!-- concept -->
+
+Le même code doit tourner en développement, en CI et en production avec des réglages différents : la configuration vient donc de l'environnement, jamais de valeurs codées en dur, et les secrets d'un gestionnaire de secrets. La valider au démarrage, avec des erreurs claires, vaut mieux que découvrir une variable manquante au milieu d'un job.
+La structure du projet suit les responsabilités : un paquet `src` découpé en ingestion, transformations et sorties, des points d'entrée minces, et les tests à côté du code qu'ils couvrent.
+
+<!-- example -->
+
+```python
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    db_url: str
+    batch_size: int = 1000
+    s3_bucket: str
+
+settings = Settings()          # reads env vars, fails fast if db_url or s3_bucket is missing
+```
+```text
+src/orders_etl/{ingest.py, transform.py, load.py, cli.py}
+tests/{test_transform.py, conftest.py}
+pyproject.toml  uv.lock
+```
+
 #### Comment se connecter à une base de données depuis Python en toute sécurité ?
 
 Avec un pilote (psycopg pour PostgreSQL) ou SQLAlchemy, en utilisant des requêtes paramétrées et jamais du formatage de chaînes, pour éviter l'injection SQL :
@@ -1026,6 +2355,45 @@ Utiliser `COPY` (le `cursor.copy()` de psycopg) plutôt que des insertions ligne
 #### Qu'est-ce que SQLAlchemy ?
 
 Une boîte à outils pour bases de données avec une couche Core (langage d'expressions SQL, pool de connexions, engines) et un ORM. pandas utilise des engines SQLAlchemy pour `read_sql` et `to_sql`.
+
+<!-- challenge -->
+
+Un job lit `os.environ["BATCH_SIZE"]` au fond d'une boucle et plante au bout de deux heures quand la variable manque en production. Comment l'éviter ?
+
+<!-- solution -->
+
+Charger et valider toute la configuration une fois au démarrage (settings pydantic ou fonction de validation), avec types et valeurs par défaut, pour que les valeurs manquantes ou invalides échouent immédiatement.
+
+<!-- takeaways -->
+
+- Configuration depuis l'environnement ; secrets depuis un gestionnaire.
+- Validez les réglages au démarrage.
+- Structurez les projets par responsabilité.
+
+### Python pour le data engineering
+
+<!-- unit: L'essentiel de pandas -->
+
+<!-- goals -->
+
+- Lire de gros fichiers avec pandas et sélectionner des données avec loc et iloc.
+- Grouper, fusionner et gérer les valeurs manquantes sans avertissements.
+
+<!-- concept -->
+
+pandas est l'outil quotidien pour les données qui tiennent en mémoire. Ses gestes de base : sélectionner (par étiquette ou position), grouper avec des agrégations nommées, fusionner comme des jointures SQL, et traiter délibérément les valeurs manquantes.
+La mémoire est la limite habituelle : ne lire que les colonnes utiles avec des types compacts, ou par morceaux, la repousse loin. L'indexation chaînée déclenche le fameux avertissement parce que pandas ne peut pas savoir si vous modifiez une copie ou l'original.
+
+<!-- example -->
+
+```python
+import pandas as pd
+df = pd.read_csv("companies.csv", usecols=["country", "industry", "revenue"],
+                 dtype={"country": "category", "industry": "category"})
+summary = (df.groupby(["country", "industry"], as_index=False, observed=True)
+             .agg(companies=("revenue", "size"), revenue=("revenue", "sum")))
+df.loc[df["revenue"] < 0, "revenue"] = pd.NA       # assign on the original, no warning
+```
 
 #### Comment lire des fichiers depuis Amazon S3 en Python ?
 
@@ -1051,6 +2419,45 @@ Chaque ligne est sérialisée entre la JVM et Python. Préférez les fonctions i
 
 Indiquer explicitement le bon `encoding`, n'utiliser `errors="replace"` qu'en connaissance de cause, détecter un BOM avec `encoding="utf-8-sig"`, et réparer le mojibake (`'TravesÃ­a'.encode('latin-1').decode('utf-8')`) avec une garde pour les chaînes où la conversion échoue.
 
+<!-- challenge -->
+
+`pd.merge(orders, customers, on="customer_id")` renvoie plus de lignes que `orders`. Que s'est-il passé, et comment le détecter ?
+
+<!-- solution -->
+
+`customers` contient des `customer_id` en double : les commandes se démultiplient. Dédupliquer d'abord les clients et utiliser `validate="many_to_one"` dans `merge`, qui lève une erreur si le côté droit n'est pas unique.
+
+<!-- takeaways -->
+
+- Ne lisez que les colonnes utiles, avec des dtypes compacts.
+- Utilisez `.loc` pour les assignations.
+- `merge(validate=...)` détecte le fan-out.
+
+<!-- unit: Formats colonnaires et moteurs rapides -->
+
+<!-- goals -->
+
+- Expliquer Parquet et Arrow, et écrire du Parquet partitionné.
+- Savoir quand Polars ou DuckDB battent pandas.
+
+<!-- concept -->
+
+Le CSV est un mauvais format pour l'analytique : non typé, non compressé, lu en entier. Parquet stocke les données par colonne avec types et statistiques, pour que les outils ne lisent que le nécessaire. Arrow est le format en mémoire correspondant, qui permet à pandas, Polars, DuckDB et Spark d'échanger des données sans copie.
+Par-dessus, de nouveaux moteurs changent ce qu'une machine peut faire : Polars tourne en multithread avec un optimiseur de requêtes, et DuckDB exécute du SQL directement sur des fichiers Parquet et des DataFrames.
+
+<!-- example -->
+
+```python
+import duckdb, polars as pl
+top = duckdb.sql("""
+    SELECT country, sum(revenue) AS revenue
+    FROM 'lake/companies/*.parquet'
+    GROUP BY country ORDER BY revenue DESC LIMIT 5
+""").pl()
+lazy = pl.scan_parquet("lake/orders/*.parquet").filter(pl.col("amount") > 0).group_by("day").agg(pl.sum("amount"))
+print(lazy.collect())
+```
+
 #### Comment planifier et orchestrer des pipelines Python ?
 
 Avec un orchestrateur comme Airflow, Dagster ou Prefect (dépendances, relances, alertes, recalculs d'historique), ou un planificateur cloud qui déclenche des fonctions serverless ou des conteneurs dans les cas simples.
@@ -1071,8 +2478,6 @@ pq.write_to_dataset(pa.Table.from_pandas(df), root_path="out/", partition_cols=[
 ```
 
 Cela crée des dossiers comme `out/country=FR/`, que les moteurs de requête peuvent élaguer.
-
-### Exercices de code
 
 #### Analyser un fichier de journal et indiquer combien de temps un appareil est resté allumé et quand les erreurs se sont produites.
 
@@ -1108,6 +2513,48 @@ def device_report(path: str) -> str:
 ```
 
 L'horodatage correspond aux trois premiers champs de la ligne (mois, jour, heure), pas au seul troisième champ. L'analyser avec `strptime` (`%f` accepte les millisecondes) donne un datetime, et la différence de deux datetimes donne un `timedelta`. Notez aussi `errors.append()` (les listes n'ont pas de `add`), le parcours direct de l'objet fichier, et le contrôle de l'état en fin de ligne pour que `ON` ne soit pas trouvé à l'intérieur d'un autre mot.
+
+<!-- challenge -->
+
+Un analyste charge 8 Go de CSV dans pandas pour calculer un agrégat et manque de mémoire. Que lui suggéreriez-vous ?
+
+<!-- solution -->
+
+Convertir une fois les fichiers en Parquet, puis les interroger avec DuckDB (ou des scans paresseux Polars), qui ne lisent que les colonnes utiles, traitent les données en flux et utilisent tous les cœurs.
+
+<!-- takeaways -->
+
+- Parquet est typé, colonnaire et compressé.
+- Arrow permet aux outils de partager des données sans copie.
+- Polars et DuckDB repoussent les limites d'une machine.
+
+<!-- unit: API, fichiers et bases de données -->
+
+<!-- goals -->
+
+- Appeler des API REST de façon robuste et télécharger de gros fichiers en flux.
+- Se connecter aux bases en sécurité, charger des lignes en masse et lire depuis S3.
+
+<!-- concept -->
+
+Les pipelines passent une grande partie de leur temps à dialoguer avec d'autres systèmes, et chaque échange peut échouer. Les appels d'API exigent sessions, timeouts, relances avec backoff et pagination. Les gros téléchargements doivent être écrits en flux sur disque au lieu de remplir la mémoire.
+Les bases de données exigent des requêtes paramétrées pour la sécurité et des voies de masse comme `COPY` pour la vitesse ; SQLAlchemy ajoute pooling et portabilité. Le stockage objet a ses propres clients, ou un accès de type fichier via fsspec.
+
+<!-- example -->
+
+```python
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
+session = requests.Session()
+session.mount("https://", HTTPAdapter(max_retries=Retry(total=5, backoff_factor=1,
+                                                        status_forcelist=[429, 500, 502, 503])))
+with session.get(URL, stream=True, timeout=60) as r:
+    r.raise_for_status()
+    with open("export.csv.gz", "wb") as f:
+        for chunk in r.iter_content(chunk_size=1 << 20):
+            f.write(chunk)
+```
 
 #### Inverser une chaîne et vérifier si c'est un palindrome, sans tenir compte de la casse ni de la ponctuation.
 
@@ -1176,6 +2623,42 @@ def latest_by_key(rows: list[dict], key: str, ts: str) -> list[dict]:
         if current is None or row[ts] > current[ts]:
             latest[row[key]] = row
     return list(latest.values())
+```
+
+<!-- challenge -->
+
+Un job construit du SQL avec `f"SELECT * FROM users WHERE email = '{email}'"`. Quels sont les deux problèmes, et la correction ?
+
+<!-- solution -->
+
+L'injection SQL (une valeur piégée peut modifier la requête) et les bugs de guillemets (les e-mails avec apostrophe la cassent). Utiliser des requêtes paramétrées : `cur.execute("... WHERE email = %s", (email,))`.
+
+<!-- takeaways -->
+
+- Sessions, timeouts, relances et pagination pour les API.
+- Téléchargez les gros fichiers en flux.
+- Paramétrez le SQL ; chargez en masse avec `COPY`.
+
+<!-- unit: Des étapes de pipeline fiables -->
+
+<!-- goals -->
+
+- Rendre les étapes de pipeline idempotentes et valider les données avant chargement.
+- Gérer encodages et gros JSON, et orchestrer des pipelines Python.
+
+<!-- concept -->
+
+Une étape de pipeline sera relancée, réexécutée et nourrie de données surprenantes. Des étapes idempotentes, qui donnent le même résultat exécutées deux fois, rendent les relances sûres ; valider avant de charger arrête les mauvaises données à l'entrée. Encodage et taille des fichiers figurent parmi les surprises courantes.
+Planification, dépendances et alertes relèvent d'un orchestrateur, pas de cron et de l'espoir. Que Python transforme lui-même les données (ETL) ou les déplace surtout pour qu'un entrepôt les transforme (ELT) détermine la quantité de code à écrire.
+
+<!-- example -->
+
+```python
+def load_day(conn, day: str, rows: list[dict]) -> None:
+    validate(rows)                                   # schema, nulls, ranges, duplicates
+    with conn.transaction():
+        conn.execute("DELETE FROM sales WHERE sale_date = %s", (day,))
+        copy_rows(conn, "sales", rows)               # rerun-safe: replaces the day
 ```
 
 #### Fusionner des intervalles qui se chevauchent.
@@ -1250,6 +2733,42 @@ running = list(accumulate(values))                                         # [3,
 moving = [sum(values[i - 2:i + 1]) / 3 for i in range(2, len(values))]     # [3.33, 5.0, 5.33]
 ```
 
+<!-- challenge -->
+
+Une étape quotidienne ajoute des lignes à une table, et une relance après un timeout a doublé les données du jour. Réécrivez sa stratégie d'écriture.
+
+<!-- solution -->
+
+Remplacer la tranche du jour dans une transaction (supprimer la date puis insérer, ou faire un upsert sur la clé métier), pour qu'une double exécution laisse les mêmes données.
+
+<!-- takeaways -->
+
+- Les étapes idempotentes rendent les relances sûres.
+- Validez avant de charger.
+- Les orchestrateurs gèrent planification, relances et alertes.
+
+<!-- unit: Python et Spark -->
+
+<!-- goals -->
+
+- Expliquer le lien entre PySpark et Python.
+- Éviter les UDF Python lentes dans PySpark.
+
+<!-- concept -->
+
+PySpark permet à Python de décrire des calculs distribués, mais le travail s'exécute dans le moteur JVM de Spark. Le code Python construit le plan ; les lignes touchent rarement l'interpréteur Python, et c'est pourquoi PySpark passe à l'échelle.
+L'exception, ce sont les UDF Python : chaque ligne est envoyée à un processus Python puis renvoyée, avec perte de vitesse et d'optimisation. Les fonctions intégrées, ou les pandas UDF vectorisées quand Python est inévitable, gardent le travail là où Spark est rapide.
+
+<!-- example -->
+
+```python
+from pyspark.sql import functions as F
+# slow: Python UDF per row
+# clean = F.udf(lambda s: s.strip().lower())
+# fast: built-in functions
+df = df.withColumn("email", F.lower(F.trim("email")))
+```
+
 #### Lire un CSV de transactions, calculer le montant total par utilisateur et les villes dont la moyenne dépasse 8 000.
 
 ```python
@@ -1281,3 +2800,17 @@ def fibonacci():
 
 list(islice(fibonacci(), 10))   # [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
 ```
+
+<!-- challenge -->
+
+Un job PySpark utilise une UDF pour calculer `price * qty * (1 - discount)`. Pourquoi est-ce du gaspillage, et qu'est-ce qui la remplace ?
+
+<!-- solution -->
+
+Une UDF Python sérialise chaque ligne vers Python pour une arithmétique simple que Spark sait faire nativement. Utiliser une expression de colonne : `F.col("price") * F.col("qty") * (1 - F.col("discount"))`.
+
+<!-- takeaways -->
+
+- PySpark construit les plans ; la JVM les exécute.
+- Les UDF Python sérialisent chaque ligne.
+- Préférez les built-ins ; pandas UDF si nécessaire.
