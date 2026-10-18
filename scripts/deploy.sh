@@ -7,7 +7,8 @@
 # DISTRIBUTION_ID is optional: without it the files are uploaded and CloudFront serves
 # them once its cache expires. Used locally and by .github/workflows/ci.yml.
 #
-# Files are only added or overwritten, never deleted, so a mistake can't wipe the bucket.
+# Files are only added or overwritten, never deleted, so a mistake can't wipe the bucket; the one
+# exception is stale post and guide pages under {lang}/blog/ and {lang}/guides/ (see below).
 # Old URLs (/pages/..., /post/...) are overwritten by redirect pages from the build.
 # Project data under */projects/*/data/ is excluded: the pipeline publishes it there itself,
 # and a local preview copy (local_data/) must never overwrite a newer pipeline run.
@@ -31,6 +32,13 @@ aws s3 sync dist "s3://$BUCKET" $DRY --no-progress \
 aws s3 sync dist "s3://$BUCKET" $DRY --no-progress \
   --exclude "*" --include "*.html" --include "*.xml" --include "*.txt" \
   --cache-control "public, max-age=300"
+
+# Posts and guides that the build no longer produces (moved to another section, or unpublished)
+# are removed. Scoped to the .html pages of each language's blog/ and guides/ folders only.
+for section in dist/*/blog dist/*/guides; do
+  aws s3 sync "$section" "s3://$BUCKET/${section#dist/}" $DRY --no-progress --delete \
+    --exclude "*" --include "*.html" --cache-control "public, max-age=300"
+done
 
 if [ -n "${DRY_RUN:-}" ]; then
   echo "Dry run only: nothing uploaded."

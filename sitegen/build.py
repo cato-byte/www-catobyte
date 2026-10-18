@@ -9,6 +9,7 @@ endpoint, which does not resolve directory indexes):
     /{lang}/projects/index.html     /{lang}/projects/{slug}.html
     /{lang}/projects/{slug}/insights.html   a project's data page, when it has one
     /{lang}/blog/index.html         /{lang}/blog/{slug}.html
+    /{lang}/guides/index.html       /{lang}/guides/{slug}.html   study guides (content/guides)
     /pages/... and /post/...        redirects from the old site's URLs
 """
 
@@ -53,7 +54,7 @@ MONTHS = {
 def url_for(lang: str, page: str, slug: str | None = None) -> str:
     if page == "home":
         return f"/{lang}/index.html"
-    if page in ("projects", "blog"):
+    if page in ("projects", "blog", "guides"):
         return f"/{lang}/{page}/index.html"
     if page == "project":
         return f"/{lang}/projects/{slug}.html"
@@ -61,6 +62,8 @@ def url_for(lang: str, page: str, slug: str | None = None) -> str:
         return f"/{lang}/projects/{slug}/insights.html"
     if page == "post":
         return f"/{lang}/blog/{slug}.html"
+    if page == "guide":
+        return f"/{lang}/guides/{slug}.html"
     return f"/{lang}/{page}.html"
 
 
@@ -165,7 +168,7 @@ class Builder:
 
     def alternates(self, page: str, slug: str | None = None, available: list[str] | None = None) -> dict[str, str]:
         """Same page in the other languages; falls back to that language's section index."""
-        fallback = {"post": "blog", "project": "projects", "insights": "projects"}.get(page, "home")
+        fallback = {"post": "blog", "guide": "guides", "project": "projects", "insights": "projects"}.get(page, "home")
         return {
             lang: url_for(lang, page, slug) if available is None or lang in available else url_for(lang, fallback)
             for lang in self.languages
@@ -180,12 +183,11 @@ class Builder:
         self.copy_static()
 
         registry = load_registry()
-        for lang in self.languages:
-            self.build_language(lang, registry)
+        guide_ids = {lang: self.build_language(lang, registry) for lang in self.languages}
 
         self.build_root()
         self.copy_local_data()
-        self.build_redirects(registry)
+        self.build_redirects(registry, guide_ids)
         self.build_sitemap()
 
         for draft in find_drafts(registry):
@@ -204,16 +206,20 @@ class Builder:
             if project.insights and src.is_dir():
                 shutil.copytree(src, self.out_dir / project.insights.data_url.strip("/"), dirs_exist_ok=True)
 
-    def build_language(self, lang: str, registry: list[dict]) -> None:
+    def build_language(self, lang: str, registry: list[dict]) -> set[str]:
+        """Render one language; returns the ids of its study guides."""
         t = self.load_i18n(lang)
         posts = load_posts(lang, registry)
+        articles = [p for p in posts if p.kind == "post"]
+        guides = sorted((p for p in posts if p.kind == "guide"), key=lambda p: p.title.casefold())
         projects = load_projects(lang)
 
         self.render(
             "home.html",
             Page("home", url_for(lang, "home"), t["meta"]["site_title"], t["meta"]["description"],
                  self.alternates("home"), image="/images/og-default.png"),
-            lang, t, projects=projects[:3], posts=posts[:3],
+            lang, t, projects=projects[:3], posts=articles[:3],
+            guides=[p for p in posts if p.kind == "guide"][:3],
             featured=next((p for p in projects if p.featured), None),
         )
         for name in STATIC_PAGES:
@@ -246,18 +252,26 @@ class Builder:
                     lang, t, project=project, insights=insights, body=Markup(insights.body_html),
                 )
 
-        posts_by_year = [(year, list(group)) for year, group in groupby(posts, key=lambda p: p.date.year)]
+        posts_by_year = [(year, list(group)) for year, group in groupby(articles, key=lambda p: p.date.year)]
         self.render(
             "blog.html",
             Page("blog", url_for(lang, "blog"), t["blog"]["title"], t["blog"]["description"], self.alternates("blog")),
             lang, t, posts_by_year=posts_by_year,
         )
-        for i, post in enumerate(posts):
-            others = [p for p in posts if p.slug != post.slug][:3]
+        self.render(
+            "guides.html",
+            Page("guides", url_for(lang, "guides"), t["guides"]["title"], t["guides"]["description"],
+                 self.alternates("guides")),
+            lang, t, guides=guides,
+        )
+        for post in posts:
+            # "More posts" stays within the section: other guides under a guide, other articles under an article.
+            siblings = guides if post.kind == "guide" else articles
+            others = [p for p in sorted(siblings, key=lambda p: p.date, reverse=True) if p.slug != post.slug][:3]
             self.render(
                 "post.html",
-                Page("post", url_for(lang, "post", post.slug), post.title, post.summary or post.title,
-                     self.alternates("post", post.slug, post.languages), image=post.cover, has_code=post.has_code),
+                Page(post.kind, url_for(lang, post.kind, post.slug), post.title, post.summary or post.title,
+                     self.alternates(post.kind, post.slug, post.languages), image=post.cover, has_code=post.has_code),
                 lang, t, post=post, body=Markup(post.body_html), others=others,
             )
 
@@ -267,6 +281,7 @@ class Builder:
                  self.alternates("home"), noindex=True),
             lang, t,
         )
+        return {g.slug for g in guides}
 
     def build_root(self) -> None:
         """The domain root serves the default-language home, plus a root 404 for CloudFront."""
@@ -275,15 +290,20 @@ class Builder:
         shutil.copy(self.out_dir / lang / "404.html", self.out_dir / "404.html")
         self.write("/robots.txt", f"User-agent: *\nAllow: /\n\nSitemap: {self.site['base_url']}/sitemap.xml\n")
 
-    def build_redirects(self, registry: list[dict]) -> None:
+    def build_redirects(self, registry: list[dict], guide_ids: dict[str, set[str]]) -> None:
         template = self.env.get_template("redirect.html")
+
+        def redirect(url: str, target: str) -> None:
+            self.write(url, template.render(target=target, base_url=self.site["base_url"]))
+
         for lang in self.languages:
             for old, new in LEGACY_PAGES.items():
-                self.write(f"/pages/{lang}/{old}.html", template.render(target=url_for(lang, new)))
+                redirect(f"/pages/{lang}/{old}.html", url_for(lang, new))
             for entry in registry:
                 if lang in entry["languages"]:
-                    target = url_for(lang, "post", entry["post_id"])
-                    self.write(f"/post/{lang}/{entry['post_id']}.html", template.render(target=target))
+                    post_id = entry["post_id"]
+                    kind = "guide" if post_id in guide_ids[lang] else "post"
+                    redirect(f"/post/{lang}/{post_id}.html", url_for(lang, kind, post_id))
 
     def build_sitemap(self) -> None:
         base = self.site["base_url"]

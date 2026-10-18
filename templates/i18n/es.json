@@ -11,6 +11,7 @@
     "language": "Idioma",
     "home": "Inicio",
     "projects": "Proyectos",
+    "guides": "Guías",
     "blog": "Blog",
     "about": "Sobre mí",
     "contact": "Contacto"
@@ -41,6 +42,8 @@
     "projects_title": "Proyectos recientes",
     "projects_all": "Todos los proyectos",
     "skills_title": "Competencias y herramientas",
+    "guides_title": "Guías de estudio",
+    "guides_all": "Todas las guías",
     "writing_title": "Últimos artículos",
     "writing_all": "Archivo del blog",
     "cta_title": "Hablemos de datos",
@@ -68,8 +71,9 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Artículos sobre IA, aprendizaje automático e ingeniería de datos, y apuntes de estudio.",
-    "intro": "Apuntes de estudio sobre el stack de ingeniería de datos y los artículos sobre IA y aprendizaje automático que escribí en 2024 y 2025, conservados como archivo.",
+    "description": "Artículos sobre ingeniería de datos, IA y aprendizaje automático.",
+    "intro": "Artículos sobre ingeniería de datos en la práctica y los artículos sobre IA y aprendizaje automático que escribí en 2024 y 2025, conservados como archivo.",
+    "guides_link": "¿Buscas las guías de estudio? Ahora tienen su propia sección.",
     "back": "Todos los artículos",
     "more": "Más artículos",
     "minutes": "{n} min de lectura",
@@ -79,6 +83,13 @@
     "collapse_all": "Cerrar todas las respuestas",
     "filter": "Filtrar las preguntas",
     "filter_status": "{n} preguntas coinciden"
+  },
+  "guides": {
+    "title": "Guías de estudio",
+    "description": "Guías de estudio pregunta por pregunta sobre el stack de ingeniería de datos: AWS, Spark, Databricks, Airflow, dbt, SQL y más.",
+    "intro": "Guías de estudio pregunta por pregunta sobre el stack de ingeniería de datos. Cada respuesta se puede plegar para que te pongas a prueba, y el filtro encuentra cualquier pregunta de una guía.",
+    "back": "Todas las guías",
+    "more": "Más guías de estudio"
   },
   "about": {
     "title": "Sobre mí",

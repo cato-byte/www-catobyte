@@ -9,7 +9,7 @@ from urllib.parse import unquote, urlparse
 import pytest
 
 from sitegen import config
-from sitegen.content import load_projects, load_registry
+from sitegen.content import ContentError, load_posts, load_projects, load_registry
 
 LANGS = config.load_site()["languages"]
 
@@ -38,8 +38,8 @@ def test_translations_have_identical_keys():
 @pytest.mark.parametrize("lang", LANGS)
 def test_expected_pages_exist(dist, lang):
     expected = ["index.html", "about.html", "contact.html", "legal.html", "404.html",
-                "projects/index.html", "blog/index.html"]
-    expected += [f"blog/{e['post_id']}.html" for e in load_registry() if lang in e["languages"]]
+                "projects/index.html", "blog/index.html", "guides/index.html"]
+    expected += [f"{'guides' if p.kind == 'guide' else 'blog'}/{p.slug}.html" for p in load_posts(lang)]
     expected += [f"projects/{p.slug}.html" for p in load_projects(lang)]
     missing = [p for p in expected if not (dist / lang / p).exists()]
     assert not missing
@@ -110,6 +110,21 @@ def test_no_broken_internal_links_or_images(dist, pages):
     assert not broken, "\n".join(sorted(set(broken)))
 
 
+def _is_redirect(path: Path) -> bool:
+    return path.suffix == ".html" and 'http-equiv="refresh"' in path.read_text(encoding="utf-8")
+
+
+def test_internal_links_skip_redirects(dist, pages):
+    """Pages link straight to the current URL, never through a legacy redirect stub."""
+    hops = []
+    for rel, soup in pages.items():
+        for el in soup.find_all("a", href=True):
+            target = _resolve(rel, el["href"])
+            if target is not None and (dist / target).is_file() and _is_redirect(dist / target):
+                hops.append(f"{rel}: {el['href']}")
+    assert not hops, "\n".join(sorted(set(hops)))
+
+
 def test_in_page_anchors_exist(pages):
     broken = []
     for rel, soup in pages.items():
@@ -152,6 +167,8 @@ def test_legacy_urls_redirect_to_existing_pages(dist):
     for stub in stubs:
         target = re.search(r'url=([^"]+)"', stub.read_text(encoding="utf-8")).group(1)
         assert (dist / target.lstrip("/")).is_file(), f"{stub} -> {target}"
+        assert not _is_redirect(dist / target.lstrip("/")), f"{stub} -> {target} is a redirect chain"
+        assert 'name="robots" content="noindex"' in stub.read_text(encoding="utf-8"), stub
 
 
 def test_sitemap_lists_only_existing_pages(dist, site):
@@ -252,14 +269,77 @@ def test_study_guides_render_question_cards(pages, lang):
     for entry in load_registry():
         if lang not in entry["languages"] or not entry["post_id"].endswith("study_guide"):
             continue
-        soup = pages[Path(lang) / "blog" / f"{entry['post_id']}.html"]
+        soup = pages[Path(lang) / "guides" / f"{entry['post_id']}.html"]
         cards = soup.select("details.qa")
-        if entry["post_id"] == "pyspark_study_guide":
-            continue  # written before the question-card format
         assert len(cards) >= 100, f"{entry['post_id']} ({lang}): {len(cards)} questions"
         assert soup.find("nav", class_="qa-toc")
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_study_guides_have_their_own_section(dist, pages, lang):
+    posts = load_posts(lang)
+    guides = [p for p in posts if p.kind == "guide"]
+    assert guides
+    index = pages[Path(lang) / "guides" / "index.html"]
+    blog = pages[Path(lang) / "blog" / "index.html"]
+    for guide in guides:
+        url = f"/{lang}/guides/{guide.slug}.html"
+        assert index.find("a", href=url), f"{guide.slug} missing from the guides index"
+        assert not blog.find("a", href=url), f"{guide.slug} still listed in the blog"
+        assert not (dist / lang / "blog" / f"{guide.slug}.html").exists(), f"{guide.slug} still served from the blog"
+    for article in (p for p in posts if p.kind == "post"):
+        assert blog.find("a", href=f"/{lang}/blog/{article.slug}.html"), article.slug
+    assert pages[Path(lang) / "guides" / f"{guides[0].slug}.html"].find(
+        "nav", id="site-nav").find("a", href=f"/{lang}/guides/index.html", attrs={"aria-current": "page"})
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_posts_and_guides_are_served_from_their_section(dist, pages, site, lang):
+    """Every URL that identifies a page (canonical, og:url, hreflang, sitemap) uses its section's folder."""
+    base = site["base_url"]
+    sitemap = set(re.findall(r"<loc>(.*?)</loc>", (dist / "sitemap.xml").read_text(encoding="utf-8")))
+    for post in load_posts(lang):
+        section, other = ("guides", "blog") if post.kind == "guide" else ("blog", "guides")
+        url = f"{base}/{lang}/{section}/{post.slug}.html"
+        soup = pages[Path(lang) / section / f"{post.slug}.html"]
+        assert soup.find("link", rel="canonical")["href"] == url
+        assert soup.find("meta", property="og:url")["content"] == url
+        for alt in soup.find_all("link", rel="alternate", hreflang=True):
+            assert f"/{section}/" in alt["href"], f"{post.slug}: {alt['href']}"
+        assert url in sitemap
+        assert f"{base}/{lang}/{other}/{post.slug}.html" not in sitemap
+        assert not (dist / lang / other / f"{post.slug}.html").exists()
+        legacy = (dist / "post" / lang / f"{post.slug}.html").read_text(encoding="utf-8")
+        assert f"url=/{lang}/{section}/{post.slug}.html" in legacy
+
+
+def test_content_folders_match_published_sections():
+    """content/guides holds only study guides and content/blog only articles."""
+    for lang in LANGS:
+        kinds = {p.slug: p.kind for p in load_posts(lang)}
+        for kind, folder in config.POST_DIRS.items():
+            for md in (folder / lang).glob("*.md"):
+                if md.stem in kinds:
+                    assert kinds[md.stem] == kind, md
 
 
 def test_image_archive_is_not_published(dist):
     assert (dist / "images").is_dir()
     assert not (dist / "images" / "archive").exists()
+
+
+def test_post_kind_comes_from_its_folder(tmp_path):
+    """Guides live in content/guides, articles in content/blog; a file in the wrong one fails the build."""
+    dirs = {"post": tmp_path / "blog", "guide": tmp_path / "guides"}
+    for d in dirs.values():
+        (d / "en").mkdir(parents=True)
+    registry = [{"post_id": pid, "publication_date": "2026-01-01",
+                 "languages": {"en": {"file_name": f"{pid}.md", "title": pid}}} for pid in ("article", "guide")]
+    (dirs["post"] / "en" / "article.md").write_text("## Article\n\nText.\n", encoding="utf-8")
+    (dirs["guide"] / "en" / "guide.md").write_text("## Guide\n\n<!-- QA -->\n### Basics\n#### Q?\nA.\n",
+                                                   encoding="utf-8")
+    assert {p.slug: p.kind for p in load_posts("en", registry, dirs)} == {"article": "post", "guide": "guide"}
+
+    (dirs["guide"] / "en" / "guide.md").rename(dirs["post"] / "en" / "guide.md")
+    with pytest.raises(ContentError, match="QA"):
+        load_posts("en", registry, dirs)

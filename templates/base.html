@@ -14,7 +14,7 @@
   {% endfor %}
   <link rel="alternate" hreflang="x-default" href="{{ site.base_url }}{{ page.alternates[site.default_language] }}">
 
-  <meta property="og:type" content="{{ 'article' if page.kind in ('post', 'project') else 'website' }}">
+  <meta property="og:type" content="{{ 'article' if page.kind in ('post', 'guide', 'project') else 'website' }}">
   <meta property="og:title" content="{{ page.title }}">
   <meta property="og:description" content="{{ page.description }}">
   <meta property="og:url" content="{{ site.base_url }}{{ page.url }}">
@@ -54,8 +54,9 @@
 
       <nav id="site-nav" class="site-nav" aria-label="{{ t.nav.label }}">
         <ul class="nav-links">
-          {% for key in ["projects", "blog", "about", "contact"] %}
-          <li><a href="{{ url_for(lang, key) }}"{% if page.kind == key or (page.kind == 'project' and key == 'projects') or (page.kind == 'post' and key == 'blog') %} aria-current="page"{% endif %}>{{ t.nav[key] }}</a></li>
+          {% set section = {"project": "projects", "insights": "projects", "post": "blog", "guide": "guides"}.get(page.kind, page.kind) %}
+          {% for key in ["projects", "guides", "blog", "about", "contact"] %}
+          <li><a href="{{ url_for(lang, key) }}"{% if section == key %} aria-current="page"{% endif %}>{{ t.nav[key] }}</a></li>
           {% endfor %}
         </ul>
         <ul class="lang-switch" aria-label="{{ t.nav.language }}">

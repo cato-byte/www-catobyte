@@ -4,7 +4,8 @@
 {% block content %}
 <article class="article">
   <header class="container article-head">
-    <a class="back-link" href="{{ url_for(lang, 'blog') }}"><span aria-hidden="true">←</span> {{ t.blog.back }}</a>
+    {% set section = t.guides if post.kind == 'guide' else t.blog %}
+    <a class="back-link" href="{{ url_for(lang, 'guides' if post.kind == 'guide' else 'blog') }}"><span aria-hidden="true">←</span> {{ section.back }}</a>
     <p class="eyebrow"><time datetime="{{ post.date.isoformat() }}">{{ post.date | date(lang) }}</time> · {% if post.question_count %}{{ t.blog.questions | replace('{n}', post.question_count | number(lang)) }}{% else %}{{ t.blog.minutes | replace('{n}', post.reading_minutes | string) }}{% endif %}</p>
     <h1>{{ post.title }}</h1>
   </header>
@@ -40,7 +41,7 @@
 {% if others %}
 <aside class="section section-alt" aria-labelledby="more-title">
   <div class="container">
-    <h2 id="more-title">{{ t.blog.more }}</h2>
+    <h2 id="more-title">{{ section.more }}</h2>
     <div class="grid grid-posts">
       {% for other in others %}{{ post_card(other, lang, t, compact=true) }}{% endfor %}
     </div>

@@ -19,7 +19,7 @@
 
 {% macro post_card(post, lang, t, compact=false) %}
 <article class="card post-card{% if compact %} post-card-compact{% endif %}">
-  <a class="card-link" href="{{ url_for(lang, 'post', post.slug) }}">
+  <a class="card-link" href="{{ url_for(lang, post.kind, post.slug) }}">
     {% if post.cover %}
     <img class="card-thumb" src="{{ post.cover }}" alt="" loading="lazy" decoding="async">
     {% endif %}

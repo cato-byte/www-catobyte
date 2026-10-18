@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% from "macros.html" import post_card %}
+
+{% block content %}
+<div class="container page-head">
+  <h1>{{ t.guides.title }}</h1>
+  <p class="lede">{{ t.guides.intro }}</p>
+</div>
+<div class="container section-tight">
+  <div class="post-list">
+    {% for guide in guides %}{{ post_card(guide, lang, t) }}{% endfor %}
+  </div>
+</div>
+{% endblock %}
