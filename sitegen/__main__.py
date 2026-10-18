@@ -2,7 +2,7 @@
 
     python -m sitegen build              render the site into dist/
     python -m sitegen serve [--port N]   build, then serve dist/ on http://localhost:N
-    python -m sitegen publish <post_id>  add a draft post to the registry with today's date
+    python -m sitegen publish <post_id>  add a draft post or guide to the registry with today's date
     python -m sitegen drafts             list markdown files that are not published yet
 """
 
@@ -24,11 +24,12 @@ def publish(post_id: str) -> None:
         raise SystemExit(f"{post_id} is already published")
 
     languages = {}
-    for md_path in sorted(config.BLOG_DIR.glob(f"*/{post_id}.md")):
+    md_paths = [p for d in config.POST_DIRS.values() for p in d.glob(f"*/{post_id}.md")]
+    for md_path in sorted(md_paths):
         rendered = render_markdown(md_path.read_text(encoding="utf-8"))
         languages[md_path.parent.name] = {"file_name": md_path.name, "title": rendered.title}
     if not languages:
-        raise SystemExit(f"No content/blog/<lang>/{post_id}.md found")
+        raise SystemExit(f"No content/blog/<lang>/{post_id}.md or content/guides/<lang>/{post_id}.md found")
 
     today = date.today().isoformat()
     registry.append({"post_id": post_id, "languages": languages, "creation_date": today, "publication_date": today})

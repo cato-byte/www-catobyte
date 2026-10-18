@@ -1,4 +1,4 @@
-"""Load blog posts and projects from content/ into plain objects the templates can use."""
+"""Load blog posts, study guides and projects from content/ into plain objects the templates can use."""
 
 import json
 import re
@@ -8,7 +8,7 @@ from pathlib import Path
 
 import yaml
 
-from .config import BLOG_DIR, POSTS_REGISTRY, PROJECTS_DIR
+from .config import POST_DIRS, POSTS_REGISTRY, PROJECTS_DIR
 from .markdown import render_markdown
 
 _FRONT_MATTER_RE = re.compile(r"\A---\s*\n(.*?)\n---\s*\n", re.DOTALL)
@@ -32,6 +32,7 @@ class Post:
     has_code: bool
     reading_minutes: int
     languages: list[str]
+    kind: str = "post"  # "post" (content/blog) or "guide" (content/guides), which live in their own sections
     qa_sections: list[tuple[str, str, int]] = field(default_factory=list)
 
     @property
@@ -89,11 +90,19 @@ def load_registry(path: Path = POSTS_REGISTRY) -> list[dict]:
         return json.load(f)
 
 
-def load_posts(lang: str, registry: list[dict] | None = None, blog_dir: Path = BLOG_DIR) -> list[Post]:
-    """Published posts for one language, newest first.
+def _find_post(lang: str, file_name: str, post_dirs: dict[str, Path]) -> tuple[str, Path] | None:
+    """The kind of a registered post and its file, from the folder it sits in."""
+    found = [(kind, d / lang / file_name) for kind, d in post_dirs.items() if (d / lang / file_name).exists()]
+    if len(found) > 1:
+        raise ContentError(f"{file_name} ({lang}) exists in more than one of: {', '.join(str(p) for _, p in found)}")
+    return found[0] if found else None
+
+
+def load_posts(lang: str, registry: list[dict] | None = None, post_dirs: dict[str, Path] = POST_DIRS) -> list[Post]:
+    """Published blog posts and study guides for one language, newest first.
 
     A markdown file is only published once it has an entry in posts_metadata.json
-    (see `python -m sitegen publish`); anything else under content/blog is a draft.
+    (see `python -m sitegen publish`); anything else under content/blog or content/guides is a draft.
     """
     registry = registry if registry is not None else load_registry()
     posts = []
@@ -101,10 +110,15 @@ def load_posts(lang: str, registry: list[dict] | None = None, blog_dir: Path = B
         lang_info = entry["languages"].get(lang)
         if not lang_info:
             continue
-        md_path = blog_dir / lang / lang_info["file_name"]
-        if not md_path.exists():
-            raise ContentError(f"{entry['post_id']} is registered for '{lang}' but {md_path} is missing")
+        found = _find_post(lang, lang_info["file_name"], post_dirs)
+        if not found:
+            raise ContentError(f"{entry['post_id']} is registered for '{lang}' but {lang_info['file_name']} is "
+                               f"missing from {' and '.join(f'{d}/{lang}' for d in post_dirs.values())}")
+        kind, md_path = found
         rendered = render_markdown(md_path.read_text(encoding="utf-8"))
+        if (kind == "guide") != bool(rendered.qa_sections):
+            raise ContentError(f"{md_path}: study guides (and only study guides) need a <!-- QA --> section; "
+                               f"guides go in content/guides, articles in content/blog")
         posts.append(
             Post(
                 slug=entry["post_id"],
@@ -118,16 +132,18 @@ def load_posts(lang: str, registry: list[dict] | None = None, blog_dir: Path = B
                 has_code=rendered.has_code,
                 reading_minutes=_reading_minutes(rendered.word_count),
                 languages=sorted(entry["languages"]),
+                kind=kind,
                 qa_sections=rendered.qa_sections,
             )
         )
     return sorted(posts, key=lambda p: p.date, reverse=True)
 
 
-def find_drafts(registry: list[dict] | None = None, blog_dir: Path = BLOG_DIR) -> list[Path]:
+def find_drafts(registry: list[dict] | None = None, post_dirs: dict[str, Path] = POST_DIRS) -> list[Path]:
     registry = registry if registry is not None else load_registry()
     registered = {(lang, info["file_name"]) for e in registry for lang, info in e["languages"].items()}
-    return sorted(p for p in blog_dir.glob("*/*.md") if (p.parent.name, p.name) not in registered)
+    return sorted(p for d in post_dirs.values() for p in d.glob("*/*.md")
+                  if (p.parent.name, p.name) not in registered)
 
 
 def parse_front_matter(source: str) -> tuple[dict, str]:

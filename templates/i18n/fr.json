@@ -11,6 +11,7 @@
     "language": "Langue",
     "home": "Accueil",
     "projects": "Projets",
+    "guides": "Fiches",
     "blog": "Blog",
     "about": "À propos",
     "contact": "Contact"
@@ -41,6 +42,8 @@
     "projects_title": "Projets récents",
     "projects_all": "Tous les projets",
     "skills_title": "Compétences et outils",
+    "guides_title": "Fiches d'étude",
+    "guides_all": "Toutes les fiches",
     "writing_title": "Derniers articles",
     "writing_all": "Archives du blog",
     "cta_title": "Parlons data",
@@ -68,8 +71,9 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Articles sur l'IA, le machine learning et le data engineering, et fiches d'étude.",
-    "intro": "Des fiches d'étude sur la stack data engineering, ainsi que les articles sur l'IA et le machine learning écrits en 2024 et 2025, conservés comme archives.",
+    "description": "Articles sur le data engineering, l'IA et le machine learning.",
+    "intro": "Des articles sur le data engineering en pratique, ainsi que les articles sur l'IA et le machine learning écrits en 2024 et 2025, conservés comme archives.",
+    "guides_link": "Vous cherchez les fiches d'étude ? Elles ont désormais leur propre rubrique.",
     "back": "Tous les articles",
     "more": "Autres articles",
     "minutes": "{n} min de lecture",
@@ -79,6 +83,13 @@
     "collapse_all": "Fermer toutes les réponses",
     "filter": "Filtrer les questions",
     "filter_status": "{n} questions correspondent"
+  },
+  "guides": {
+    "title": "Fiches d'étude",
+    "description": "Fiches d'étude question par question sur la stack data engineering : AWS, Spark, Databricks, Airflow, dbt, SQL et plus encore.",
+    "intro": "Des fiches d'étude question par question sur la stack data engineering. Chaque réponse se replie pour que vous puissiez vous tester, et le filtre retrouve n'importe quelle question d'une fiche.",
+    "back": "Toutes les fiches",
+    "more": "Autres fiches d'étude"
   },
   "about": {
     "title": "À propos",

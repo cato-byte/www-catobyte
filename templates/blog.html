@@ -5,6 +5,7 @@
 <div class="container page-head">
   <h1>{{ t.blog.title }}</h1>
   <p class="lede">{{ t.blog.intro }}</p>
+  <p><a class="text-link" href="{{ url_for(lang, 'guides') }}">{{ t.blog.guides_link }} <span aria-hidden="true">→</span></a></p>
 </div>
 <div class="container section-tight">
   {% for year, posts in posts_by_year %}

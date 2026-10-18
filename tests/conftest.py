@@ -22,11 +22,12 @@ def dist(tmp_path_factory, site) -> Path:
 
 @pytest.fixture(scope="session")
 def pages(dist) -> dict[Path, BeautifulSoup]:
-    """Every generated HTML page except the legacy redirect stubs, parsed once."""
+    """Every generated HTML page except the redirect stubs, parsed once."""
     parsed = {}
     for path in sorted(dist.rglob("*.html")):
         rel = path.relative_to(dist)
-        if rel.parts[0] in ("pages", "post"):
+        text = path.read_text(encoding="utf-8")
+        if rel.parts[0] in ("pages", "post") or 'http-equiv="refresh"' in text:
             continue
-        parsed[rel] = BeautifulSoup(path.read_text(encoding="utf-8"), "html.parser")
+        parsed[rel] = BeautifulSoup(text, "html.parser")
     return parsed

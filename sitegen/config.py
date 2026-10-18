@@ -8,6 +8,9 @@ ROOT = Path(__file__).resolve().parent.parent
 
 CONTENT_DIR = ROOT / "content"
 BLOG_DIR = CONTENT_DIR / "blog"
+GUIDES_DIR = CONTENT_DIR / "guides"
+# Where each kind of post lives: content/<folder>/<lang>/<post_id>.md. Both share one registry.
+POST_DIRS = {"post": BLOG_DIR, "guide": GUIDES_DIR}
 PROJECTS_DIR = CONTENT_DIR / "projects"
 POSTS_REGISTRY = ROOT / "metadata" / "posts_metadata.json"
 EXPERIENCE_FILE = CONTENT_DIR / "experience.yaml"

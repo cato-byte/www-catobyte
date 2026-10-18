@@ -641,7 +641,7 @@ main:focus { outline: none; }
 
 @media (min-width: 64rem) {
   .grid-posts { grid-template-columns: repeat(3, 1fr); }
-  .page-blog .post-list { grid-template-columns: repeat(2, 1fr); }
+  .page-blog .post-list, .page-guides .post-list { grid-template-columns: repeat(2, 1fr); }
   .vault { grid-template-columns: repeat(3, 1fr); }
   .pipeline { grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
   .pipeline li:not(:last-child)::after { content: none; }

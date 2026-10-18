@@ -11,6 +11,7 @@
     "language": "Language",
     "home": "Home",
     "projects": "Projects",
+    "guides": "Guides",
     "blog": "Blog",
     "about": "About",
     "contact": "Contact"
@@ -41,6 +42,8 @@
     "projects_title": "Recent projects",
     "projects_all": "All projects",
     "skills_title": "Skills & tools",
+    "guides_title": "Study guides",
+    "guides_all": "All study guides",
     "writing_title": "Latest writing",
     "writing_all": "Blog archive",
     "cta_title": "Let's talk data",
@@ -68,8 +71,9 @@
   },
   "blog": {
     "title": "Blog",
-    "description": "Articles on AI, machine learning and data engineering, plus study notes.",
-    "intro": "Study notes on the data engineering stack, plus the articles on AI and machine learning I wrote in 2024 and 2025, kept here as an archive.",
+    "description": "Articles on data engineering, AI and machine learning.",
+    "intro": "Articles on data engineering in practice, plus the pieces on AI and machine learning I wrote in 2024 and 2025, kept here as an archive.",
+    "guides_link": "Looking for the study guides? They have their own section.",
     "back": "All posts",
     "more": "More posts",
     "minutes": "{n} min read",
@@ -79,6 +83,13 @@
     "collapse_all": "Close all answers",
     "filter": "Filter the questions",
     "filter_status": "{n} matching questions"
+  },
+  "guides": {
+    "title": "Study guides",
+    "description": "Question-by-question study guides on the data engineering stack: AWS, Spark, Databricks, Airflow, dbt, SQL and more.",
+    "intro": "Question-by-question study guides on the data engineering stack. Every answer is collapsible so you can quiz yourself, and the filter box finds any question in a guide.",
+    "back": "All study guides",
+    "more": "More study guides"
   },
   "about": {
     "title": "About me",
