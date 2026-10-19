@@ -593,6 +593,82 @@ main:focus { outline: none; }
 .qa-answer > :last-child { margin-bottom: 0; }
 .qa-answer pre { margin: 0.75rem 0; }
 
+/* Learning guides: units with a concept, a worked example, questions and practice. */
+.guide-layout { display: block; }
+.guide-nav { display: none; }
+.guide-main { min-width: 0; }
+.learning-path-intro { margin: 0 0 0.75rem; font-size: 0.9rem; }
+.prose .learning-path-stages { margin: 0; padding-left: 1.4rem; columns: 2 15rem; column-gap: 2rem; font-size: 0.92rem; }
+.learning-path-stages > li { break-inside: avoid; margin-bottom: 0.6rem; }
+.learning-path-stage { font-weight: 700; }
+.prose .learning-path-stages ul { margin: 0.15rem 0 0; padding-left: 1rem; list-style: none; }
+.qa-tools-learning .field { gap: 0.15rem; }
+.qa-tools-learning .field > span { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+.qa-tools select { min-height: 2.25rem; max-width: 100%; padding: 0.3rem 0.5rem; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; font-size: 0.88rem; }
+.qa-jump { flex: 1 1 100%; }
+.qa-show { flex: 1 1 10rem; }
+.qa-mode { display: inline-flex; }
+.qa-tools .qa-mode button { border-radius: 0; }
+.qa-tools .qa-mode button:first-child { border-radius: 999px 0 0 999px; }
+.qa-tools .qa-mode button:last-child { border-radius: 0 999px 999px 0; margin-left: -1px; }
+.qa-tools button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.qa-marks-note { margin: -0.5rem 0 1rem; font-size: 0.8rem; }
+
+.guide-section { scroll-margin-top: 9rem; }
+.guide-section + .guide-section { margin-top: 3rem; }
+.guide-section-stage { margin: 0 0 -1.5rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+.guide-section-stage:empty { display: none; }
+.unit { margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
+.guide-section > h2 + .unit, .guide-section > h2 + p + .unit { border-top: 0; padding-top: 0; }
+.unit-title { margin: 0 0 0.25rem; scroll-margin-top: 9rem; }
+.unit-skip { margin: 0 0 0.5rem; font-size: 0.85rem; }
+.unit-label { margin: 0 0 0.4rem; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--text-muted); }
+.qa-learning[data-mode="review"] .unit-concept, .qa-learning[data-mode="review"] .unit-goals,
+.qa-learning[data-mode="review"] .unit-example, .qa-learning[data-mode="review"] .unit-skip { display: none; }
+.unit-block { margin: 0.6rem 0; padding: 0.55rem 1rem; border-radius: var(--radius-sm); background: var(--bg-alt); border: 1px solid var(--border); }
+.unit-block > :last-child { margin-bottom: 0; }
+.unit-block > summary { cursor: pointer; margin: 0; list-style-position: inside; }
+.unit-block[open] > summary { margin-bottom: 0.5rem; }
+.unit-block ul { margin: 0; padding-left: 1.2rem; }
+.unit-block li + li { margin-top: 0.25rem; }
+.unit-block pre { margin: 0.5rem 0; }
+.unit-goals { border-left: 3px solid var(--accent); }
+.unit-challenge { border-left: 3px solid var(--warning); }
+.unit-takeaways { border-left: 3px solid var(--success); }
+.unit-solution { margin-top: 0.75rem; }
+.unit-solution > summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+.unit-solution[open] > summary { margin-bottom: 0.5rem; }
+.unit-questions { margin: 1rem 0; scroll-margin-top: 9rem; }
+.qa-back { margin: 0.75rem 0 0; font-size: 0.82rem; }
+.qa-marks { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.75rem 0 0; }
+.qa-marks button { min-height: 2rem; padding: 0.2rem 0.75rem; border: 1px solid var(--border); border-radius: 999px; background: var(--surface); color: var(--text); font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; }
+.qa-marks button[data-mark="review"][aria-pressed="true"] { background: var(--warning); border-color: var(--warning); color: var(--on-accent); }
+.qa-marks button[data-mark="ok"][aria-pressed="true"] { background: var(--success); border-color: var(--success); color: var(--on-accent); }
+.qa[data-mark="review"] { border-left: 3px solid var(--warning); }
+.qa[data-mark="ok"] { border-left: 3px solid var(--success); }
+/* While filtering or in a mixed review, show only the matching questions. */
+.is-filtering .unit-concept, .is-filtering .unit-goals, .is-filtering .unit-example, .is-filtering .unit-skip, .is-filtering .unit-challenge,
+.is-filtering .unit-takeaways, .is-filtering .section-pager, .is-filtering .unit-questions > .unit-label { display: none; }
+.section-pager { display: flex; justify-content: space-between; gap: 1rem; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.section-pager a { display: flex; flex-direction: column; max-width: 48%; font-weight: 600; text-decoration: none; line-height: 1.3; }
+.section-pager small { font-weight: 500; color: var(--text-muted); }
+.section-pager .pager-next { margin-left: auto; text-align: right; }
+
+@media (min-width: 64rem) {
+  .guide-layout { display: grid; grid-template-columns: 15rem minmax(0, var(--measure)); gap: 3rem; justify-content: center; }
+  .guide-nav { display: block; position: sticky; top: 5rem; align-self: start; max-height: calc(100vh - 6rem); overflow-y: auto; padding: 0.25rem 0.5rem 1rem 0; font-size: 0.86rem; }
+  .guide-nav ol { margin: 0 0 1rem; padding: 0; list-style: none; }
+  .guide-nav-stage { margin: 0 0 0.3rem; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+  .guide-nav li { margin: 0.1rem 0; }
+  .guide-nav a { display: block; padding: 0.15rem 0.5rem; border-left: 2px solid transparent; color: var(--text); text-decoration: none; }
+  .guide-nav a:hover { color: var(--accent); }
+  .guide-nav a[aria-current="true"] { border-left-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .guide-nav .guide-nav-units { display: none; margin: 0.1rem 0 0.4rem 0.6rem; font-size: 0.8rem; }
+  .guide-nav .is-current > .guide-nav-units { display: block; }
+  .guide-nav-units a { color: var(--text-muted); }
+  .qa-jump { display: none; }
+}
+
 /* ---- Footer ------------------------------------------------------------- */
 .site-footer { padding-block: 2.5rem; border-top: 1px solid var(--border); background: var(--bg-alt); font-size: 0.92rem; }
 .footer-inner { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1.5rem; }

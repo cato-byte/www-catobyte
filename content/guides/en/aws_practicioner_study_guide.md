@@ -5,11 +5,35 @@
 
 ![AWS Certified Cloud Practitioner study guide: about 200 questions](../../images/aws_practicioner_guide_title_img.png)
 
-About 200 questions and short answers I used to prepare the AWS Certified Cloud Practitioner exam (CLF-C02), which I passed in October 2026. They follow the exam's four domains: cloud concepts, security and compliance, cloud technology and services, and billing, pricing and support. Open a question to see its answer, or use the filter to search the whole guide. Service details and prices change, so check the AWS documentation before relying on a number.
+About 200 questions and short answers I used to prepare the AWS Certified Cloud Practitioner exam (CLF-C02), which I passed in October 2026. They follow the exam's four domains: cloud concepts, security and compliance, cloud technology and services, and billing, pricing and support.
+
+The guide follows a learning path in four stages. Each section is split into short units: learning goals, a concept explanation and a worked example, then questions (recall first, then application), a practical challenge and key takeaways. To **learn**, read each unit top to bottom. To **review**, switch to review mode or use "Skip to questions", mark answers you want to see again, and try a mixed review across sections. Service details and prices change, so check the AWS documentation before relying on a number.
 
 <!-- QA -->
+<!-- stage: Cloud foundations -->
 
 ### Cloud concepts
+
+<!-- unit: Why the cloud -->
+
+<!-- goals -->
+
+- Explain the economic case for cloud computing.
+- Connect AWS's six advantages to concrete business benefits.
+
+<!-- concept -->
+
+Running your own data center means buying for the peak you expect years ahead, then paying for idle capacity until you get there. The cloud flips that: you rent capacity by the second, from a provider whose scale makes each unit cheaper than you could buy it. Money moves from upfront investment to operating expense.
+
+Speed follows from the same shift. When a server is an API call away, trying an idea costs minutes, and launching in another continent is a configuration change rather than a construction project.
+
+<!-- example -->
+
+| Question | On-premises | AWS |
+|---|---|---|
+| Capacity for Black Friday | Buy servers for the peak | Scale out for the week |
+| New region for EU customers | Lease space, ship hardware | Deploy to eu-west-3 |
+| Cost model | CapEx upfront | OpEx, pay as you go |
 
 #### What is cloud computing?
 
@@ -24,6 +48,61 @@ The on-demand delivery of IT resources (compute, storage, databases, networking,
 5. Stop spending money running and maintaining data centers.
 6. Go global in minutes.
 
+#### What are some advantages of using AWS instead of on-premises infrastructure?
+
+No upfront hardware purchase, pay only for what you use, capacity in minutes instead of months, global reach, managed services that remove undifferentiated work (patching, backups), built-in security and compliance certifications, and the ability to experiment cheaply and shut down what fails.
+
+#### What is the difference between CapEx and OpEx?
+
+Capital expenditure (CapEx) is an upfront investment in physical assets, such as servers, depreciated over years. Operational expenditure (OpEx) is ongoing spending on services. The cloud turns most IT CapEx into OpEx.
+
+#### What does "economies of scale" mean in the cloud?
+
+AWS buys hardware, power and network at a scale no single customer can, so its cost per unit is lower. Part of the saving is passed on through lower prices, which AWS has reduced many times.
+
+#### What is agility in the context of the cloud?
+
+The speed at which you can provide resources and try new ideas. Resources that took weeks to procure are available in minutes, so the cost and time of experimenting fall sharply.
+
+#### What does "go global in minutes" mean?
+
+You can deploy an application in AWS Regions around the world with a few clicks or API calls, giving users lower latency without building data centers in other countries.
+
+<!-- challenge -->
+
+A startup's CFO asks why they shouldn't buy servers, since "renting always costs more in the end". Give two arguments in plain terms.
+
+<!-- solution -->
+
+They'd pay upfront for capacity they may never use, and guessing wrong either way is expensive. With AWS they pay for what they use, scale with demand, and keep cash for the business; savings plans lower prices further once usage is predictable.
+
+<!-- takeaways -->
+
+- Cloud trades upfront CapEx for variable OpEx.
+- Economies of scale lower AWS's unit prices.
+- Agility: resources in minutes, regions worldwide.
+
+<!-- unit: Service and deployment models -->
+
+<!-- goals -->
+
+- Tell apart IaaS, PaaS and SaaS with AWS examples.
+- Compare cloud, hybrid and on-premises deployments.
+
+<!-- concept -->
+
+Cloud services differ in how much AWS runs for you. With infrastructure services you get virtual machines and manage everything on them. With platform services you bring code and AWS runs the servers. With software services you just use the application. Managed and serverless services sit toward the platform end: less to operate, less to control.
+
+Deployment models answer a different question: where things run. Many companies mix cloud and on-premises for years during a migration.
+
+<!-- example -->
+
+| You manage | IaaS (EC2) | PaaS (Elastic Beanstalk) | SaaS |
+|---|---|---|---|
+| Application code | Yes | Yes | No |
+| OS patches | Yes | No | No |
+| Hardware | No | No | No |
+
 #### What are the different cloud deployment models supported by AWS?
 
 - **Cloud (cloud-native):** everything runs in the public cloud.
@@ -35,6 +114,48 @@ The on-demand delivery of IT resources (compute, storage, databases, networking,
 - **IaaS (Infrastructure as a Service):** you get virtual machines, storage and networks and manage the operating system and everything above it. Example: Amazon EC2.
 - **PaaS (Platform as a Service):** the provider runs the infrastructure and platform, you deploy code. Example: AWS Elastic Beanstalk.
 - **SaaS (Software as a Service):** a complete application used over the internet. Examples: Amazon WorkMail, Amazon Chime, Amazon QuickSight.
+
+#### What is a managed service?
+
+A service where AWS operates the underlying infrastructure and software (provisioning, patching, backups, scaling) and you only use it. Amazon RDS is a managed database. Running a database on EC2 is not managed: you do all of that yourself.
+
+#### What does "serverless" mean?
+
+You run code or use a service without provisioning or managing servers. Capacity scales automatically and you pay for actual use. Examples: AWS Lambda, Amazon S3, Amazon DynamoDB, AWS Fargate, Amazon Athena.
+
+<!-- challenge -->
+
+A team runs PostgreSQL on EC2 and spends hours on patches and backups. Which model change would help, and what do they give up?
+
+<!-- solution -->
+
+Move to a managed database (Amazon RDS for PostgreSQL), where AWS handles patching, backups and failover. They give up OS-level access and some low-level configuration.
+
+<!-- takeaways -->
+
+- IaaS, PaaS and SaaS differ in what you manage.
+- Managed and serverless services shift operations to AWS.
+- Hybrid mixes cloud and on-premises.
+
+<!-- unit: Elasticity and scaling -->
+
+<!-- goals -->
+
+- Distinguish elasticity from scalability.
+- Choose between vertical and horizontal scaling.
+
+<!-- concept -->
+
+Scalability is the ability to handle more load by adding resources. Elasticity adds a time dimension: resources grow and shrink automatically as demand changes, so you don't pay for the peak all year.
+
+How you scale matters. A bigger machine is simple but has a ceiling and is still one point of failure. More machines behind a load balancer scale further and survive failures, but the application must be designed so any instance can serve any request.
+
+<!-- example -->
+
+```text
+Vertical:   t3.large ─► m7i.2xlarge         (bigger box, restart, limit)
+Horizontal: 2 × m7i.large ─► 8 × m7i.large  (more boxes, load balancer, no limit)
+```
 
 #### What is elasticity?
 
@@ -48,17 +169,41 @@ The ability of a system to handle a growing load by adding resources. Scaling up
 
 Vertical scaling replaces a resource with a larger one (a bigger instance type). It is simple but has a ceiling and often needs a restart. Horizontal scaling adds more resources of the same size behind a load balancer. It has no practical ceiling and improves availability.
 
-#### What are some advantages of using AWS instead of on-premises infrastructure?
+<!-- challenge -->
 
-No upfront hardware purchase, pay only for what you use, capacity in minutes instead of months, global reach, managed services that remove undifferentiated work (patching, backups), built-in security and compliance certifications, and the ability to experiment cheaply and shut down what fails.
+An online shop's traffic triples every evening and drops at night. Which approach do you suggest?
 
-#### What is the difference between CapEx and OpEx?
+<!-- solution -->
 
-Capital expenditure (CapEx) is an upfront investment in physical assets, such as servers, depreciated over years. Operational expenditure (OpEx) is ongoing spending on services. The cloud turns most IT CapEx into OpEx.
+Horizontal scaling with EC2 Auto Scaling behind a load balancer: add instances in the evening, remove them at night. That's elasticity, and it means paying for peak capacity only when it's used.
 
-#### What does "economies of scale" mean in the cloud?
+<!-- takeaways -->
 
-AWS buys hardware, power and network at a scale no single customer can, so its cost per unit is lower. Part of the saving is passed on through lower prices, which AWS has reduced many times.
+- Scalability handles growth; elasticity follows demand.
+- Vertical is simple but limited; horizontal scales further.
+- Elastic designs avoid paying for idle peak capacity.
+
+<!-- unit: Availability and recovery -->
+
+<!-- goals -->
+
+- Define high availability, fault tolerance and disaster recovery.
+- Pick a DR strategy from RTO and RPO.
+
+<!-- concept -->
+
+Failures are certain; the question is how much they cost. High availability keeps downtime short when parts fail; fault tolerance keeps the system running with no interruption at all, at a higher price. Disaster recovery covers the bigger events, such as losing a whole Region.
+
+Two numbers frame every DR choice: how long you can be down (RTO) and how much data you can lose (RPO). Lower numbers need more standby resources, so cost rises as both shrink.
+
+<!-- example -->
+
+| Strategy | RTO / RPO | Cost |
+|---|---|---|
+| Backup and restore | Hours / hours | $ |
+| Pilot light | Tens of minutes | $$ |
+| Warm standby | Minutes | $$$ |
+| Multi-site active/active | Near zero | $$$$ |
 
 #### What is high availability?
 
@@ -79,21 +224,42 @@ Disaster recovery (DR) is the set of plans for restoring a workload after a majo
 3. **Warm standby:** a scaled-down but fully working copy runs and is scaled up on failover.
 4. **Multi-site active/active:** full production in two or more Regions. Near-zero RTO, highest cost.
 
-#### What is agility in the context of the cloud?
+<!-- challenge -->
 
-The speed at which you can provide resources and try new ideas. Resources that took weeks to procure are available in minutes, so the cost and time of experimenting fall sharply.
+A payroll system can be down for 8 hours and lose at most 1 hour of data. Which DR strategy fits, and why not a more expensive one?
 
-#### What does "go global in minutes" mean?
+<!-- solution -->
 
-You can deploy an application in AWS Regions around the world with a few clicks or API calls, giving users lower latency without building data centers in other countries.
+Backup and restore with hourly backups (or pilot light if restores take too long) meets an 8-hour RTO and 1-hour RPO. Warm standby or multi-site would cost much more for recovery speed the business doesn't need.
 
-#### What is a managed service?
+<!-- takeaways -->
 
-A service where AWS operates the underlying infrastructure and software (provisioning, patching, backups, scaling) and you only use it. Amazon RDS is a managed database. Running a database on EC2 is not managed: you do all of that yourself.
+- High availability limits downtime; fault tolerance avoids it.
+- RTO is time to recover; RPO is data you can lose.
+- Faster recovery means more standby cost.
 
-#### What does "serverless" mean?
+<!-- unit: Planning a migration -->
 
-You run code or use a service without provisioning or managing servers. Capacity scales automatically and you pay for actual use. Examples: AWS Lambda, Amazon S3, Amazon DynamoDB, AWS Fargate, Amazon Athena.
+<!-- goals -->
+
+- Describe the AWS Cloud Adoption Framework.
+- Choose a migration strategy among the 7 Rs.
+
+<!-- concept -->
+
+Moving to the cloud is as much an organizational change as a technical one. The Cloud Adoption Framework structures the work into perspectives, from business and people to security and operations, so that skills and processes change along with servers.
+
+For each application, the 7 Rs give the options, from leaving it alone to rewriting it. Most companies use several: rehost quickly to exit a data center, then refactor the systems where cloud features pay off.
+
+<!-- example -->
+
+| Application | Strategy |
+|---|---|
+| Old reporting tool nobody uses | Retire |
+| ERP with a hard license constraint | Retain (for now) |
+| Web app on VMs | Rehost to EC2 |
+| Self-managed MySQL | Replatform to RDS |
+| Monolith that needs to scale | Refactor |
 
 #### What is the AWS Cloud Adoption Framework (AWS CAF)?
 
@@ -103,7 +269,43 @@ Guidance that helps organizations plan a cloud transformation. It groups capabil
 
 Retire, Retain, Rehost ("lift and shift"), Relocate (for example VMware Cloud on AWS), Repurchase (move to SaaS), Replatform ("lift, tinker and shift", such as moving to RDS) and Refactor/re-architect (rebuild as cloud-native).
 
+<!-- challenge -->
+
+A company must leave its data center in 6 months and has 300 applications. Which strategy would you use for most of them, and what comes after?
+
+<!-- solution -->
+
+Rehost most of them (lift and shift), since it's fastest, and retire or retain the rest. After the exit, refactor or replatform the applications where managed services or scaling bring clear benefits.
+
+<!-- takeaways -->
+
+- CAF covers business, people, governance, platform, security, operations.
+- The 7 Rs range from retire to refactor.
+- Rehost first, optimize later is a common path.
+
 ### Global infrastructure and the Well-Architected Framework
+
+<!-- unit: Regions and Availability Zones -->
+
+<!-- goals -->
+
+- Describe Regions, Availability Zones and global versus regional services.
+- Choose a Region using compliance, latency, services and price.
+
+<!-- concept -->
+
+AWS builds its infrastructure in layers of isolation. A Region is a geographic area; inside it, Availability Zones are separate data centers with their own power and networking, close enough for fast connections but far enough that one event doesn't hit them all.
+
+That layout drives design: spreading across AZs protects against a data center failure, and spreading across Regions protects against a regional event. Choosing the Region starts with legal requirements, then latency, service availability and price.
+
+<!-- example -->
+
+```text
+Region eu-west-3 (Paris)
+ ├─ AZ eu-west-3a ── app + DB primary
+ ├─ AZ eu-west-3b ── app + DB standby
+ └─ AZ eu-west-3c ── app
+```
 
 #### How is AWS global infrastructure structured?
 
@@ -124,6 +326,46 @@ At least three for most Regions (new Regions are built with three or more). Depl
 3. **Service availability:** not every service or feature is in every Region.
 4. **Pricing:** the same service can cost different amounts in different Regions.
 
+#### Are services global or regional?
+
+Most services are regional: resources live in one Region. A few are global: IAM, Route 53, CloudFront, AWS Organizations and WAF for CloudFront. Some, such as EC2 subnets and EBS volumes, are scoped to a single Availability Zone.
+
+<!-- challenge -->
+
+A French health company wants low latency for French users and must keep patient data in France. Which Region and layout do you suggest?
+
+<!-- solution -->
+
+Paris (eu-west-3), which meets data residency, with the application and database spread across at least two Availability Zones for high availability. Confirm the needed services are available there.
+
+<!-- takeaways -->
+
+- Regions contain several isolated Availability Zones.
+- Spread across AZs for availability, Regions for disasters.
+- Compliance comes first when choosing a Region.
+
+<!-- unit: Edge and on-premises infrastructure -->
+
+<!-- goals -->
+
+- Explain edge locations, Local Zones, Wavelength and Outposts.
+- Match each to a latency or location need.
+
+<!-- concept -->
+
+Not everything can run in a Region. Content and DNS answers are faster from edge locations near users. Some applications need single-digit millisecond latency to a city or a 5G network, which Local Zones and Wavelength provide. Some must stay in your building for regulatory or latency reasons, which Outposts handle by bringing AWS hardware to you.
+
+Each option extends the same AWS services and APIs to a new place.
+
+<!-- example -->
+
+| Need | Option |
+|---|---|
+| Cache images near users worldwide | Edge locations (CloudFront) |
+| Video editing near Los Angeles | Local Zone |
+| Mobile game over 5G | Wavelength |
+| Factory systems on site | Outposts |
+
 #### What is an edge location?
 
 A site that runs CloudFront caches and Route 53 DNS (and services such as Lambda@Edge) close to end users. There are many more edge locations than Regions.
@@ -140,9 +382,43 @@ Infrastructure embedded in telecom providers' 5G networks, so applications can r
 
 Racks of AWS-managed hardware installed in your own data center, running AWS services with the same APIs and tools. Used for low latency to on-premises systems, local data processing or data residency.
 
-#### Are services global or regional?
+<!-- challenge -->
 
-Most services are regional: resources live in one Region. A few are global: IAM, Route 53, CloudFront, AWS Organizations and WAF for CloudFront. Some, such as EC2 subnets and EBS volumes, are scoped to a single Availability Zone.
+A bank must keep a trading system in its own data center but wants AWS APIs and tools. Which service fits?
+
+<!-- solution -->
+
+AWS Outposts: AWS-managed racks installed on premises that run AWS services with the same APIs, connected to a parent Region.
+
+<!-- takeaways -->
+
+- Edge locations serve CloudFront and Route 53 near users.
+- Local Zones and Wavelength bring compute closer to cities and 5G.
+- Outposts run AWS in your data center.
+
+<!-- unit: The Well-Architected pillars -->
+
+<!-- goals -->
+
+- Name the six pillars of the Well-Architected Framework.
+- Summarize what each pillar asks of a workload.
+
+<!-- concept -->
+
+The Well-Architected Framework is a structured way to ask whether a workload is built well. It splits "well" into six concerns that often pull against each other: running it smoothly, keeping it secure, making it reliable, using resources efficiently, spending wisely and reducing environmental impact.
+
+The value is in the trade-offs. A design review using the pillars makes them explicit, for example paying more for multi-AZ reliability or accepting less performance for lower cost.
+
+<!-- example -->
+
+| Pillar | Typical question |
+|---|---|
+| Operational excellence | How do you deploy and learn from incidents? |
+| Security | How do you manage identities and protect data? |
+| Reliability | How does the workload recover from failure? |
+| Performance efficiency | How do you choose the right resources? |
+| Cost optimization | How do you know what you spend and why? |
+| Sustainability | How do you reduce resource use? |
 
 #### What is the AWS Well-Architected Framework?
 
@@ -176,6 +452,40 @@ Delivering business value at the lowest price: paying only for what you use, mea
 
 Minimizing the environmental impact of workloads: understanding your impact, maximizing utilization, using managed services and more efficient hardware, and reducing the resources downstream users need.
 
+<!-- challenge -->
+
+A team runs its production database on one instance with no backups to save money. Which pillars does this neglect, and what is the cheapest fix?
+
+<!-- solution -->
+
+Mainly Reliability (single point of failure, no recovery) in favor of Cost optimization. The cheapest fix is automated backups with point-in-time recovery; Multi-AZ adds availability at higher cost.
+
+<!-- takeaways -->
+
+- Six pillars: operations, security, reliability, performance, cost, sustainability.
+- Pillars often trade against each other.
+- Reviews make those trade-offs explicit.
+
+<!-- unit: Design principles -->
+
+<!-- goals -->
+
+- Apply "design for failure", loose coupling and statelessness.
+- Explain why infrastructure as code is recommended.
+
+<!-- concept -->
+
+A few principles recur across the pillars. Expect every component to fail, so build redundancy and automatic recovery. Connect components through queues and events so a slow part doesn't stall the rest. Keep application servers stateless so any one can be replaced.
+
+Infrastructure as code makes all of this repeatable: environments become reviewed, versioned templates, and rebuilding after a failure is running the template again.
+
+<!-- example -->
+
+```text
+Tightly coupled:  web ─► order service ─► payment API (down → orders fail)
+Loosely coupled:  web ─► SQS queue ─► order workers ─► payment API (down → orders wait)
+```
+
 #### What does "design for failure" mean?
 
 Assume any component can fail and build the system so it keeps working when it does: multiple AZs, health checks, automatic replacement, retries and decoupled components.
@@ -192,7 +502,45 @@ A stateless component keeps no session data between requests, so any instance ca
 
 Defining infrastructure in versioned templates or code (CloudFormation, AWS CDK) instead of manual console clicks. Environments become reproducible, reviewable and quick to rebuild, which supports operational excellence and reliability.
 
+<!-- challenge -->
+
+Users get logged out whenever Auto Scaling removes an instance. What is the cause, and the fix?
+
+<!-- solution -->
+
+Sessions are stored on the instances, so the application is stateful. Move session data to a shared store (ElastiCache or DynamoDB) so any instance can serve any user.
+
+<!-- takeaways -->
+
+- Design for failure: redundancy and automatic recovery.
+- Queues and events decouple components.
+- Stateless servers and IaC make replacement easy.
+
+<!-- stage: Security -->
+
 ### Security, the shared responsibility model and IAM
+
+<!-- unit: Shared responsibility -->
+
+<!-- goals -->
+
+- Explain what AWS secures and what the customer secures.
+- Show how responsibilities shift between EC2, RDS and S3.
+
+<!-- concept -->
+
+Security on AWS is split along a line. AWS secures the cloud itself: buildings, hardware, the virtualization layer, the managed services' internals. You secure what you put in it: data, identities, configuration, and anything you install.
+
+Where the line falls depends on the service. The more AWS manages, the less you do, but data, access and configuration always stay yours.
+
+<!-- example -->
+
+| Task | EC2 | RDS | S3 |
+|---|---|---|---|
+| Physical security | AWS | AWS | AWS |
+| OS patching | Customer | AWS | AWS |
+| Database engine patching | Customer | AWS | n/a |
+| Data, access policies, encryption settings | Customer | Customer | Customer |
 
 #### What is the shared responsibility model in AWS?
 
@@ -213,6 +561,41 @@ AWS. Customers never get physical access to AWS data centers.
 #### Which responsibilities are shared by both?
 
 Patch management (AWS patches infrastructure, the customer patches guest systems and applications), configuration management, and awareness and training (each trains its own staff).
+
+<!-- challenge -->
+
+A company's S3 bucket was made public by mistake and data leaked. Under the shared responsibility model, whose failure was it, and what control would prevent it?
+
+<!-- solution -->
+
+The customer's: bucket access configuration is their responsibility. S3 Block Public Access at the account level (plus SCPs in Organizations and Config rules) would prevent buckets from becoming public.
+
+<!-- takeaways -->
+
+- AWS secures "of" the cloud; you secure "in" the cloud.
+- More managed services move more work to AWS.
+- Data, identities and configuration are always yours.
+
+<!-- unit: Root user and IAM identities -->
+
+<!-- goals -->
+
+- Protect the root user and know its exclusive tasks.
+- Choose between IAM users, groups and roles.
+
+<!-- concept -->
+
+Every account starts with a root user that can do anything, including closing the account. Because it can't be limited, it should be locked away with MFA and used only for the few tasks that require it.
+
+Daily access goes through IAM. Users represent people or applications with long-term credentials; groups make permissions manageable; roles provide temporary credentials to whoever is trusted to assume them. Roles are the safer default, especially for applications.
+
+<!-- example -->
+
+```text
+root user        ─► MFA, no access keys, used only for root-only tasks
+group: analysts  ─► policy AnalystsReadOnly ◄─ users ana, luis
+role: ec2-app    ─► policy AppS3Access      ◄─ assumed by EC2 instances
+```
 
 #### What is AWS Identity and Access Management (IAM)?
 
@@ -242,6 +625,47 @@ An identity with permissions but no long-term credentials. A trusted entity (an 
 
 Keys stored on the instance can leak and must be rotated by hand. A role provides automatically rotated temporary credentials through the instance metadata, and nothing secret is stored on disk.
 
+<!-- challenge -->
+
+A developer stores access keys in a config file on an EC2 instance so the app can read S3. What do you recommend?
+
+<!-- solution -->
+
+Create an IAM role with read access to the needed bucket, attach it to the instance through an instance profile, remove the keys from the file and deactivate them. The app gets rotated temporary credentials automatically.
+
+<!-- takeaways -->
+
+- Protect root with MFA; don't use it daily.
+- Groups manage user permissions; roles give temporary credentials.
+- Applications on AWS should use roles, not keys.
+
+<!-- unit: Policies and permission evaluation -->
+
+<!-- goals -->
+
+- Read an IAM policy statement and its parts.
+- Predict the result when policies allow and deny.
+
+<!-- concept -->
+
+Permissions in AWS are written as JSON policies that allow or deny actions on resources, optionally under conditions. Resources are named by ARNs, which is how a policy can point at one bucket or one table.
+
+Evaluation follows a simple rule: everything starts denied, an allow opens access, and an explicit deny always wins. Least privilege means writing allows as narrowly as the task needs and widening them only when necessary.
+
+<!-- example -->
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["s3:GetObject"],
+    "Resource": "arn:aws:s3:::sales-reports/*",
+    "Condition": {"Bool": {"aws:SecureTransport": "true"}}
+  }]
+}
+```
+
 #### What is an IAM policy?
 
 A JSON document that allows or denies actions on resources under optional conditions. Identity-based policies attach to users, groups or roles. Resource-based policies (such as S3 bucket policies) attach to resources.
@@ -269,6 +693,45 @@ Everything is denied by default. An explicit Allow grants access, but an explici
 
 Grant only the permissions needed to do a task, and nothing more. Start small and add permissions as needed. IAM Access Analyzer can generate policies from actual activity.
 
+#### What is an ARN?
+
+An Amazon Resource Name uniquely identifies a resource: `arn:partition:service:region:account-id:resource`, for example `arn:aws:s3:::my-bucket`.
+
+<!-- challenge -->
+
+A user has a group policy allowing `s3:*` on all buckets and a user policy denying `s3:DeleteObject` on `finance-*`. Can they delete objects in `finance-2026`?
+
+<!-- solution -->
+
+No. The explicit deny overrides any allow, so deletes on buckets matching `finance-*` are refused, while other S3 actions there remain allowed.
+
+<!-- takeaways -->
+
+- Policies allow or deny actions on resources, with conditions.
+- Default deny; allow grants; explicit deny always wins.
+- Least privilege: start narrow, widen when needed.
+
+<!-- unit: Credentials and account hygiene -->
+
+<!-- goals -->
+
+- Secure sign-in with MFA and password policies.
+- Audit credentials and unused permissions.
+
+<!-- concept -->
+
+Most account compromises start with a stolen credential. MFA makes a stolen password insufficient, password policies make weak ones rarer, and access keys, which never expire on their own, should be few and rotated.
+
+Hygiene also means looking back: who still has old keys, who has permissions they never use. The credential report and Access Advisor answer those questions so you can remove what isn't needed.
+
+<!-- example -->
+
+```bash
+aws iam generate-credential-report
+aws iam get-credential-report --query Content --output text | base64 -d \
+  | cut -d, -f1,4,9,11 | column -t -s,      # user, password, key 1 active, key 1 last rotated
+```
+
 #### What is multi-factor authentication (MFA), and which devices does AWS support?
 
 A second factor in addition to the password. AWS supports passkeys and FIDO2 security keys, virtual authenticator apps, and hardware TOTP tokens.
@@ -276,6 +739,52 @@ A second factor in addition to the password. AWS supports passkeys and FIDO2 sec
 #### What are access keys?
 
 An access key ID and secret access key pair used to sign programmatic requests (CLI, SDK). They are long-term credentials: never commit them to code, rotate them, and prefer roles or IAM Identity Center where possible.
+
+#### What is a password policy in IAM?
+
+Account rules for IAM user passwords: minimum length, required character types, expiry, reuse prevention.
+
+#### What is the IAM credential report?
+
+An account-level CSV listing all users and the status of their credentials: passwords, access keys, MFA, last used dates. Useful for audits.
+
+#### What is IAM Access Advisor?
+
+A view showing which services a user, group or role has permissions for and when they were last accessed. It helps remove unused permissions.
+
+<!-- challenge -->
+
+An audit finds a user with admin rights who hasn't signed in for a year but has an active access key. What do you do?
+
+<!-- solution -->
+
+Check the key's last use; deactivate it, then delete the key and the user if no longer needed. Use Access Advisor on remaining identities to remove unused permissions.
+
+<!-- takeaways -->
+
+- MFA blocks most password-based compromises.
+- Access keys don't expire; minimize and rotate them.
+- Credential reports and Access Advisor reveal what to remove.
+
+<!-- unit: Federation and temporary credentials -->
+
+<!-- goals -->
+
+- Give workforce users access through IAM Identity Center and federation.
+- Explain how STS issues temporary credentials.
+
+<!-- concept -->
+
+In companies with many accounts and many people, creating IAM users everywhere doesn't scale and leaves credentials behind when people leave. Federation lets people sign in with their corporate identity, and IAM Identity Center maps them to permission sets across accounts.
+
+Underneath, STS issues short-lived credentials whenever a role is assumed. Temporary credentials expire on their own, which is why they're safer than long-term keys.
+
+<!-- example -->
+
+```bash
+aws sso login --profile data-dev                  # corporate sign-in via Identity Center
+aws sts get-caller-identity --profile data-dev    # temporary role credentials
+```
 
 #### What is AWS IAM Identity Center?
 
@@ -289,23 +798,45 @@ Letting users sign in with an existing identity (corporate directory, SAML 2.0 o
 
 The AWS Security Token Service issues temporary, limited-privilege credentials, for example when a role is assumed or a federated user signs in.
 
-#### What is the IAM credential report?
+<!-- challenge -->
 
-An account-level CSV listing all users and the status of their credentials: passwords, access keys, MFA, last used dates. Useful for audits.
+A company with 20 AWS accounts creates IAM users in each one for 150 employees. What do you propose?
 
-#### What is IAM Access Advisor?
+<!-- solution -->
 
-A view showing which services a user, group or role has permissions for and when they were last accessed. It helps remove unused permissions.
+Connect the corporate identity provider to IAM Identity Center, define permission sets per job role, and assign groups to accounts. Then remove the per-account IAM users and their keys.
 
-#### What is an ARN?
+<!-- takeaways -->
 
-An Amazon Resource Name uniquely identifies a resource: `arn:partition:service:region:account-id:resource`, for example `arn:aws:s3:::my-bucket`.
-
-#### What is a password policy in IAM?
-
-Account rules for IAM user passwords: minimum length, required character types, expiry, reuse prevention.
+- Identity Center centralizes workforce access across accounts.
+- Federation reuses corporate identities.
+- STS credentials expire on their own.
 
 ### Security services and compliance
+
+<!-- unit: Multi-account governance -->
+
+<!-- goals -->
+
+- Organize accounts with AWS Organizations and OUs.
+- Set guardrails with SCPs and Control Tower.
+
+<!-- concept -->
+
+Companies use many accounts to separate teams, environments and risk. Managing them one by one doesn't scale, so Organizations groups them into organizational units and applies rules from the top.
+
+Service Control Policies set the maximum anyone in an account can do, even administrators: for example, no one can leave approved Regions or disable logging. Control Tower packages this into a ready landing zone with guardrails.
+
+<!-- example -->
+
+```json
+{
+  "Effect": "Deny",
+  "Action": "*",
+  "Resource": "*",
+  "Condition": {"StringNotEquals": {"aws:RequestedRegion": ["eu-west-1", "eu-west-3"]}}
+}
+```
 
 #### What is AWS Organizations?
 
@@ -318,6 +849,43 @@ Policies in AWS Organizations that set the maximum permissions for accounts or O
 #### What is AWS Control Tower?
 
 A service that sets up and governs a secure multi-account environment (a landing zone) following best practices, with preventive and detective guardrails and a dashboard.
+
+<!-- challenge -->
+
+An SCP denies all actions outside two EU Regions. An account administrator has full IAM permissions. Can they launch an instance in us-east-1?
+
+<!-- solution -->
+
+No. SCPs set the maximum permissions for the account, so even an administrator can't act outside the allowed Regions. (Global services may need exceptions in the SCP.)
+
+<!-- takeaways -->
+
+- Organizations groups accounts into OUs.
+- SCPs cap what any identity in an account can do.
+- Control Tower sets up a governed landing zone.
+
+<!-- unit: Encryption and secrets -->
+
+<!-- goals -->
+
+- Encrypt data at rest and in transit with KMS and ACM.
+- Store and rotate secrets with Secrets Manager or Parameter Store.
+
+<!-- concept -->
+
+Encryption protects data in two states. At rest, keys managed in KMS encrypt volumes, objects and databases, and access to the key becomes a second permission check. In transit, TLS certificates from ACM protect traffic to load balancers and CloudFront.
+
+Secrets such as database passwords need their own home. Storing them in a managed service with rotation means they never sit in code and change without redeploying.
+
+<!-- example -->
+
+| Need | Service |
+|---|---|
+| Encrypt S3, EBS, RDS with keys you control | KMS |
+| Single-tenant HSM for strict compliance | CloudHSM |
+| HTTPS certificate for a load balancer | ACM |
+| Rotating database password | Secrets Manager |
+| App configuration values | Parameter Store |
 
 #### What is AWS Key Management Service (KMS)?
 
@@ -342,6 +910,44 @@ A service to store, retrieve and automatically rotate secrets such as database p
 #### What is the difference between Secrets Manager and Systems Manager Parameter Store?
 
 Both store configuration and secrets. Secrets Manager adds built-in automatic rotation and cross-account sharing, at a per-secret cost. Parameter Store's standard tier is free and is good for configuration values and simple secrets without rotation.
+
+<!-- challenge -->
+
+A database password is in the application's source code and was pushed to a public repository. What do you do now and to prevent it next time?
+
+<!-- solution -->
+
+Rotate the password immediately and check logs for misuse. Move it to Secrets Manager with automatic rotation, have the app read it at runtime through its IAM role, and add secret scanning to the repository.
+
+<!-- takeaways -->
+
+- KMS manages encryption keys; CloudHSM gives dedicated HSMs.
+- ACM provides and renews TLS certificates.
+- Secrets Manager stores and rotates secrets.
+
+<!-- unit: Protecting and detecting -->
+
+<!-- goals -->
+
+- Match AWS security services to threats they address.
+- Combine protection, detection and investigation services.
+
+<!-- concept -->
+
+Security services fall into three jobs. Some protect at the edge: Shield absorbs DDoS attacks and WAF filters malicious web requests. Some detect: GuardDuty spots threats in logs, Inspector finds vulnerabilities, Macie finds sensitive data where it shouldn't be. Some help you respond: Security Hub gathers findings in one place, and Detective helps trace what happened.
+
+Knowing which job a service does is usually enough to pick the right one.
+
+<!-- example -->
+
+| Problem | Service |
+|---|---|
+| SQL injection attempts on a web app | WAF |
+| Large DDoS against a website | Shield (Advanced for extra protection) |
+| Instance talking to a known malicious IP | GuardDuty |
+| Unpatched CVE in a container image | Inspector |
+| Credit card numbers in an S3 bucket | Macie |
+| One view of all findings across accounts | Security Hub |
 
 #### What is AWS Shield?
 
@@ -371,6 +977,42 @@ A central view of security alerts and compliance posture across accounts. It agg
 
 A service that analyzes and visualizes security data to investigate the root cause of a security finding or suspicious activity.
 
+<!-- challenge -->
+
+GuardDuty reports that an EC2 instance is mining cryptocurrency. Which service helps you understand how it happened, and what do you do first?
+
+<!-- solution -->
+
+Isolate the instance (restrictive security group, snapshot for forensics) and revoke its credentials. Use Detective to trace the activity and entry point, and Inspector to check for the vulnerability that was exploited.
+
+<!-- takeaways -->
+
+- Shield and WAF protect at the edge.
+- GuardDuty, Inspector and Macie detect threats, vulnerabilities and sensitive data.
+- Security Hub centralizes; Detective investigates.
+
+<!-- unit: Compliance and reporting -->
+
+<!-- goals -->
+
+- Find AWS compliance reports and agreements.
+- Know the rules for penetration testing and abuse reports.
+
+<!-- concept -->
+
+Customers inherit part of their compliance from AWS. Auditors want proof that AWS's side is certified, and Artifact provides those reports and agreements on demand. Your side still needs your own controls and evidence.
+
+Testing your own security is allowed for many services without asking, within published rules. When AWS resources are used against you, or yours are abused, the abuse team is the contact.
+
+<!-- example -->
+
+| Need | Where |
+|---|---|
+| SOC 2 report for an auditor | AWS Artifact |
+| Sign a business associate addendum (HIPAA) | AWS Artifact |
+| Pen test your EC2 web app | Allowed under the policy, no approval |
+| Report spam coming from an AWS IP | AWS Trust & Safety (abuse) |
+
 #### What is AWS Artifact?
 
 A self-service portal for AWS compliance reports (SOC, ISO, PCI DSS) and agreements (such as the Business Associate Addendum for HIPAA).
@@ -387,7 +1029,44 @@ Not for a list of permitted services (EC2, RDS, Lambda, CloudFront and others). 
 
 The AWS team to report AWS resources being used for abuse, such as spam, port scanning, DoS attacks or hosting malware.
 
+<!-- challenge -->
+
+An auditor asks for proof that the data center hosting your workload is ISO 27001 certified. What do you provide, and is it enough for your audit?
+
+<!-- solution -->
+
+Download AWS's ISO 27001 certificate from AWS Artifact. It covers AWS's responsibilities only; you must also show your own controls (access, encryption, logging) for your workloads.
+
+<!-- takeaways -->
+
+- Artifact provides AWS compliance reports and agreements.
+- AWS compliance covers only AWS's side.
+- Pen testing many services needs no approval.
+
+<!-- stage: Core services -->
+
 ### Compute: EC2, containers and serverless
+
+<!-- unit: EC2 basics -->
+
+<!-- goals -->
+
+- Describe EC2 instances, AMIs and instance families.
+- Understand instance storage and lifecycle.
+
+<!-- concept -->
+
+EC2 rents virtual servers. You choose a template (an AMI with the operating system and software), a size from a family tuned for CPU, memory, storage or accelerators, and a script to run at first boot. Instances then behave like servers you control.
+
+Lifecycle matters for cost and data. Stopped instances keep their EBS volumes and stop paying for compute; terminated ones are gone. Instance store disks are fast but lose data when the instance stops.
+
+<!-- example -->
+
+```bash
+aws ec2 run-instances --image-id ami-0abcd1234 --instance-type m7i.large \
+  --iam-instance-profile Name=web-app \
+  --user-data file://install_web.sh
+```
 
 #### What is Amazon EC2 and what are its key features?
 
@@ -408,6 +1087,54 @@ An Amazon Machine Image is a template containing the operating system, software 
 #### What are T instances and burstable performance?
 
 T instances provide a baseline CPU level and accumulate CPU credits when idle, which they spend to burst above baseline. They suit workloads with low average CPU and occasional spikes.
+
+#### What is EC2 user data?
+
+A script passed at launch that runs on first boot, used to install software or configure the instance.
+
+#### What is the EC2 instance store?
+
+Temporary block storage physically attached to the host. It is very fast but its data is lost when the instance stops or terminates, so it suits buffers, caches and scratch data.
+
+#### What is the difference between stopping and terminating an instance?
+
+Stopping shuts it down: EBS root volumes are kept and you pay only for storage, and you can start it again. Terminating deletes the instance, and by default its root EBS volume.
+
+<!-- challenge -->
+
+A memory-hungry in-memory analytics app runs on a general-purpose instance and keeps swapping. Which family do you suggest?
+
+<!-- solution -->
+
+A memory-optimized family (R or X), which offers much more RAM per vCPU. Measure memory use first to choose the size.
+
+<!-- takeaways -->
+
+- An AMI is the template; the family sets the resource balance.
+- Stop keeps EBS; terminate deletes the instance.
+- Instance store data doesn't survive stops.
+
+<!-- unit: Paying for EC2 -->
+
+<!-- goals -->
+
+- Compare On-Demand, Savings Plans, Reserved, Spot and Dedicated options.
+- Match a pricing option to a workload pattern.
+
+<!-- concept -->
+
+The same instance can cost very different amounts depending on how you commit. On-Demand is the price of flexibility. Committing to steady usage for one or three years with Savings Plans or Reserved Instances cuts it substantially. Spot sells spare capacity at the deepest discount, but AWS can take it back with two minutes' notice.
+
+So the pricing choice follows the workload: steady baseline on commitments, spikes on On-Demand, interruptible batch on Spot.
+
+<!-- example -->
+
+| Workload | Pricing |
+|---|---|
+| Web servers running 24/7 for years | Savings Plan |
+| Holiday traffic spikes | On-Demand |
+| Nightly image rendering, restartable | Spot |
+| License tied to physical cores | Dedicated Host |
 
 #### What are the EC2 pricing options?
 
@@ -431,9 +1158,48 @@ Compute Savings Plans apply to any instance family, size, Region and operating s
 
 When software licences are tied to physical cores or sockets (bring your own license), or when compliance requires visibility and control of the physical server.
 
+<!-- challenge -->
+
+A company runs 20 instances all year and adds 30 more for two months each winter. How do you price this?
+
+<!-- solution -->
+
+Cover the 20 steady instances with a Savings Plan (Compute Savings Plans keep flexibility), and run the 30 seasonal instances On-Demand, or Spot if the workload tolerates interruptions.
+
+<!-- takeaways -->
+
+- Commit for steady usage; stay On-Demand for spikes.
+- Spot is cheapest but interruptible.
+- Dedicated Hosts serve per-core licensing and isolation needs.
+
+<!-- unit: Networking and scaling EC2 -->
+
+<!-- goals -->
+
+- Control instance traffic with security groups and access instances safely.
+- Scale and balance load with Auto Scaling and ELB.
+
+<!-- concept -->
+
+An instance alone is neither reachable safely nor resilient. Security groups decide which traffic reaches it, and they are stateful, so replies are allowed automatically. Session Manager and Instance Connect give administrators access without long-lived SSH keys.
+
+Resilience and scale come from groups of instances: a load balancer spreads traffic across AZs and stops sending to unhealthy targets, while Auto Scaling replaces failed instances and adjusts capacity to demand.
+
+<!-- example -->
+
+```text
+users ─► Application Load Balancer (AZ a, b)
+           └─► Auto Scaling group: min 2, desired 4, max 10 (target CPU 50%)
+                 security group: allow 443 from the load balancer only
+```
+
 #### What is a security group?
 
 A stateful virtual firewall for instances (attached to network interfaces). It has allow rules only. Return traffic is allowed automatically, and by default all inbound traffic is denied and all outbound allowed.
+
+#### What is an Elastic IP address?
+
+A static public IPv4 address you allocate to your account and can attach to an instance. Public IPv4 addresses are charged hourly, whether attached or not.
 
 #### What is EC2 Auto Scaling?
 
@@ -446,13 +1212,45 @@ A service that distributes traffic across targets in several AZs and checks thei
 - **Network Load Balancer:** TCP/UDP/TLS, layer 4, very high performance and static IPs.
 - **Gateway Load Balancer:** layer 3, for third-party network appliances such as firewalls.
 
-#### What is an Elastic IP address?
+#### What does EC2 Instance Connect or Session Manager give you?
 
-A static public IPv4 address you allocate to your account and can attach to an instance. Public IPv4 addresses are charged hourly, whether attached or not.
+Ways to access instances without managing SSH keys. Session Manager (part of Systems Manager) even works without opening inbound ports, with sessions logged.
 
-#### What is EC2 user data?
+<!-- challenge -->
 
-A script passed at launch that runs on first boot, used to install software or configure the instance.
+A web app runs on one instance with an Elastic IP. It went down when the instance failed. How do you redesign it?
+
+<!-- solution -->
+
+Put two or more instances in an Auto Scaling group across two AZs behind an Application Load Balancer, point DNS at the load balancer, and drop the Elastic IP. Failed instances are replaced automatically.
+
+<!-- takeaways -->
+
+- Security groups are stateful instance firewalls.
+- Load balancers spread traffic and check health.
+- Auto Scaling replaces and adjusts instances.
+
+<!-- unit: Containers and functions -->
+
+<!-- goals -->
+
+- Choose between Lambda, ECS, EKS and Fargate.
+- Know where container images are stored.
+
+<!-- concept -->
+
+Containers and functions move work further from servers. Lambda runs a function per event and charges only while it runs, which suits short, spiky work. Containers package an application with its dependencies; ECS and EKS schedule them, and Fargate runs them without managing instances.
+
+The choice depends on how long the work runs, how much control you need, and whether the team already knows Kubernetes.
+
+<!-- example -->
+
+| Workload | Good fit |
+|---|---|
+| Resize an image when uploaded | Lambda |
+| Web API in containers, small team | ECS on Fargate |
+| Company standard is Kubernetes | EKS |
+| Store and scan images | ECR |
 
 #### What is AWS Lambda?
 
@@ -474,6 +1272,42 @@ A serverless compute engine for containers that works with ECS and EKS. You defi
 
 Elastic Container Registry, a managed registry to store, scan and share Docker and OCI container images.
 
+<!-- challenge -->
+
+A data processing task runs for 40 minutes each night. A colleague proposes Lambda. Does it fit?
+
+<!-- solution -->
+
+No: Lambda functions are limited to 15 minutes. Run it as a container task on ECS with Fargate (or AWS Batch), which has no such limit and still needs no servers.
+
+<!-- takeaways -->
+
+- Lambda for short, event-driven work (max 15 minutes).
+- ECS is simpler; EKS is Kubernetes.
+- Fargate runs containers without managing instances.
+
+<!-- unit: Managed platforms -->
+
+<!-- goals -->
+
+- Recognize Elastic Beanstalk, Lightsail, Batch and App Runner use cases.
+- Pick the simplest platform that fits.
+
+<!-- concept -->
+
+Some services exist mainly to hide infrastructure decisions. Elastic Beanstalk deploys code onto EC2 with load balancing and scaling configured for you. App Runner does the same for containers and source code with even less to set up. Lightsail offers simple servers at a fixed price for small projects. Batch schedules large numbers of jobs on managed capacity.
+
+They trade control for speed, which is often the right trade for small teams.
+
+<!-- example -->
+
+| Need | Service |
+|---|---|
+| Deploy a Django app without learning EC2 details | Elastic Beanstalk |
+| Run a container web API from a repo | App Runner |
+| Small blog with predictable monthly price | Lightsail |
+| 10,000 simulation jobs | AWS Batch |
+
 #### What is AWS Elastic Beanstalk?
 
 A platform as a service: you upload application code (Java, .NET, Node.js, Python, PHP, Go, Ruby, Docker) and Beanstalk provisions and manages EC2, load balancing, Auto Scaling and monitoring. The underlying resources remain visible and configurable.
@@ -490,19 +1324,43 @@ A service that runs batch computing jobs at any scale, provisioning EC2 or Farga
 
 A fully managed service that builds and runs web applications and APIs from source code or a container image, with automatic scaling and HTTPS.
 
-#### What is the EC2 instance store?
+<!-- challenge -->
 
-Temporary block storage physically attached to the host. It is very fast but its data is lost when the instance stops or terminates, so it suits buffers, caches and scratch data.
+A two-person startup wants to deploy a containerized API with HTTPS and autoscaling this week, with no ops experience. What do you suggest?
 
-#### What does EC2 Instance Connect or Session Manager give you?
+<!-- solution -->
 
-Ways to access instances without managing SSH keys. Session Manager (part of Systems Manager) even works without opening inbound ports, with sessions logged.
+AWS App Runner: point it at the container image or repository and it handles build, deployment, HTTPS, load balancing and scaling. Revisit ECS later if they need more control.
 
-#### What is the difference between stopping and terminating an instance?
+<!-- takeaways -->
 
-Stopping shuts it down: EBS root volumes are kept and you pay only for storage, and you can start it again. Terminating deletes the instance, and by default its root EBS volume.
+- Platform services trade control for speed.
+- Beanstalk and App Runner deploy apps without infrastructure work.
+- Batch runs large job queues on managed capacity.
 
 ### Storage
+
+<!-- unit: S3 basics -->
+
+<!-- goals -->
+
+- Describe buckets, objects, durability and storage classes.
+- Lower storage costs with classes and lifecycle rules.
+
+<!-- concept -->
+
+S3 stores objects (files with metadata) in buckets, with extremely high durability because each object is copied across several facilities. What varies is how fast and how often you need the data, and storage classes price that: frequent access costs more per gigabyte to store, archives cost little to store but more and longer to retrieve.
+
+Lifecycle rules move objects between classes as they age, so data gets cheaper automatically.
+
+<!-- example -->
+
+```json
+{"Rules": [{"ID": "logs", "Status": "Enabled", "Filter": {"Prefix": "logs/"},
+  "Transitions": [{"Days": 30, "StorageClass": "STANDARD_IA"},
+                  {"Days": 180, "StorageClass": "GLACIER"}],
+  "Expiration": {"Days": 730}}]}
+```
 
 #### What is Amazon S3 and what storage classes does it offer?
 
@@ -520,9 +1378,52 @@ Simple Storage Service is object storage with 11 nines (99.999999999%) of durabi
 
 A bucket is a container for objects with a globally unique name, created in one Region. An object is a file plus metadata, identified by a key, up to 5 TB in size.
 
+#### How durable and available is S3 Standard?
+
+Designed for 99.999999999% durability and 99.99% availability, with data stored across at least three AZs.
+
+#### When would you use S3 One Zone-IA?
+
+For infrequently accessed data that can be recreated, such as secondary backup copies or derived data, where losing an AZ is acceptable in exchange for a lower price.
+
 #### What are S3 lifecycle policies?
 
 Rules that automatically transition objects to cheaper storage classes after a given age, or delete them (expiration).
+
+<!-- challenge -->
+
+Application logs are read often for a week, rarely for a year, and must be kept for 7 years for audits. Design a lifecycle.
+
+<!-- solution -->
+
+Keep them in S3 Standard for 30 days, move to Standard-IA, then to Glacier Flexible Retrieval or Deep Archive after a year, and expire them after 7 years.
+
+<!-- takeaways -->
+
+- S3 stores objects in buckets with 11 nines of durability.
+- Storage classes trade access speed for price.
+- Lifecycle rules move and expire data automatically.
+
+<!-- unit: Protecting and serving S3 data -->
+
+<!-- goals -->
+
+- Protect objects with versioning, access controls, encryption and replication.
+- Serve websites and speed up uploads from S3.
+
+<!-- concept -->
+
+S3's defaults are safe (new buckets are private and encrypted), and most incidents come from changing them. Versioning protects against overwrites and deletions, Block Public Access prevents accidental exposure, policies limit who reads what, and replication keeps a copy in another Region.
+
+S3 can also serve content directly, for static websites, usually behind CloudFront, and speed up long-distance uploads through edge locations.
+
+<!-- example -->
+
+```bash
+aws s3api put-bucket-versioning --bucket finance-docs --versioning-configuration Status=Enabled
+aws s3api put-public-access-block --bucket finance-docs \
+  --public-access-block-configuration BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true
+```
 
 #### What is S3 Versioning?
 
@@ -548,6 +1449,42 @@ Serving a website made of static files (HTML, CSS, JS, images) directly from a b
 
 Faster uploads over long distances by routing them through CloudFront edge locations and the AWS backbone network.
 
+<!-- challenge -->
+
+A user deleted an important folder in a bucket. Versioning was on. Can you recover it, and how?
+
+<!-- solution -->
+
+Yes. With versioning, the delete only added delete markers. Remove the delete markers (or copy the previous versions back), and consider MFA delete or Object Lock for critical buckets.
+
+<!-- takeaways -->
+
+- Versioning protects against overwrites and deletes.
+- Block Public Access prevents accidental exposure.
+- Replication copies objects to another Region or account.
+
+<!-- unit: Block and file storage -->
+
+<!-- goals -->
+
+- Compare S3, EBS, EFS and FSx.
+- Back up EBS volumes with snapshots.
+
+<!-- concept -->
+
+Not all applications can use object storage. Databases and operating systems need block storage, a disk attached to one instance: that's EBS, backed up with incremental snapshots. Applications that share files across many servers need a file system: EFS for Linux, FSx for Windows and specialized file systems.
+
+The choice follows the access pattern: API objects, one-instance disk, or shared files.
+
+<!-- example -->
+
+| Need | Service |
+|---|---|
+| Boot and database disk for one instance | EBS |
+| Shared folder for 20 Linux web servers | EFS |
+| Windows file shares with Active Directory | FSx for Windows File Server |
+| Images and backups accessed over HTTP | S3 |
+
 #### What is Amazon EBS?
 
 Elastic Block Store provides network block volumes for EC2 instances, persisting independently of the instance's life. A volume lives in one AZ and is replicated within it. Types include gp3 (general SSD), io2 (provisioned IOPS SSD), st1 (throughput HDD) and sc1 (cold HDD).
@@ -568,6 +1505,42 @@ S3 is object storage accessed by API, virtually unlimited, for any number of cli
 
 Fully managed third-party file systems: FSx for Windows File Server (SMB), FSx for Lustre (high-performance computing), FSx for NetApp ONTAP and FSx for OpenZFS.
 
+<!-- challenge -->
+
+Ten Linux servers behind a load balancer must read and write the same uploaded files. Which storage do you choose?
+
+<!-- solution -->
+
+Amazon EFS, mounted by all servers over NFS, or S3 if the application can use an API. EBS volumes attach to one instance, so they don't fit shared access.
+
+<!-- takeaways -->
+
+- EBS is block storage for one instance.
+- EFS and FSx are shared file systems.
+- S3 is object storage accessed by API.
+
+<!-- unit: Hybrid, transfer and backup -->
+
+<!-- goals -->
+
+- Move data to AWS online and offline.
+- Centralize backups across services.
+
+<!-- concept -->
+
+Getting data into AWS depends on volume and bandwidth. Online transfers with DataSync suit ongoing or moderate amounts; when a network transfer would take weeks, Snow devices ship the data physically. Some on-premises applications keep running and use cloud storage through Storage Gateway.
+
+Once workloads run on AWS, backups should be centralized, with policies and audit across services, which is AWS Backup's job.
+
+<!-- example -->
+
+| Situation | Service |
+|---|---|
+| 500 TB archive, slow office link | Snowball |
+| Daily sync from an NFS server to S3 | DataSync |
+| On-premises backup app writing to cloud tape | Storage Gateway (Tape Gateway) |
+| Backup policy for RDS, EBS and DynamoDB | AWS Backup |
+
 #### What is AWS Storage Gateway?
 
 A hybrid storage service that gives on-premises applications access to cloud storage. Types: S3 File Gateway, FSx File Gateway, Volume Gateway and Tape Gateway (virtual tape library for backups).
@@ -576,23 +1549,51 @@ A hybrid storage service that gives on-premises applications access to cloud sto
 
 Physical devices to move large amounts of data into and out of AWS offline, or to process data at the edge where there is little or no connectivity (AWS Snowball Edge devices).
 
-#### What is AWS Backup?
-
-A central service to automate and audit backups across services: EBS, EC2, RDS, DynamoDB, EFS, FSx, S3 and more, with backup plans and cross-Region or cross-account copies.
-
 #### What is AWS DataSync?
 
 An online data transfer service that moves data between on-premises storage (NFS, SMB, HDFS, object stores) and AWS storage services, quickly and with verification.
 
-#### How durable and available is S3 Standard?
+#### What is AWS Backup?
 
-Designed for 99.999999999% durability and 99.99% availability, with data stored across at least three AZs.
+A central service to automate and audit backups across services: EBS, EC2, RDS, DynamoDB, EFS, FSx, S3 and more, with backup plans and cross-Region or cross-account copies.
 
-#### When would you use S3 One Zone-IA?
+<!-- challenge -->
 
-For infrequently accessed data that can be recreated, such as secondary backup copies or derived data, where losing an AZ is acceptable in exchange for a lower price.
+A company must move 200 TB to AWS over a 100 Mbps link. Estimate the online transfer time and suggest an option.
+
+<!-- solution -->
+
+At 100 Mbps, 200 TB takes about 185 days at full speed. Use Snowball Edge devices to ship the data, then DataSync for the changes made during shipping.
+
+<!-- takeaways -->
+
+- DataSync moves data online; Snow devices ship it.
+- Storage Gateway links on-premises apps to cloud storage.
+- AWS Backup centralizes backup policies.
 
 ### Databases and analytics
+
+<!-- unit: Relational databases -->
+
+<!-- goals -->
+
+- Compare RDS, Aurora and DynamoDB.
+- Distinguish Multi-AZ from read replicas, and use DMS for migrations.
+
+<!-- concept -->
+
+Relational databases on AWS come managed: RDS runs familiar engines and handles backups, patching and failover; Aurora is AWS's cloud-native engine with storage replicated across zones. DynamoDB is a different model, a key-value store that scales without servers.
+
+Two RDS features are often confused. Multi-AZ is for availability: a standby takes over if the primary fails. Read replicas are for scale: they serve reads. DMS moves existing databases in with little downtime.
+
+<!-- example -->
+
+| Need | Choice |
+|---|---|
+| Survive an AZ failure | RDS Multi-AZ |
+| Offload reporting reads | Read replica |
+| Shopping cart with millions of users, key access | DynamoDB |
+| Move on-premises Oracle to PostgreSQL | DMS (+ Schema Conversion) |
 
 #### How does Amazon RDS differ from Amazon DynamoDB?
 
@@ -610,6 +1611,48 @@ Multi-AZ keeps a synchronous standby (or standbys) in another AZ for high availa
 
 A cloud-native relational database compatible with MySQL and PostgreSQL. It stores six copies of data across three AZs, scales storage automatically, and offers Aurora Serverless for variable workloads.
 
+#### What is AWS Database Migration Service (DMS)?
+
+A service that migrates databases to AWS with minimal downtime, between the same engines (homogeneous) or different engines (heterogeneous, with the Schema Conversion Tool), and can replicate ongoing changes.
+
+<!-- challenge -->
+
+Reports slow down an RDS database during business hours. The team proposes enabling Multi-AZ. Is that the right fix?
+
+<!-- solution -->
+
+No. Multi-AZ standbys don't serve reads; they're for failover. Add a read replica and point reports to it (or move reporting to a warehouse).
+
+<!-- takeaways -->
+
+- RDS manages engines; Aurora is cloud-native; DynamoDB is key-value.
+- Multi-AZ is availability; read replicas are read scale.
+- DMS migrates databases with minimal downtime.
+
+<!-- unit: Purpose-built databases -->
+
+<!-- goals -->
+
+- Match caching, document, graph, wide-column and time-series needs to services.
+- Know when an in-memory store helps.
+
+<!-- concept -->
+
+AWS's approach is "the right database for the job". Instead of forcing every data shape into tables, it offers engines built for specific access patterns: in-memory caches for microsecond reads, document stores for JSON, graphs for relationships, wide-column stores for massive writes, time series for metrics.
+
+The question to ask is how the application reads and writes data; the engine follows.
+
+<!-- example -->
+
+| Access pattern | Service |
+|---|---|
+| Cache product pages | ElastiCache |
+| Durable Redis-compatible primary store | MemoryDB |
+| MongoDB-style documents | DocumentDB |
+| Fraud rings, social graphs | Neptune |
+| Cassandra workloads | Keyspaces |
+| IoT sensor readings | Timestream |
+
 #### What is Amazon ElastiCache?
 
 Managed in-memory caching with Valkey, Redis OSS or Memcached, used to reduce database load and serve frequent reads with microsecond latency.
@@ -617,14 +1660,6 @@ Managed in-memory caching with Valkey, Redis OSS or Memcached, used to reduce da
 #### What is Amazon MemoryDB?
 
 A durable in-memory database compatible with Valkey and Redis OSS, usable as a primary database thanks to its multi-AZ transaction log.
-
-#### What is Amazon Redshift?
-
-A managed, petabyte-scale cloud data warehouse for analytical SQL queries (OLAP), with columnar storage, a serverless option and the ability to query data in S3.
-
-#### What is the difference between OLTP and OLAP, and which AWS services fit each?
-
-OLTP handles many small transactional reads and writes (orders, payments): RDS, Aurora, DynamoDB. OLAP runs large analytical queries over historical data: Redshift, Athena.
 
 #### What is Amazon DocumentDB?
 
@@ -642,9 +1677,48 @@ A serverless managed database compatible with Apache Cassandra.
 
 A managed time-series database for IoT and operational metrics.
 
-#### What is AWS Database Migration Service (DMS)?
+<!-- challenge -->
 
-A service that migrates databases to AWS with minimal downtime, between the same engines (homogeneous) or different engines (heterogeneous, with the Schema Conversion Tool), and can replicate ongoing changes.
+An e-commerce site's product pages query the database on every view and it's overloaded. What do you add?
+
+<!-- solution -->
+
+An ElastiCache cache in front of the database: cache rendered product data with a sensible expiry, so most views never reach the database.
+
+<!-- takeaways -->
+
+- Pick the database for the access pattern.
+- Caches cut database load and latency.
+- Graph, document and time-series stores fit specific shapes.
+
+<!-- unit: Analytics services -->
+
+<!-- goals -->
+
+- Distinguish OLTP from OLAP and the services for each.
+- Place Redshift, Athena, Glue, EMR and Lake Formation in a data platform.
+
+<!-- concept -->
+
+Transactional systems answer many small questions fast; analytical systems answer big questions over lots of history. Mixing them slows both, so analytics usually moves to a separate platform.
+
+On AWS that platform has interchangeable parts: S3 as the lake, Glue to catalog and transform, Lake Formation to govern, Athena for serverless SQL on files, Redshift as a warehouse for heavy BI, and EMR for big-data frameworks.
+
+<!-- example -->
+
+```text
+RDS (OLTP) ─► DMS / Glue ─► S3 data lake ─► Athena (ad hoc SQL)
+                               │  Glue Data Catalog + Lake Formation
+                               └─► Redshift (dashboards)   EMR (Spark)
+```
+
+#### What is Amazon Redshift?
+
+A managed, petabyte-scale cloud data warehouse for analytical SQL queries (OLAP), with columnar storage, a serverless option and the ability to query data in S3.
+
+#### What is the difference between OLTP and OLAP, and which AWS services fit each?
+
+OLTP handles many small transactional reads and writes (orders, payments): RDS, Aurora, DynamoDB. OLAP runs large analytical queries over historical data: Redshift, Athena.
 
 #### What is Amazon Athena?
 
@@ -658,27 +1732,101 @@ A serverless data integration service: crawlers to discover schemas, the Glue Da
 
 A managed big-data platform to run Apache Spark, Hive, Presto/Trino, HBase and other frameworks on EC2, EKS or serverless.
 
+#### What is AWS Lake Formation?
+
+A service to build, secure and manage a data lake on S3, with central fine-grained permissions on Glue Data Catalog tables.
+
+<!-- challenge -->
+
+Analysts want to run occasional SQL over three years of log files in S3 without loading them anywhere. Which service fits?
+
+<!-- solution -->
+
+Amazon Athena with tables in the Glue Data Catalog: queries run directly on S3 and you pay per data scanned. Converting logs to Parquet keeps costs low.
+
+<!-- takeaways -->
+
+- OLTP for transactions; OLAP for analysis.
+- Athena queries S3; Redshift serves heavy BI.
+- Glue and Lake Formation catalog and govern the lake.
+
+<!-- unit: Streaming, search and BI -->
+
+<!-- goals -->
+
+- Recognize Kinesis, OpenSearch and QuickSight use cases.
+- Build a simple real-time-to-dashboard flow.
+
+<!-- concept -->
+
+Some data is valuable only while it's fresh: clicks, sensor readings, logs. Kinesis captures and delivers those streams, either for custom processing or straight into storage. OpenSearch indexes text and logs so you can search and explore them interactively.
+
+At the end of most pipelines sits a BI tool; QuickSight provides serverless dashboards that business users can explore and share.
+
+<!-- example -->
+
+```text
+app clicks ─► Kinesis Data Streams ─► consumers (real-time alerts)
+           └► Firehose ─► S3 ─► Athena ─► QuickSight dashboard
+app logs   ─► OpenSearch Service (search, log analytics)
+```
+
 #### What is Amazon Kinesis?
 
 Services for real-time streaming data. Kinesis Data Streams captures and stores streams for custom processing. Amazon Data Firehose loads streams into destinations such as S3, Redshift or OpenSearch.
-
-#### What is Amazon QuickSight?
-
-A serverless business intelligence service to build interactive dashboards and reports, with machine-learning insights and natural-language questions.
 
 #### What is Amazon OpenSearch Service?
 
 A managed service for OpenSearch (and legacy Elasticsearch) clusters, used for log analytics, full-text search and observability.
 
-#### What is AWS Lake Formation?
+#### What is Amazon QuickSight?
 
-A service to build, secure and manage a data lake on S3, with central fine-grained permissions on Glue Data Catalog tables.
+A serverless business intelligence service to build interactive dashboards and reports, with machine-learning insights and natural-language questions.
+
+<!-- challenge -->
+
+Support engineers want to search application error logs by keyword within seconds of an error. Which service do you suggest?
+
+<!-- solution -->
+
+Amazon OpenSearch Service, fed by the logs (for example through Firehose or CloudWatch subscriptions), with OpenSearch Dashboards for search and visualizations.
+
+<!-- takeaways -->
+
+- Kinesis captures and delivers streaming data.
+- OpenSearch powers search and log analytics.
+- QuickSight provides serverless BI dashboards.
 
 ### Networking and content delivery
+
+<!-- unit: VPC building blocks -->
+
+<!-- goals -->
+
+- Describe VPCs, CIDR blocks and subnets.
+- Route traffic with internet gateways, NAT gateways and bastions.
+
+<!-- concept -->
+
+A VPC is your private network in a Region, with an address range you choose. Subnets divide it by AZ and by exposure. What makes a subnet public is not a setting but a route to an internet gateway; private subnets have none, so their resources can't be reached from the internet.
+
+Private resources still need to download updates, which NAT gateways allow in one direction only. Administrative access goes through a hardened bastion or, better, Session Manager.
+
+<!-- example -->
+
+```text
+VPC 10.0.0.0/16
+ ├─ public subnet  10.0.1.0/24  (AZ a)  route 0.0.0.0/0 → internet gateway   [load balancer, NAT]
+ └─ private subnet 10.0.11.0/24 (AZ a)  route 0.0.0.0/0 → NAT gateway        [app servers, DB]
+```
 
 #### What is Amazon VPC?
 
 Virtual Private Cloud is a logically isolated virtual network in a Region where you launch resources. You choose its IP range and create subnets, route tables and gateways.
+
+#### What is a CIDR block?
+
+A notation for an IP address range, such as 10.0.0.0/16, used to define the address space of a VPC and its subnets.
 
 #### What is the difference between a public and a private subnet?
 
@@ -692,9 +1840,97 @@ A VPC component that allows communication between resources in the VPC and the i
 
 A managed service that lets instances in private subnets start outbound connections to the internet (for updates, for example) while blocking unsolicited inbound connections.
 
+#### What is a bastion host?
+
+An instance in a public subnet used as a hardened entry point for SSH or RDP access to instances in private subnets. Systems Manager Session Manager often replaces it.
+
+<!-- challenge -->
+
+Database servers must not be reachable from the internet but need to download OS patches. Where do you place them, and how do they get patches?
+
+<!-- solution -->
+
+In private subnets with no route to the internet gateway, and a route to a NAT gateway in a public subnet for outbound traffic only. Better still, use VPC endpoints and Systems Manager Patch Manager.
+
+<!-- takeaways -->
+
+- A route to an internet gateway makes a subnet public.
+- NAT gateways allow outbound-only internet access.
+- Keep databases and app servers in private subnets.
+
+<!-- unit: Network security and private access -->
+
+<!-- goals -->
+
+- Compare security groups and network ACLs.
+- Reach AWS services privately and log network traffic.
+
+<!-- concept -->
+
+Network defense has two layers. Security groups protect each resource and remember connections, so replies flow back automatically. Network ACLs protect whole subnets, evaluate rules in order, and need explicit rules both ways. Most designs rely on security groups and keep ACLs simple.
+
+Traffic to AWS services doesn't need the internet either: endpoints and PrivateLink keep it on the AWS network. Flow Logs record what actually passed.
+
+<!-- example -->
+
+| | Security group | Network ACL |
+|---|---|---|
+| Applies to | Network interface | Subnet |
+| State | Stateful | Stateless |
+| Rules | Allow only | Allow and deny, numbered |
+
 #### What is the difference between a security group and a network ACL?
 
 A security group works at the instance (network interface) level, is stateful and supports allow rules only. A network ACL works at the subnet level, is stateless (return traffic must be allowed explicitly), supports allow and deny rules, and evaluates rules in number order.
+
+#### What are VPC Flow Logs?
+
+Records of IP traffic going to and from network interfaces in a VPC, sent to CloudWatch Logs or S3 for troubleshooting and security analysis.
+
+#### What is a VPC endpoint?
+
+A private connection from a VPC to AWS services without going through the internet. Gateway endpoints serve S3 and DynamoDB. Interface endpoints (AWS PrivateLink) serve many other services.
+
+#### What is AWS PrivateLink?
+
+Technology that exposes services privately across VPCs and accounts through interface endpoints, keeping traffic on the AWS network.
+
+<!-- challenge -->
+
+You must block one malicious IP range from reaching any instance in a subnet. Security group or NACL?
+
+<!-- solution -->
+
+A network ACL with a deny rule for that range, numbered before the allow rules: security groups can't deny, they only allow.
+
+<!-- takeaways -->
+
+- Security groups: stateful, per resource, allow only.
+- NACLs: stateless, per subnet, allow and deny.
+- Endpoints keep traffic to AWS services private.
+
+<!-- unit: Connecting networks -->
+
+<!-- goals -->
+
+- Connect VPCs with peering and Transit Gateway.
+- Connect offices and users with VPN and Direct Connect.
+
+<!-- concept -->
+
+As companies grow, networks multiply: many VPCs, offices, data centers and remote workers. Peering connects two VPCs directly, but doesn't chain, so many VPCs become a mesh. Transit Gateway replaces the mesh with a hub.
+
+For on-premises links, VPN is quick and encrypted over the internet; Direct Connect is a private line with steady performance that takes weeks to set up. Client VPN serves individual users.
+
+<!-- example -->
+
+| Need | Service |
+|---|---|
+| Two VPCs share a database | VPC peering |
+| 40 VPCs and two data centers | Transit Gateway |
+| Office link this week | Site-to-Site VPN |
+| Steady 10 Gbps to AWS | Direct Connect |
+| Remote employees | Client VPN |
 
 #### What is VPC peering?
 
@@ -716,17 +1952,41 @@ A dedicated private network connection from your premises to AWS. It provides co
 
 A managed VPN service that lets individual users connect securely to AWS and on-premises networks from their devices.
 
-#### What is a VPC endpoint?
+<!-- challenge -->
 
-A private connection from a VPC to AWS services without going through the internet. Gateway endpoints serve S3 and DynamoDB. Interface endpoints (AWS PrivateLink) serve many other services.
+A company needs a reliable, high-bandwidth link to AWS but can't wait months, and must be covered if the link fails. What do you set up?
 
-#### What is AWS PrivateLink?
+<!-- solution -->
 
-Technology that exposes services privately across VPCs and accounts through interface endpoints, keeping traffic on the AWS network.
+Order Direct Connect for steady bandwidth and set up a Site-to-Site VPN right away; keep the VPN as a backup path once Direct Connect is live.
 
-#### What are VPC Flow Logs?
+<!-- takeaways -->
 
-Records of IP traffic going to and from network interfaces in a VPC, sent to CloudWatch Logs or S3 for troubleshooting and security analysis.
+- Peering links two VPCs; Transit Gateway links many.
+- VPN is quick and encrypted; Direct Connect is private and steady.
+- Client VPN connects individual users.
+
+<!-- unit: DNS and content delivery -->
+
+<!-- goals -->
+
+- Route users with Route 53 and its routing policies.
+- Speed up applications with CloudFront, Global Accelerator and API Gateway.
+
+<!-- concept -->
+
+Users reach applications through names and networks you can shape. Route 53 answers DNS queries and can send users to the closest, healthiest or a weighted endpoint. CloudFront caches content near users so most requests never reach your servers. Global Accelerator puts traffic on AWS's backbone early for non-cacheable traffic.
+
+API Gateway fronts APIs with authentication, throttling and monitoring, often in front of Lambda.
+
+<!-- example -->
+
+| Goal | Route 53 policy |
+|---|---|
+| Send 10% of users to a new version | Weighted |
+| Fail over to a standby Region | Failover |
+| Serve users from the fastest Region | Latency |
+| Serve French content to France | Geolocation |
 
 #### What is Amazon Route 53?
 
@@ -748,15 +2008,46 @@ A service that routes user traffic onto the AWS global network through two stati
 
 A managed service to create, publish, secure and monitor REST, HTTP and WebSocket APIs, often in front of Lambda functions.
 
-#### What is a CIDR block?
+<!-- challenge -->
 
-A notation for an IP address range, such as 10.0.0.0/16, used to define the address space of a VPC and its subnets.
+A website hosted in eu-west-1 is slow for users in Asia, mostly because of large images. What do you add first?
 
-#### What is a bastion host?
+<!-- solution -->
 
-An instance in a public subnet used as a hardened entry point for SSH or RDP access to instances in private subnets. Systems Manager Session Manager often replaces it.
+Amazon CloudFront in front of the site (or the S3 bucket with images), so content is cached at edge locations near Asian users.
+
+<!-- takeaways -->
+
+- Route 53 routes by weight, latency, health or location.
+- CloudFront caches content at the edge.
+- API Gateway fronts and protects APIs.
+
+<!-- stage: Operating and paying -->
 
 ### Management, governance and developer tools
+
+<!-- unit: Monitoring and auditing -->
+
+<!-- goals -->
+
+- Distinguish CloudWatch, CloudTrail and Config.
+- Trace requests and follow AWS service health.
+
+<!-- concept -->
+
+Three questions need three services. Is it healthy? CloudWatch collects metrics and logs and raises alarms. Who did what? CloudTrail records every API call. Is it configured as it should be? Config records resource settings over time and checks them against rules.
+
+For distributed applications, X-Ray follows a request through services, and the Health Dashboard tells you when AWS itself has a problem affecting you.
+
+<!-- example -->
+
+| Question | Service |
+|---|---|
+| CPU above 80% for 10 minutes? | CloudWatch alarm |
+| Who deleted the security group? | CloudTrail |
+| Are all buckets encrypted? | Config rule |
+| Which service slows checkout? | X-Ray |
+| Is an AWS outage hitting my Region? | Health Dashboard |
 
 #### What is Amazon CloudWatch?
 
@@ -774,9 +2065,57 @@ CloudWatch monitors performance and health (metrics, logs, alarms). CloudTrail a
 
 A service that records resource configurations and their changes over time and evaluates them against rules, for compliance auditing and troubleshooting.
 
-#### What is AWS Systems Manager?
+#### What is AWS X-Ray?
 
-A set of operational tools for managing EC2 and on-premises servers at scale: Session Manager, Patch Manager, Run Command, Parameter Store, Automation and inventory.
+A service that traces requests through distributed applications to find performance bottlenecks and errors.
+
+#### What is the AWS Health Dashboard?
+
+A view of AWS service health and of events that affect your own resources, such as scheduled maintenance or issues in your Regions.
+
+<!-- challenge -->
+
+A production security group was opened to the whole internet last night. How do you find who did it and get alerted next time?
+
+<!-- solution -->
+
+Search CloudTrail for the `AuthorizeSecurityGroupIngress` call to find the identity and time. Add a Config rule (or EventBridge rule) that flags open security groups and notifies the team, with automatic remediation if desired.
+
+<!-- takeaways -->
+
+- CloudWatch: health. CloudTrail: activity. Config: configuration.
+- X-Ray traces distributed requests.
+- The Health Dashboard reports AWS issues affecting you.
+
+<!-- unit: Managing and automating -->
+
+<!-- goals -->
+
+- Interact with AWS through the console, CLI, SDKs and IaC.
+- Automate infrastructure, operations and deployments.
+
+<!-- concept -->
+
+Everything in AWS is an API, and the console, CLI and SDKs are just different ways to call it. Repeatable work should go through code: CloudFormation and CDK describe infrastructure, Systems Manager runs operational tasks across fleets, and the Code* services build and deploy software.
+
+Trusted Advisor closes the loop by reviewing the account and pointing out savings, risks and limits.
+
+<!-- example -->
+
+```yaml
+# CloudFormation: a versioned, private S3 bucket
+Resources:
+  ReportsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      VersioningConfiguration: {Status: Enabled}
+      PublicAccessBlockConfiguration: {BlockPublicAcls: true, BlockPublicPolicy: true,
+                                       IgnorePublicAcls: true, RestrictPublicBuckets: true}
+```
+
+#### What are the ways to interact with AWS?
+
+The AWS Management Console (web), the AWS CLI, the SDKs for programming languages, infrastructure as code (CloudFormation, CDK) and AWS CloudShell (a browser-based shell already authenticated).
 
 #### What is AWS CloudFormation?
 
@@ -786,25 +2125,52 @@ Infrastructure as code: you describe resources in JSON or YAML templates, and Cl
 
 A framework to define cloud infrastructure in programming languages (TypeScript, Python, Java, C#, Go). It synthesizes CloudFormation templates.
 
-#### What is AWS Trusted Advisor?
+#### What is AWS Systems Manager?
 
-A service that inspects your account and recommends improvements in five categories: cost optimization, performance, security, fault tolerance and service quotas. Basic and Developer Support plans get core checks only. Business and higher plans get the full set.
-
-#### What is the AWS Health Dashboard?
-
-A view of AWS service health and of events that affect your own resources, such as scheduled maintenance or issues in your Regions.
-
-#### What are the ways to interact with AWS?
-
-The AWS Management Console (web), the AWS CLI, the SDKs for programming languages, infrastructure as code (CloudFormation, CDK) and AWS CloudShell (a browser-based shell already authenticated).
+A set of operational tools for managing EC2 and on-premises servers at scale: Session Manager, Patch Manager, Run Command, Parameter Store, Automation and inventory.
 
 #### What are AWS CodeCommit, CodeBuild, CodeDeploy and CodePipeline?
 
 Developer tools for CI/CD: CodeBuild compiles and tests code, CodeDeploy automates deployments to EC2, Lambda, ECS and on premises, CodePipeline orchestrates release pipelines. CodeCommit is a Git hosting service that is closed to new customers.
 
-#### What is AWS X-Ray?
+#### What is AWS Trusted Advisor?
 
-A service that traces requests through distributed applications to find performance bottlenecks and errors.
+A service that inspects your account and recommends improvements in five categories: cost optimization, performance, security, fault tolerance and service quotas. Basic and Developer Support plans get core checks only. Business and higher plans get the full set.
+
+<!-- challenge -->
+
+A team creates test environments by clicking in the console, and each one ends up slightly different. What do you propose?
+
+<!-- solution -->
+
+Define the environment in CloudFormation or CDK, store it in Git, and create every environment from the same template with parameters. Deploy changes through a pipeline instead of the console.
+
+<!-- takeaways -->
+
+- Console, CLI and SDKs all call the same APIs.
+- CloudFormation and CDK make infrastructure repeatable.
+- Trusted Advisor checks cost, security, limits and more.
+
+<!-- unit: Decoupling applications -->
+
+<!-- goals -->
+
+- Choose between SQS, SNS and EventBridge.
+- Decouple producers from consumers.
+
+<!-- concept -->
+
+When one component calls another directly, a slowdown in one spreads to both. Messaging services break that link. A queue holds work until a consumer is ready; a topic delivers each message to many subscribers at once; an event bus routes events by content to the right targets, including AWS services and SaaS.
+
+The difference is in delivery: one consumer per message, all subscribers, or rule-based routing.
+
+<!-- example -->
+
+| Pattern | Service |
+|---|---|
+| Orders processed by a pool of workers | SQS |
+| Send one alert to email, SMS and a Lambda | SNS |
+| Route "order placed" events to billing and analytics by rules | EventBridge |
 
 #### What is Amazon SQS?
 
@@ -818,7 +2184,42 @@ SQS is a queue: consumers poll messages, each message is processed by one consum
 
 A serverless event bus that routes events from AWS services, SaaS applications and your own code to targets based on rules, and schedules tasks (EventBridge Scheduler).
 
+<!-- challenge -->
+
+An order service calls the email service directly; when email is slow, checkout times out. How do you fix it?
+
+<!-- solution -->
+
+Publish order events to an SQS queue (or SNS topic with an SQS subscription) and let the email service consume them at its own pace. Checkout finishes as soon as the message is stored.
+
+<!-- takeaways -->
+
+- SQS queues work for one consumer per message.
+- SNS fans out to many subscribers.
+- EventBridge routes events by rules.
+
 ### Billing, pricing and support
+
+<!-- unit: What drives cost -->
+
+<!-- goals -->
+
+- Name the main cost drivers on AWS.
+- Estimate costs and use the Free Tier wisely.
+
+<!-- concept -->
+
+AWS bills mainly for three things: compute time, stored data and data leaving AWS. Most surprises come from forgetting one of them, such as idle instances or large outbound transfers. The Free Tier helps you learn, within limits that are easy to exceed.
+
+Cost work starts before building, with an estimate, and continues after, by removing waste and committing to steady usage.
+
+<!-- example -->
+
+| Cost driver | Example | Lever |
+|---|---|---|
+| Compute | 10 instances 24/7 | Rightsize, Savings Plans, stop when idle |
+| Storage | 50 TB in S3 Standard | Lifecycle to cheaper classes |
+| Data transfer out | Video served from EC2 | CloudFront, compression |
 
 #### What are the three fundamental drivers of AWS cost?
 
@@ -831,6 +2232,46 @@ Offers that let you try AWS at no cost within limits. It includes always-free of
 #### What is the AWS Pricing Calculator?
 
 A free tool to estimate the cost of an architecture before building it.
+
+#### How can you reduce costs on AWS?
+
+Rightsize instances, turn off unused resources, use Savings Plans or Reserved Instances for steady workloads and Spot for interruptible ones, choose cheaper storage classes with lifecycle rules, use serverless for variable load, reduce data transfer (for example with CloudFront and VPC endpoints), and track spending with tags, Budgets and Cost Explorer.
+
+<!-- challenge -->
+
+A student's Free Tier account produced a 90 USD bill. Name two likely causes and how to avoid them.
+
+<!-- solution -->
+
+Resources outside Free Tier limits (a larger instance, a NAT gateway, an RDS instance left running) or usage after the 12-month offers ended. Set a budget alert at a low amount and delete resources after experiments.
+
+<!-- takeaways -->
+
+- Compute, storage and outbound transfer drive cost.
+- Estimate with the Pricing Calculator before building.
+- The Free Tier has limits; set budget alerts.
+
+<!-- unit: Tracking and controlling spend -->
+
+<!-- goals -->
+
+- Analyze and forecast spend with Cost Explorer and detailed exports.
+- Control and attribute costs with budgets, tags and consolidated billing.
+
+<!-- concept -->
+
+You can't control what you can't see. Cost Explorer shows trends and forecasts; detailed exports give line-level data for your own analysis; tags attribute costs to projects and teams. Budgets add alerts, and Compute Optimizer suggests better sizes from actual use.
+
+In organizations, consolidated billing combines usage across accounts, which reaches volume discounts sooner and lets commitments benefit the whole company.
+
+<!-- example -->
+
+```bash
+aws budgets create-budget --account-id 123456789012 --budget '{
+  "BudgetName": "data-team-monthly", "BudgetLimit": {"Amount": "5000", "Unit": "USD"},
+  "TimeUnit": "MONTHLY", "BudgetType": "COST",
+  "CostFilters": {"TagKeyValue": ["user:team$data"]}}'
+```
 
 #### What is AWS Cost Explorer?
 
@@ -855,6 +2296,42 @@ One bill for all accounts of an organization, paid by the management account. Us
 #### What is AWS Compute Optimizer?
 
 A service that uses machine learning on utilization metrics to recommend optimal EC2 instance types, Auto Scaling groups, EBS volumes, Lambda functions and ECS on Fargate configurations.
+
+<!-- challenge -->
+
+Finance wants each team's monthly AWS cost, but all teams share accounts. What do you set up?
+
+<!-- solution -->
+
+Define a `team` tag, require it on resources (tag policies, SCPs or IaC), activate it as a cost allocation tag, and report by tag in Cost Explorer with a budget per team. Separate accounts per team is the longer-term fix.
+
+<!-- takeaways -->
+
+- Cost Explorer shows and forecasts spend.
+- Tags and accounts attribute costs to owners.
+- Consolidated billing shares discounts across accounts.
+
+<!-- unit: Support and partners -->
+
+<!-- goals -->
+
+- Compare AWS Support plans and what each includes.
+- Know where to get help: re:Post, TAMs, Marketplace and partners.
+
+<!-- concept -->
+
+Help on AWS comes in tiers. Everyone gets documentation, the re:Post community and basic checks. Paid support plans add technical cases with faster response times as the plan rises, and the top tiers add a Technical Account Manager who knows your environment.
+
+Beyond AWS itself, partners and Professional Services provide consulting, and the Marketplace sells ready software that runs on AWS, billed through your AWS account.
+
+<!-- example -->
+
+| Need | Plan or resource |
+|---|---|
+| Learning, no production | Basic + re:Post |
+| Production workload, business hours issues | Developer or Business |
+| Business-critical, 24/7 fast response | Business or Enterprise On-Ramp |
+| Dedicated TAM, critical systems | Enterprise |
 
 #### What are the AWS Support plans?
 
@@ -882,6 +2359,16 @@ A curated digital catalog of third-party software, data and services that run on
 
 AWS Professional Services is AWS's own consulting team. The AWS Partner Network (APN) is the global community of consulting and technology partners that help customers build on AWS.
 
-#### How can you reduce costs on AWS?
+<!-- challenge -->
 
-Rightsize instances, turn off unused resources, use Savings Plans or Reserved Instances for steady workloads and Spot for interruptible ones, choose cheaper storage classes with lifecycle rules, use serverless for variable load, reduce data transfer (for example with CloudFront and VPC endpoints), and track spending with tags, Budgets and Cost Explorer.
+A company's production site is down at 2 a.m. and it has the Developer plan. What support can it get, and which plan would fit better?
+
+<!-- solution -->
+
+Developer gives business-hours email support for general guidance, not urgent production cases. Business (or higher) adds 24/7 phone and chat with a fast response for production system down.
+
+<!-- takeaways -->
+
+- Support plans differ in response times and access.
+- Enterprise plans include a TAM.
+- Marketplace and partners extend what AWS provides.

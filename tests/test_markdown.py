@@ -156,3 +156,75 @@ def test_qa_guide_turns_questions_into_cards_grouped_by_category():
 def test_posts_without_qa_marker_have_no_cards():
     r = render_markdown(POST)
     assert r.qa_sections == [] and "<details" not in r.body_html
+
+
+LEARNING_GUIDE = """## A guide
+
+Intro paragraph that explains what this guide covers and how to use it well.
+
+<!-- QA -->
+
+<!-- stage: Foundations -->
+
+### Basics
+
+<!-- unit: First unit -->
+
+<!-- goals -->
+
+- Explain a thing.
+
+<!-- concept -->
+
+Things connect *like this*.
+
+<!-- example -->
+
+```sql
+-- <!-- unit: not a marker inside code -->
+SELECT 1;
+```
+
+#### What is a thing?
+
+A thing.
+
+<!-- challenge -->
+
+Build a thing.
+
+<!-- solution -->
+
+Like so.
+
+<!-- takeaways -->
+
+- Things matter.
+
+<!-- stage: Practice -->
+
+### Scenarios
+
+Mixed problems.
+
+#### Combine things?
+
+Yes.
+"""
+
+
+def test_learning_guide_parses_stages_units_and_blocks():
+    from sitegen.markdown import group_stages
+    r = render_markdown(LEARNING_GUIDE)
+    basics, scenarios = r.guide_sections
+    assert [(stage, [s.id for s in secs]) for stage, secs in group_stages(r.guide_sections)] == [
+        ("Foundations", ["basics"]), ("Practice", ["scenarios"])]
+    unit = basics.units[0]
+    assert (unit.id, unit.title, unit.has_intro) == ("first-unit", "First unit", True)
+    assert "<em>like this</em>" in unit.concept and "not a marker inside code" in unit.example
+    assert "Build a thing" in unit.challenge and "Like so" in unit.solution and "Things matter" in unit.takeaways
+    assert [(q.id, q.number) for q in unit.questions] == [("what-is-a-thing", 1)]
+    # Questions without a unit marker form an untitled unit; text under ### is the section lead.
+    assert scenarios.units[0].title == "" and scenarios.units[0].questions[0].number == 2
+    assert "Mixed problems" in scenarios.lead
+    assert r.qa_sections == [("basics", "Basics", 1), ("scenarios", "Scenarios", 1)]
