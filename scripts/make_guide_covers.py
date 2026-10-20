@@ -24,7 +24,7 @@ ARTICLE = "Article · catobyte.co"
 COVERS = {
     "pyspark_study_guide": ("PS", (226, 90, 27), "PySpark", "DataFrames, Spark SQL, joins, shuffles and performance tuning", GUIDE),
     "postgres_study_guide": ("PG", (51, 103, 145), "PostgreSQL", "SQL, indexes, transactions and MVCC, performance and administration", GUIDE),
-    "databricks_study_guide": ("DB", (255, 54, 33), "Databricks", "Lakehouse, Delta Lake, Unity Catalog, jobs and performance", GUIDE),
+    "databricks_study_guide": ("DB", (255, 54, 33), "Databricks", "Lakehouse, Delta Lake, Lakeflow pipelines, Unity Catalog and performance", "~250 questions · catobyte.co"),
     "airflow_study_guide": ("AF", (1, 124, 238), "Apache Airflow", "DAGs, operators, scheduling, sensors and deployment", GUIDE),
     "snowflake_study_guide": ("SF", (41, 181, 232), "Snowflake", "Warehouses, storage, loading, security and cost", GUIDE),
     "aws_glue_study_guide": ("Glue", (140, 79, 255), "AWS Glue", "Data Catalog, crawlers, Spark ETL jobs and workflows", GUIDE),

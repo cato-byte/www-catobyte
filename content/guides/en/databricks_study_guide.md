@@ -3,9 +3,9 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Databricks study guide: about 200 questions](../../images/databricks_study_guide_title_img.png)
+![Databricks study guide: about 250 questions](../../images/databricks_study_guide_title_img.png)
 
-About 200 interview-style questions on Databricks, from the lakehouse idea to Delta Lake, Unity Catalog, ingestion, Lakeflow pipelines and jobs, performance tuning, security and cost. The answers reflect the platform as of 2026; Databricks renames products often, so former names are given where they are still common.
+About 250 interview-style questions on Databricks, from the lakehouse idea to Delta Lake, Unity Catalog, ingestion and streaming, Lakeflow pipelines and jobs, performance tuning, security and cost. The answers reflect the platform as of 2026; Databricks renames products often, so former names are given where they are still common.
 
 The guide follows a learning path in six stages. Each section is split into short units: learning goals, a concept explanation and a worked example, then questions (recall first, then application), a practical challenge and key takeaways. To **learn**, read each unit top to bottom. To **review**, switch to review mode or use "Skip to questions", mark answers you want to see again, and try a mixed review across sections.
 
@@ -50,7 +50,7 @@ Data lakes had no transactions (readers saw half-written data), no schema enforc
 
 #### What is Lakeflow?
 
-The umbrella name, since 2025, for Databricks' data engineering products: Lakeflow Connect (managed ingestion connectors), Lakeflow Declarative Pipelines (formerly Delta Live Tables) and Lakeflow Jobs (formerly Workflows).
+The umbrella name, since 2025, for Databricks' data engineering products, which ingest, transform and orchestrate data. It has four parts: Lakeflow Connect (ingestion connectors), Lakeflow pipelines (declarative batch and streaming pipelines, formerly Delta Live Tables), Lakeflow Designer (visual, no-code data preparation) and Lakeflow Jobs (orchestration, formerly Workflows). They all run on the Databricks Runtime and are governed by Unity Catalog.
 
 #### What is Mosaic AI?
 
@@ -176,6 +176,10 @@ A utility library available in notebooks and jobs: `dbutils.fs` for files, `dbut
 
 Workspace folders linked to a Git repository (GitHub, GitLab, Azure DevOps, Bitbucket). They let you clone, branch, commit, pull and push from the workspace, so notebooks and Python files are versioned and reviewed like any other code.
 
+#### What is Genie Code?
+
+The AI agent built into the workspace, which replaced Databricks Assistant in 2026. It writes and fixes code and explains errors, and in agent mode it carries out multi-step tasks across notebooks, the SQL editor, pipelines, dashboards and MLflow. It works from Unity Catalog metadata, so its suggestions use your real tables, columns and comments, and it only sees what you are allowed to see.
+
 #### What is DBFS, and why is it discouraged now?
 
 The Databricks File System, a legacy abstraction that mounted cloud storage under `dbfs:/` paths, including a workspace root bucket. It has no fine-grained governance, so Databricks now recommends Unity Catalog volumes for files and tables for data, and disables DBFS root and mounts in new setups.
@@ -231,7 +235,7 @@ A client-server protocol where the client builds an unresolved logical plan and 
 
 #### What is the Databricks CLI?
 
-A command-line tool to manage workspaces from a terminal or CI: files, jobs, clusters, secrets, Unity Catalog objects and, above all, Databricks Asset Bundles (`databricks bundle validate|deploy|run`). It authenticates with OAuth (user or service principal) or tokens.
+A command-line tool to manage workspaces from a terminal or CI: files, jobs, clusters, secrets, Unity Catalog objects and, above all, Declarative Automation Bundles, formerly Databricks Asset Bundles (`databricks bundle validate|plan|deploy|run`). It authenticates with OAuth (user or service principal) or tokens.
 
 #### What is Databricks Connect?
 
@@ -598,7 +602,7 @@ Settings stored with the table, such as `delta.enableChangeDataFeed`, `delta.log
 
 #### What is UniForm?
 
-Universal Format: a Delta table option that also writes Iceberg (and Hudi) metadata, so engines that read Iceberg can read the same files without copying data.
+Universal Format: a Delta table option that also writes Iceberg metadata, so engines that read Iceberg can read the same files without copying data.
 
 <!-- challenge -->
 
@@ -851,7 +855,7 @@ High-cardinality partitioning created hundreds of thousands of tiny directories 
 
 <!-- concept -->
 
-How data arrives decides the tool. Files landing in storage go through Auto Loader (or `COPY INTO` for modest batch loads, or `read_files` in SQL). SaaS apps and databases can use Lakeflow Connect's managed connectors; otherwise a JDBC read does the job. Event streams come from Kafka or similar through Structured Streaming.
+How data arrives decides the tool, and Databricks recommends starting with the most managed option and dropping lower only when it doesn't fit. For SaaS apps and databases, Lakeflow Connect's managed connectors come first; otherwise a JDBC read does the job. Files landing in storage go through Auto Loader (or `COPY INTO` for modest batch loads, or `read_files` in SQL). Event streams come from Kafka or similar through Structured Streaming, and applications can push records directly with Zerobus Ingest.
 
 Whatever the source, the pattern is the same: land the data raw in bronze, incrementally, with enough metadata to know where each row came from.
 
@@ -861,17 +865,26 @@ Whatever the source, the pattern is the same: land the data raw in bronze, incre
 |---|---|
 | Files in S3 / ADLS / volumes | Auto Loader (`cloudFiles`) |
 | A few thousand batch files, SQL only | `COPY INTO` |
-| Salesforce, SQL Server, Workday... | Lakeflow Connect |
+| Salesforce, Workday, SQL Server, PostgreSQL... | Lakeflow Connect managed connector |
 | PostgreSQL without a connector | Spark JDBC, partitioned, by watermark |
-| Kafka, Kinesis, Event Hubs | Structured Streaming |
+| Kafka, Kinesis, Event Hubs | Structured Streaming (or a managed streaming connector) |
+| Your own application's events | Zerobus Ingest (direct write) |
 
 #### What options exist for loading data into Databricks?
 
-Auto Loader for files arriving in cloud storage, `COPY INTO` for idempotent batch file loads, Lakeflow Connect managed connectors (Salesforce, Workday, SQL Server, Google Analytics and others), Structured Streaming from Kafka, Kinesis or Event Hubs, Lakehouse Federation for querying in place, partner tools (Fivetran and others) and file uploads to volumes.
+Lakeflow Connect managed connectors for SaaS apps, databases, files and message buses, Auto Loader for files arriving in cloud storage, `COPY INTO` for idempotent batch file loads, Structured Streaming from Kafka, Kinesis or Event Hubs, the Zerobus Ingest API for applications that write records directly, community and custom connectors, partner tools (Fivetran and others) and file uploads through the "Add data" UI. Lakehouse Federation and data sharing are alternatives that read data without ingesting it.
 
 #### What is Lakeflow Connect?
 
-Managed, serverless ingestion connectors for SaaS applications and databases. They handle incremental extraction (often CDC) and land the data in Unity Catalog tables through a pipeline, without writing extraction code.
+Databricks' ingestion layer. Its managed connectors are serverless and fully managed: databases with CDC (SQL Server, PostgreSQL, MySQL, Oracle), SaaS apps (Salesforce, Workday, HubSpot, Jira and others), files (cloud storage, SharePoint, Google Drive) and message buses (Kafka, Kinesis, Pub/Sub). They handle incremental extraction and land data in Unity Catalog streaming tables, without extraction code. For sources without a managed connector, the SQL and Spark APIs (Auto Loader, `read_files`, Structured Streaming) give more control.
+
+#### What is Zerobus Ingest?
+
+A Lakeflow Connect API that lets applications write records directly into a Unity Catalog table, with no message bus in between. It suits event and telemetry data that you would otherwise send to Kafka only to load it into Databricks again.
+
+#### When should you ingest data, and when should you federate or share it instead?
+
+Ingest when volumes are high, queries need low latency, or the source has API or load limits, accepting that the copy has to be kept fresh. Federate (query in place) for exploration, small lookups or a migration period. Share when another organization already publishes the data. Ingested copies can go stale; federated queries load the source system.
 
 #### How do you load data from a relational database without Lakeflow Connect?
 
@@ -963,7 +976,7 @@ A storage location where a streaming query records its progress (offsets or proc
 
 #### What does `trigger(availableNow=True)` do?
 
-It makes a streaming query process everything available at start (in several batches respecting rate limits), then stop. It gives the incremental bookkeeping of streaming with the cost profile of a scheduled batch job.
+It makes a streaming query process everything available at start (in several batches respecting rate limits), then stop. It gives the incremental bookkeeping of streaming with the cost profile of a scheduled batch job. On serverless compute, `availableNow` and `once` are the only supported triggers.
 
 #### What is the `_metadata` column?
 
@@ -1042,6 +1055,85 @@ Those values don't parse, so `amount` is null and the raw value goes into `_resc
 - `addNewColumns` stops, evolves and continues after restart.
 - Monitor `_rescued_data` to catch upstream changes.
 
+<!-- unit: Structured Streaming essentials -->
+
+<!-- goals -->
+
+- Choose a trigger and processing mode for a latency target.
+- Explain state, watermarks and output modes in stateful queries.
+
+<!-- concept -->
+
+On Databricks, one engine serves batch and streaming. Structured Streaming treats a source (Auto Loader, a Delta table, Kafka) as an unbounded table and processes new data in micro-batches, which gives latencies of seconds to minutes. Real-time mode handles records as they arrive, with sub-second latency, for operational uses like fraud detection.
+
+Stateless queries such as filters and appends are simple. Aggregations, stream-stream joins and deduplication keep state between batches, and a watermark sets how long to wait for late data before that state is dropped. Without one, state grows until the query fails.
+
+<!-- example -->
+
+```python
+from pyspark.sql import functions as F
+
+(spark.readStream.table("bronze.clicks")
+    .withWatermark("event_ts", "30 minutes")          # accept data up to 30 min late
+    .groupBy(F.window("event_ts", "5 minutes"), "page")
+    .count()
+  .writeStream
+    .outputMode("append")                              # emit a window once it is final
+    .option("checkpointLocation", "/Volumes/ops/_checkpoints/clicks_5m")
+    .trigger(processingTime="1 minute")
+    .toTable("silver.clicks_5m"))
+```
+
+#### How does Databricks treat batch and streaming?
+
+As two semantics of the same engine. A batch query processes all data in the source each run and doesn't remember what it read; a streaming query tracks its progress in a checkpoint and processes only what arrived since the last run. Streaming isn't limited to message buses: cloud storage (through Auto Loader) and Delta tables are streaming sources too, which makes streaming the usual way to process data incrementally.
+
+#### What triggers can a streaming query use?
+
+The default (a new micro-batch as soon as the previous one ends), `processingTime` (a micro-batch at a fixed interval), `availableNow` (process everything available, then stop) and `realTime` for real-time mode. The old Spark `continuous` trigger isn't supported on Databricks. On serverless, only `availableNow` and `once` are allowed.
+
+#### What is real-time mode?
+
+A Structured Streaming trigger (`.trigger(realTime="5 minutes")`, where the interval sets how long each long-running batch lasts) that processes records as they arrive, with sub-second latency, instead of in micro-batches. It targets operational workloads like fraud detection and personalization. It runs on classic job compute without autoscaling, Photon or spot instances, and Databricks recommends it only when micro-batch latency isn't enough.
+
+#### What are output modes?
+
+They decide what a streaming query writes each batch: `append` writes only new rows (and, for aggregations with a watermark, only windows that are final), `update` writes rows that changed since the last batch, and `complete` rewrites the whole result. Delta table sinks are usually written in append mode; `foreachBatch` with `MERGE` handles upserts.
+
+#### What is a watermark?
+
+A threshold on event time (`withWatermark("event_ts", "30 minutes")`) that tells a stateful query how long to wait for late data. Records older than the watermark are ignored, and state for windows past it is dropped, so memory stays bounded. Without a watermark, aggregations and stream-stream joins keep state forever.
+
+#### What is a stateful streaming query, and where does its state live?
+
+A query that remembers data between micro-batches: aggregations, stream-stream joins, `dropDuplicates` and arbitrary stateful operators. The state is kept in a state store on the executors and saved to the checkpoint. On Databricks the RocksDB state store keeps large state on local disk instead of in JVM memory, and asynchronous state checkpointing reduces the latency it adds.
+
+#### What is a stream-static join, and what is its catch?
+
+A join between a streaming DataFrame and a static table, such as enriching events with a dimension. Each micro-batch reads the latest version of the static table, but rows already processed are not recomputed when the dimension changes later. If results must always reflect the current dimension, use a materialized view instead.
+
+#### What is `foreachBatch` used for?
+
+It runs your own function on each micro-batch as a regular DataFrame, so you can use batch-only operations: `MERGE` into a Delta table, writing to several targets, or calling a sink without a streaming writer. Make the function idempotent, since a batch can be retried.
+
+#### What should you watch when running streams in production?
+
+Keep input rates bounded (`maxFilesPerTrigger`, `maxBytesPerTrigger`, `maxOffsetsPerTrigger`) so batch sizes stay predictable, give each query its own checkpoint, monitor batch duration against the trigger interval and input versus processing rates (through the streaming UI, `StreamingQueryListener` or the pipeline event log), and run streams as jobs with retries rather than in notebooks.
+
+<!-- challenge -->
+
+A 5-minute click count per page runs in update mode without a watermark. After two weeks the job slows down and then fails with out-of-memory errors. Why, and what do you change?
+
+<!-- solution -->
+
+Without a watermark, Spark keeps the state of every window since the start, so state grows without limit. Add `withWatermark("event_ts", "30 minutes")` (or whatever lateness the business accepts) so old windows are finalized and dropped, use the RocksDB state store for large state, and switch to append mode if consumers only need final windows.
+
+<!-- takeaways -->
+
+- One engine: streaming is incremental processing, not only low latency.
+- Micro-batch covers seconds to minutes; real-time mode is for sub-second needs.
+- Stateful queries need a watermark to keep state bounded.
+
 ### Medallion architecture and modeling
 
 <!-- unit: Layers and their contracts -->
@@ -1089,6 +1181,10 @@ Data shaped for consumption: star schemas (facts and dimensions), aggregates, fe
 
 No. It is a convention, not a rule. Small projects may merge silver and gold; others add a landing zone before bronze or a platinum/serving layer after gold. What matters is that each layer has a clear contract.
 
+#### Should each medallion layer use batch or streaming?
+
+Databricks' guidance: bronze is usually streaming (streaming tables, Auto Loader), because ingestion is a stateless append. Silver and gold default to batch semantics with incremental refresh, meaning materialized views, because they join, aggregate and correct data, and a materialized view stays correct when sources change. Use streaming in silver only when latency matters more than handling late or changed data, and plan for the complexity of state.
+
 <!-- challenge -->
 
 A colleague proposes cleaning data as it is loaded and skipping bronze "to save storage". What do you lose?
@@ -1126,11 +1222,11 @@ SCD Type 2 rows for one customer:
 
 #### How do you implement SCD Type 2 on Delta?
 
-With `MERGE`: close the current row (set `valid_to` and `is_current = false`) when tracked attributes change, and insert the new version. A common trick is to merge a union of the updates with a null merge key for changed rows, so one `MERGE` both closes and inserts. Declarative pipelines do it with `AUTO CDC … STORED AS SCD TYPE 2`.
+With `MERGE`: close the current row (set `valid_to` and `is_current = false`) when tracked attributes change, and insert the new version. A common trick is to merge a union of the updates with a null merge key for changed rows, so one `MERGE` both closes and inserts. Lakeflow pipelines do it with `AUTO CDC … STORED AS SCD TYPE 2`.
 
 #### How do you quarantine bad records?
 
-Validate rows against rules in silver, write failing rows with the reasons to a quarantine table, and continue with the valid ones. Monitor the quarantine rate and alert on spikes. Expectations with `DROP ROW` plus a separate inverse query achieve the same in declarative pipelines.
+Validate rows against rules in silver, write failing rows with the reasons to a quarantine table, and continue with the valid ones. Monitor the quarantine rate and alert on spikes. Expectations with `DROP ROW` plus a separate inverse query achieve the same in Lakeflow pipelines.
 
 #### Should you use one catalog per environment or per layer?
 
@@ -1158,20 +1254,81 @@ SCD Type 2 on the customer dimension, with a surrogate key per version. The fact
 - Quarantine bad rows with reasons instead of failing or silently dropping.
 - Build BI and ML gold from the same silver so numbers agree.
 
-### Lakeflow Declarative Pipelines
+### Lakeflow pipelines
+
+<!-- unit: Choosing an ETL approach -->
+
+<!-- goals -->
+
+- Contrast procedural and declarative processing.
+- Pick between pipelines, dbt, notebooks with jobs, stored procedures and Designer.
+
+<!-- concept -->
+
+There are two ways to describe data processing. Procedural code says how: ordered steps, loops and conditions, with full control and manual tuning. Plain Spark notebooks orchestrated by jobs work this way. Declarative code says what: the tables you want and the queries behind them. The engine plans the order, the incremental processing and the retries.
+
+Databricks recommends Lakeflow pipelines, the declarative option, for most new ETL. Existing dbt projects run as they are, notebooks and jobs fit complex code-first logic, stored procedures package procedural SQL, and Lakeflow Designer lets non-coders build the same governed transformations visually.
+
+<!-- example -->
+
+| Situation | Approach |
+|---|---|
+| New batch or incremental ETL | Lakeflow pipelines |
+| Team already maintains dbt models | dbt task in Lakeflow Jobs |
+| Complex logic, external API calls per batch | Spark notebooks or scripts + Lakeflow Jobs |
+| Reusable procedural SQL on a warehouse | Stored procedures (`CREATE PROCEDURE`) |
+| Analysts preparing data without code | Lakeflow Designer |
+
+#### What is the difference between procedural and declarative processing?
+
+Procedural processing defines how data is processed, step by step, with control structures (loops, conditionals, functions) and manual tuning; it gives full control at the cost of more code and expertise. Declarative processing defines what result you want, and the system decides the execution plan, the order and the optimizations. Spark DataFrame code orchestrated by jobs is mostly procedural; SQL and Lakeflow pipelines are declarative.
+
+#### When should you choose procedural over declarative processing?
+
+Choose procedural when you need fine-grained control over execution, when business rules are hard to express as table definitions (procedural loops, per-batch calls to external systems), or when performance needs manual tuning. Choose declarative when maintainability matters most, for SQL transformations and managed pipelines, and when you want built-in incremental processing, retries and data quality.
+
+#### How do you choose an ETL approach on Databricks?
+
+Start with Lakeflow pipelines for new batch and incremental ETL, since the engine handles dependencies, incremental processing and orchestration. Keep dbt if the team already maintains dbt models (run them as dbt tasks in jobs). Use Spark notebooks or scripts with Lakeflow Jobs for complex, code-first logic. Use stored procedures to package reusable procedural SQL that runs on a SQL warehouse.
+
+#### What are stored procedures and SQL scripting in Databricks?
+
+SQL scripting adds procedural control (variables, `IF`, loops, exception handling) to Databricks SQL, and `CREATE PROCEDURE` saves such a script as a governed Unity Catalog object that takes parameters and is run with `CALL`. They suit teams migrating procedural warehouse code and reusable SQL routines.
+
+#### What is Lakeflow Designer?
+
+A visual, no-code tool for data preparation built into Databricks. Users build "visual data preps" on a drag-and-drop canvas from built-in operators (and user-defined ones based on Unity Catalog functions), or describe changes in natural language through Genie Code. Each visual data prep is backed by production-ready code governed by Unity Catalog, so it can move to production with Git, jobs and bundles without being rebuilt by engineers.
+
+#### When would you not use Lakeflow pipelines?
+
+When you need fine-grained control over every step, logic that doesn't fit the declarative model (complex procedural code, calls to external systems per batch), or portability to plain Spark jobs. Many teams use plain jobs with Delta and `MERGE` and get the same results with more code. Note that some features, such as `AUTO CDC` and expectations, exist on Databricks but not in open-source Spark Declarative Pipelines.
+
+<!-- challenge -->
+
+A team has 40 dbt models in production, a new set of streaming Kafka sources to ingest, and one analyst who prepares a weekly file by hand. Which approach do you suggest for each?
+
+<!-- solution -->
+
+Keep the dbt models and run them as dbt tasks in a Lakeflow job, since rewriting them adds no value. Ingest Kafka with a Lakeflow pipeline (streaming tables, then materialized views). Give the analyst Lakeflow Designer, so the weekly preparation becomes a governed visual data prep that can be scheduled instead of done by hand.
+
+<!-- takeaways -->
+
+- Procedural says how; declarative says what and lets the engine plan.
+- Lakeflow pipelines are the default for new ETL; keep dbt where it exists.
+- Designer brings non-coders into the same governed platform.
 
 <!-- unit: The declarative model -->
 
 <!-- goals -->
 
-- Explain what a declarative pipeline manages for you.
-- Choose between a streaming table and a materialized view.
+- Explain what a pipeline manages for you, and what it is made of.
+- Choose between a streaming table, a materialized view and a view.
 
 <!-- concept -->
 
-In a declarative pipeline you define the tables you want and the queries that produce them; the engine works out the order, runs them, retries failures and manages compute. You stop writing orchestration and checkpoint code.
+In a Lakeflow pipeline you define the tables you want and the queries that produce them, in SQL or Python files. The engine resolves dependencies, runs the work in the right order and in parallel, retries failures and manages compute. You stop writing orchestration and checkpoint code.
 
-Two kinds of datasets cover most needs. A streaming table processes each new input row once, which suits ingestion and append-only data. A materialized view recomputes (incrementally when possible) so it always matches its sources, which suits joins and aggregations. Flows let several sources feed one table.
+Three datasets cover most needs. A streaming table processes each new input row once, which suits ingestion and append-only data. A materialized view has batch semantics: it is refreshed, incrementally when possible, so it always matches its sources, which suits joins and aggregations. A view is computed on demand inside the pipeline and stores nothing.
 
 <!-- example -->
 
@@ -1183,13 +1340,17 @@ CREATE OR REFRESH MATERIALIZED VIEW gold_sales_by_day
 AS SELECT order_date, sum(amount) AS sales FROM silver_orders GROUP BY order_date;
 ```
 
-#### What are Lakeflow Declarative Pipelines (formerly Delta Live Tables)?
+#### What are Lakeflow pipelines (formerly Delta Live Tables)?
 
-A declarative framework where you define tables and the queries that produce them, in SQL or Python, and Databricks works out the dependencies, orchestrates the execution, manages the infrastructure, retries failures and applies data quality expectations. The engine was contributed to Apache Spark as Spark Declarative Pipelines.
+Databricks' declarative framework for batch and streaming pipelines: you define tables and the queries that produce them, in SQL or Python, and Databricks works out the dependencies, orchestrates the execution, manages the infrastructure, retries failures and applies data quality expectations. The product was called Delta Live Tables (DLT), then Lakeflow Declarative Pipelines in 2025, and now Lakeflow pipelines. It is built on Apache Spark Declarative Pipelines (SDP), which Databricks contributed to Apache Spark 4.1. Existing DLT code keeps working, and classic SKUs and event log names still use `dlt`.
+
+#### What is a pipeline made of?
+
+Source files (SQL or Python, by default in a `transformations` folder under the pipeline's root folder) that define flows, streaming tables, materialized views, views and sinks, plus settings: compute, default catalog and schema, trigger mode, parameters, run-as identity and notifications. Files can be in any order, because the pipeline resolves dependencies itself. You edit them in the Lakeflow Pipelines Editor, which can run the whole pipeline, one file or one table.
 
 #### What is the difference between a streaming table and a materialized view?
 
-A streaming table processes each input row once, appending or upserting incrementally, which suits ingestion and append-only data. A materialized view stores the result of a query and is refreshed (incrementally when possible) so it always reflects its sources, which suits aggregations and joins over changing data.
+A streaming table processes each input row once, appending or upserting incrementally, which suits ingestion and append-only data. A materialized view stores the result of a query and is refreshed (incrementally when possible) so it always reflects its sources, which suits aggregations and joins over changing data. Changing a streaming table's query only affects rows processed afterward; a materialized view applies the new query to everything at its next refresh.
 
 ```sql
 CREATE OR REFRESH STREAMING TABLE bronze_orders
@@ -1199,9 +1360,17 @@ CREATE OR REFRESH MATERIALIZED VIEW gold_daily_sales
 AS SELECT order_date, sum(amount) AS sales FROM silver_orders GROUP BY order_date;
 ```
 
-#### How do you write a declarative pipeline in Python?
+#### How does a materialized view refresh incrementally?
 
-With the `pipelines` module (formerly `dlt`): decorated functions return DataFrames, and the decorators declare tables and expectations.
+On each update, Databricks' incremental engine (Enzyme) checks what changed in the sources and, when the query allows it, updates only the affected rows. Otherwise it recomputes the whole result. Results are always correct either way; only the cost differs. Incremental refresh requires serverless compute, and not every query can be refreshed incrementally (some UDFs and non-deterministic functions force a full recompute).
+
+#### What is a view in a pipeline?
+
+A dataset (`CREATE TEMPORARY VIEW`, or `@dp.temporary_view` in Python) that is evaluated on demand and not stored. It breaks complex logic into steps and can carry expectations to validate intermediate results, but it can only be used inside the same pipeline.
+
+#### How do you write a pipeline in Python?
+
+With the `pyspark.pipelines` module (formerly `dlt`, which still works): decorated functions return DataFrames. `@dp.table` defines a streaming table from a streaming DataFrame, `@dp.materialized_view` a materialized view from a batch DataFrame, and `@dp.temporary_view` a view. Expectations are further decorators.
 
 ```python
 from pyspark import pipelines as dp
@@ -1210,19 +1379,23 @@ from pyspark import pipelines as dp
 @dp.expect_or_drop("valid_amount", "amount >= 0")
 def silver_orders():
     return spark.readStream.table("bronze_orders").dropDuplicates(["order_id"])
+
+@dp.materialized_view
+def gold_sales_by_day():
+    return spark.read.table("silver_orders").groupBy("order_date").sum("amount")
 ```
-
-#### What is a flow in a declarative pipeline?
-
-A unit of processing that writes into a target table. A streaming table can have several append flows (for example one per source region), which lets you add sources without a full refresh.
 
 #### Where do pipeline tables live?
 
-In the Unity Catalog catalog and schema configured for the pipeline (and other schemas if fully qualified names are used). They are ordinary Delta tables for readers, but only the pipeline should write to them.
+In Unity Catalog, in the pipeline's default catalog and schema (or elsewhere when fully qualified names are used). They are managed Delta tables that anyone with grants can read, maintained by predictive optimization, but only the pipeline that defines them can write to them. Their backing internal tables sit in a hidden `__databricks_internal` catalog.
 
-#### When would you not use declarative pipelines?
+#### What are standalone streaming tables and materialized views?
 
-When you need fine-grained control over every step, logic that doesn't fit the declarative model (complex procedural code, calls to external systems per batch), or portability to plain Spark jobs. Many teams use plain jobs with Delta and `MERGE` and get the same results with more code.
+Streaming tables and materialized views created directly in Databricks SQL (or a serverless notebook) instead of inside a pipeline. Databricks creates and manages a pipeline for each one behind the scenes (shown with type `MV/ST` under Jobs & Pipelines), and you refresh them on demand or with `SCHEDULE`. They give analysts incremental tables without setting up a pipeline.
+
+#### What are the limitations of streaming tables and materialized views?
+
+Each is owned by one pipeline, and other pipelines or jobs can't write to it. They can't be the source or target of a deep or shallow clone. Non-admins need the `REFRESH` privilege to see the backing pipeline. Streaming tables need bounded streams (or a watermark) to avoid memory pressure, and their stream-static joins don't recompute when a dimension changes.
 
 <!-- challenge -->
 
@@ -1236,20 +1409,107 @@ Ingest orders and refunds as streaming tables (each event processed once). Compu
 
 - Declare tables and queries; the engine handles order, retries and compute.
 - Streaming tables process each row once; materialized views stay correct as sources change.
-- Use flows to add sources to a table without a full refresh.
+- Python uses `@dp.table`, `@dp.materialized_view` and `@dp.temporary_view`.
 
-<!-- unit: Quality, CDC and running pipelines -->
+<!-- unit: Flows, sinks and targeted refreshes -->
 
 <!-- goals -->
 
-- Add expectations and CDC handling to a pipeline.
-- Run, monitor and refresh a pipeline safely.
+- Use flows to combine sources, backfill and write outside Databricks.
+- Choose between a REPLACE WHERE flow and a materialized view.
 
 <!-- concept -->
 
-Expectations declare quality rules on a table, with a policy for violations: record them, drop the row or fail the update. `AUTO CDC` applies a change feed with keys and sequencing, handling out-of-order events and SCD Type 2 history without `MERGE` code.
+Behind every table in a pipeline is at least one flow: a query that reads a source and writes to a target, as a batch or a stream. Usually the flow is implicit, created with the table. Explicit flows let several sources feed one table (fan-in), add a source without a full refresh, or load history once with a backfill flow.
 
-Operationally, triggered mode runs and stops; continuous mode stays up. Development mode iterates quickly, the event log records everything, and a full refresh rebuilds a table from scratch, which is powerful but costly and risky when the source no longer keeps its history.
+Targets aren't limited to Unity Catalog tables. Sinks write a stream to Kafka, Event Hubs, external Delta tables or custom Python destinations. For batch work that rewrites a recent window, a REPLACE WHERE flow refreshes only the rows that match a predicate.
+
+<!-- example -->
+
+```sql
+CREATE OR REFRESH STREAMING TABLE all_orders;
+
+CREATE FLOW orders_us AS INSERT INTO all_orders BY NAME SELECT * FROM STREAM us_orders;
+CREATE FLOW orders_eu AS INSERT INTO all_orders BY NAME SELECT * FROM STREAM eu_orders;
+-- one-time backfill of the archive
+CREATE FLOW orders_archive AS INSERT INTO ONCE all_orders BY NAME
+SELECT * FROM archive.orders_2020_2024;
+```
+
+#### What is a flow in a pipeline?
+
+A query plus a target: it reads a source, applies the logic and writes to a streaming table, materialized view or sink, with batch or streaming semantics. Defining a table with a query creates a default flow with the same name. Explicit flows (`CREATE FLOW`, `@dp.append_flow`) are defined apart from the target, so several of them can write to one table.
+
+#### What types of flows exist?
+
+Append flows (the most common: new source rows are appended to the target on each update), `AUTO CDC` flows (apply change data to a streaming table), materialized view flows (batch, recomputed incrementally when possible), update flows (Python only, in preview: emit changed rows of a streaming aggregation to a sink) and REPLACE WHERE flows (replace the rows that match a predicate).
+
+#### How do you backfill history into a streaming table?
+
+Add an append flow with `ONCE` (`INSERT INTO ONCE` in SQL, `once=True` in Python) that reads the historical source as a batch. It runs one time and is only run again after a full refresh of the target, while the regular streaming flows continue.
+
+#### Why use several append flows instead of a `UNION`?
+
+With a `UNION` in one query, adding a source changes the query and may require a full refresh. With one append flow per source (fan-in), you add or remove a source without touching the others or reprocessing their data, and each flow keeps its own checkpoint.
+
+#### What is a sink in a pipeline?
+
+A streaming target outside pipeline-managed tables: Kafka topics, Azure Event Hubs, Unity Catalog external or path-based Delta tables, or any destination through a Python custom data source or `foreach_batch_sink`. You create it with `dp.create_sink` and write to it with an append flow. Sinks are Python only, accept only streaming append (or update) flows, don't support expectations, and a full refresh doesn't clean data already written to them.
+
+```python
+dp.create_sink("orders_out", "kafka",
+               {"kafka.bootstrap.servers": "broker:9092", "topic": "orders_enriched"})
+
+@dp.append_flow(target="orders_out")
+def publish_orders():
+    return (spark.readStream.table("silver_orders")
+            .selectExpr("CAST(order_id AS STRING) AS key", "to_json(struct(*)) AS value"))
+```
+
+#### When do you use sinks?
+
+For reverse ETL and operational uses: pushing enriched events back to Kafka for an application, writing to a Delta table outside the pipeline's catalog, or feeding a store Databricks doesn't support natively. `foreach_batch_sink` covers upserts and writing one batch to several destinations.
+
+#### What is a REPLACE WHERE flow?
+
+A batch flow that deletes the target rows matching a predicate and replaces them by rerunning the source query for that range only, leaving other rows untouched. Its cost depends on the size of the range, not the table, which suits ETL that rewrites the last few days. It was in Beta in 2026 and needs serverless for incremental refresh.
+
+```sql
+CREATE STREAMING TABLE orders_enriched
+FLOW REPLACE WHERE order_date >= date_add(current_date(), -7) BY NAME
+SELECT o.*, p.product_name FROM orders_fct o JOIN product_dim p USING (product_id);
+```
+
+#### When do you prefer a REPLACE WHERE flow over a materialized view?
+
+When the target must keep data longer than the source retains it, when a dimension change should not recompute all history, when the schema evolves without recomputing everything, or when you want a predictable cost per refresh. A materialized view keeps the whole result correct but may fall back to a full recompute. Protect the table from full refreshes (`pipelines.reset.allowed = false`), because a full refresh keeps only the current predicate's range.
+
+<!-- challenge -->
+
+A pipeline must load 5 years of history from an archive table once, then keep up with a Kafka topic, and also publish every cleaned order to another Kafka topic for the order-tracking app. Sketch the flows.
+
+<!-- solution -->
+
+One streaming table, `orders`, fed by two append flows: a streaming flow from the Kafka topic and a `ONCE` backfill flow from the archive. Then a sink created with `dp.create_sink` for the outgoing topic, written by an append flow that reads `orders` as a stream and serializes each row to JSON.
+
+<!-- takeaways -->
+
+- Every table has at least one flow; explicit flows allow fan-in and backfills.
+- Sinks write streams outside the pipeline's tables, from Python only.
+- REPLACE WHERE flows refresh a predicate's range at a cost bounded by that range.
+
+<!-- unit: Change data capture with AUTO CDC -->
+
+<!-- goals -->
+
+- Apply a change feed or a series of snapshots to a target table.
+- Keep SCD Type 1 or Type 2 history without `MERGE` code.
+
+<!-- concept -->
+
+Sources that change rows, not just append them, send either a change feed (one row per insert, update or delete) or full snapshots. Applying either correctly by hand means a `MERGE` that handles out-of-order events, deletes and history.
+
+`AUTO CDC` does it declaratively. You give the keys and a sequencing column, and the flow orders events by sequence, not arrival, applies deletes and truncates, and stores the result as SCD Type 1 (latest state) or Type 2 (one row per version). `AUTO CDC FROM SNAPSHOT` compares consecutive snapshots to infer the changes when the source has no change feed.
 
 <!-- example -->
 
@@ -1259,30 +1519,115 @@ CREATE OR REFRESH STREAMING TABLE silver_customers;
 CREATE FLOW customers_cdc AS AUTO CDC INTO silver_customers
 FROM STREAM bronze_customer_changes
 KEYS (customer_id)
-SEQUENCE BY change_ts
 APPLY AS DELETE WHEN op = 'D'
-STORED AS SCD TYPE 2;
+SEQUENCE BY change_ts
+COLUMNS * EXCEPT (op, change_ts)
+STORED AS SCD TYPE 2
+TRACK HISTORY ON * EXCEPT (last_login);
+```
+
+#### How do you handle CDC in Lakeflow pipelines?
+
+With `AUTO CDC` (formerly `APPLY CHANGES INTO`, same syntax), which applies a change feed to a streaming table using keys and a sequencing column, handles out-of-order events and deletes, and can keep history as SCD Type 1 or Type 2 without writing `MERGE` logic. It needs the Pro or Advanced edition (or serverless), and it isn't part of open-source Spark Declarative Pipelines.
+
+```python
+from pyspark.sql.functions import col, expr
+
+dp.create_streaming_table("silver_customers")
+dp.create_auto_cdc_flow(
+    target="silver_customers", source="bronze_customer_changes",
+    keys=["customer_id"], sequence_by=col("change_ts"),
+    apply_as_deletes=expr("op = 'D'"),
+    except_column_list=["op", "change_ts"],
+    stored_as_scd_type=2)
+```
+
+#### How does `AUTO CDC` handle out-of-order events?
+
+It orders changes by the `SEQUENCE BY` column, not by arrival time. A late event with a lower sequence value than the one already applied doesn't overwrite the newer state (in SCD Type 2, it is placed in history at the right point). For ties, sequence by a struct (`SEQUENCE BY STRUCT(change_ts, change_id)`): fields are compared in order. The sequencing column must be sortable and can't be null.
+
+#### What does SCD Type 2 look like in an `AUTO CDC` target?
+
+Each version of a key is a row with `__START_AT` and `__END_AT` columns, taken from the sequencing values; the current row has a null `__END_AT`. `TRACK HISTORY ON` (or `track_history_except_column_list`) chooses which columns create a new version; changes to other columns update the current row in place.
+
+#### What are `APPLY AS DELETE` and `APPLY AS TRUNCATE`?
+
+Conditions that mark change rows as deletes (remove the key) or truncates (clear the target up to that sequence point). In SCD Type 2, a delete closes the current version instead of erasing history.
+
+#### What is `AUTO CDC FROM SNAPSHOT`?
+
+A flow for sources that only provide full snapshots, such as a nightly table dump. It compares each snapshot with the previous one, in ascending version order, and infers inserts, updates and deletes (keys missing from a newer snapshot are deleted). In SQL, `FROM SNAPSHOT (query) WITH VERSION (query)` sets the snapshot and its version; in Python, `create_auto_cdc_from_snapshot_flow`. Expectations aren't supported on it.
+
+#### How do you read changes downstream of an `AUTO CDC` table?
+
+Not by streaming the table directly, since it receives updates and deletes, which a streaming read of a table doesn't accept. Read its change data feed instead, or build the downstream dataset as a materialized view.
+
+<!-- challenge -->
+
+A vendor sends a full export of 2 million products every night, with no change flags. You need the current catalog plus the history of price changes. What do you build?
+
+<!-- solution -->
+
+An `AUTO CDC FROM SNAPSHOT` flow into a streaming table keyed by `product_id`, with the export date as the snapshot version, stored as SCD Type 2 and tracking history on `price` (and other attributes that matter). Products missing from a snapshot are closed as deleted. The current catalog is the rows where `__END_AT` is null.
+
+<!-- takeaways -->
+
+- `AUTO CDC` replaces hand-written `MERGE` for change feeds.
+- Sequencing, not arrival order, decides the final state.
+- Snapshots without change flags can still produce CDC and SCD Type 2.
+
+<!-- unit: Quality and running pipelines -->
+
+<!-- goals -->
+
+- Add expectations to a pipeline and act on their metrics.
+- Run, validate, monitor and refresh a pipeline safely.
+
+<!-- concept -->
+
+Expectations declare quality rules on a dataset, with a policy for violations: keep and record them, drop the row or fail the update. Their metrics land in the event log.
+
+Operationally, triggered mode processes what is available and stops; continuous mode stays up. Manual runs from the editor reuse the cluster and skip retries so you see errors at once; job and API runs restart and retry. A dry run validates definitions without writing data. A full refresh rebuilds a table from scratch, which is powerful but costly and risky when the source no longer keeps its history.
+
+<!-- example -->
+
+```python
+rules = {"valid_id": "order_id IS NOT NULL", "valid_amount": "amount >= 0"}
+
+@dp.table
+@dp.expect_all_or_drop(rules)          # drop rows that break any rule
+@dp.expect("recent", "order_date >= '2020-01-01'")   # only record violations
+def silver_orders():
+    return spark.readStream.table("bronze_orders")
 ```
 
 #### What are expectations?
 
-Data quality rules declared on a pipeline table. Each row is checked, and the policy decides what happens on a violation: keep and record it (`EXPECT`), drop the row (`ON VIOLATION DROP ROW`) or fail the update (`ON VIOLATION FAIL UPDATE`). Metrics are visible in the pipeline UI and event log.
+Data quality rules declared on a streaming table, materialized view or view. Each row is checked against a SQL boolean condition, and the policy decides what happens on a violation: keep and record it (`EXPECT`, the default), drop the row (`ON VIOLATION DROP ROW`) or fail the update (`ON VIOLATION FAIL UPDATE`, which rolls back the transaction). Warn and drop metrics are visible in the pipeline UI and the event log. Conditions can't call Python functions or query other tables.
 
 ```sql
 CONSTRAINT valid_amount EXPECT (amount >= 0) ON VIOLATION DROP ROW
 ```
 
-#### How do you handle CDC in declarative pipelines?
+#### How do you reuse a set of expectations across tables?
 
-With `AUTO CDC` (formerly `APPLY CHANGES INTO`), which applies a change feed to a target table using a key and a sequencing column, handles out-of-order events and deletes, and can keep history as SCD Type 1 or Type 2 without writing `MERGE` logic.
+In Python, put the rules in a dictionary (or load them from a table or file) and apply them with `@dp.expect_all`, `@dp.expect_all_or_drop` or `@dp.expect_all_or_fail`. Keeping rules in one place makes them reviewable and consistent.
 
 #### What is the difference between triggered and continuous pipeline mode?
 
-Triggered mode processes the available data and stops (cheaper, for batch schedules). Continuous mode keeps the pipeline running to process data with low latency.
+Triggered mode (the default) processes the data available at the start of the update and stops, which is cheaper and suits batch schedules. Continuous mode keeps the pipeline running to process data with low latency; in production, run it from a continuous job so it restarts on failure.
 
-#### What is development mode in a pipeline?
+#### What replaced development mode in pipelines?
 
-A mode that reuses the cluster between updates and disables retries, so you iterate quickly and see errors at once. Production mode restarts the cluster on recoverable errors and retries.
+The run behavior now depends on how an update starts. Manual runs from the UI and editor use fast start: the cluster is reused (it stays up two hours by default) and retries are off, so errors surface at once, which is what the older development mode toggle did. Job, API and continuous updates restart the cluster on recoverable errors, retry, and shut down after the run, like the older production mode. "Run now with different settings" overrides it for one run.
+
+#### What is a dry run of a pipeline?
+
+A validation update that resolves all dataset and flow definitions (table names, columns, dependencies, syntax) without materializing or publishing any data. It catches mistakes in seconds instead of after a long update.
+
+#### Can you refresh only part of a pipeline?
+
+Yes. You can refresh selected tables from the editor or UI, or use "Refresh failed tables" to rerun only failed tables and their downstream dependencies. For streaming flows, the API can reset the checkpoint of selected flows without clearing their data.
 
 #### What is the pipeline event log?
 
@@ -1290,11 +1635,15 @@ A Delta table recording every event of a pipeline: updates, flow progress, data 
 
 #### What is a full refresh of a pipeline table?
 
-Truncating the table and reprocessing all source data from the beginning, including resetting streaming checkpoints. It is needed after logic changes that must apply to history, but can be costly and can lose data if the source retention is shorter than the history.
+For a materialized view, a full recompute. For a streaming table, clearing its data and checkpoints and reprocessing all source data from the beginning. It is needed after logic changes that must apply to history, but it can be costly and can lose data if the source retention is shorter than the history. Set `pipelines.reset.allowed = false` on tables that must never be fully refreshed.
 
-#### How is a declarative pipeline billed?
+#### Whose identity does a pipeline run as?
 
-Through pipeline compute (serverless or classic) at the pipeline product tier (Core, Pro, Advanced), with higher tiers adding CDC and expectations. Serverless pipelines are billed per use and are the default.
+By default its owner's. You can change the run-as identity to a service principal (recommended for production), another user or a group; published tables are then owned by the new identity. This keeps pipelines running when the creator leaves.
+
+#### How is a pipeline billed?
+
+Through pipeline compute (serverless or classic) at a product edition: Core (streaming ingestion), Pro (adds CDC) and Advanced (adds expectations). Serverless pipelines include all features, are billed per use and are recommended for new pipelines; on classic compute, use enhanced autoscaling.
 
 <!-- challenge -->
 
@@ -1302,13 +1651,13 @@ A teammate wants to run a full refresh on the bronze table because of a parsing 
 
 <!-- solution -->
 
-A full refresh truncates the table and replays the source from the start, but Kafka only has 7 days: older history would be lost. Fix the parsing in silver instead, or reprocess only recent data, and keep bronze (or the raw files) as the long-term copy.
+A full refresh truncates the table and replays the source from the start, but Kafka only has 7 days: older history would be lost. Fix the parsing in silver instead, or reprocess only recent data, keep bronze (or the raw files) as the long-term copy, and set `pipelines.reset.allowed = false` on bronze so nobody does it by accident.
 
 <!-- takeaways -->
 
 - Expectations make quality rules visible and enforceable.
-- `AUTO CDC` replaces hand-written `MERGE` for change feeds.
-- Full refreshes replay sources; check source retention first.
+- Manual runs fail fast; job runs retry. Dry runs validate without writing.
+- Full refreshes replay sources; check source retention first, or block them.
 
 ### Jobs and orchestration
 
@@ -1321,7 +1670,7 @@ A full refresh truncates the table and replays the source from the start, but Ka
 
 <!-- concept -->
 
-A job is a DAG of tasks: notebooks, scripts, SQL, dbt, pipelines or other jobs, each with dependencies, compute, retries and timeouts. Triggers start it on a schedule, when files arrive or when a source table updates. Control-flow tasks add loops (For each) and branches (If/else).
+A job is a DAG of tasks: notebooks, scripts, SQL, dbt, pipelines or other jobs, each with dependencies, compute, retries and timeouts. Triggers start it on a schedule, when files arrive or when a source table updates. Control-flow tasks add loops (For each) and branches (If/else), and "Run if" conditions decide what runs after a failure.
 
 If the workflow lives mostly in Databricks, Jobs is simpler and cheaper than an external orchestrator. Airflow earns its place when the DAG spans many systems.
 
@@ -1355,7 +1704,23 @@ It runs a nested task once per item of a list (for example a list of countries o
 
 #### What is the If/else condition task used for?
 
-Branching a job based on a value, such as a task value or parameter: for example, skip the publish step when a data quality task reports zero valid rows.
+Branching a job based on a value, such as a task value, job parameter or dynamic value, compared with `==`, `!=`, `>`, `>=`, `<` or `<=`: for example, skip the publish step when a data quality task reports zero valid rows.
+
+#### What are "Run if" dependencies?
+
+A per-task setting that decides when a task runs based on how its upstream tasks finished: all succeeded (the default), at least one succeeded, none failed, all done, at least one failed, or all failed. "All done" suits cleanup tasks, and "at least one failed" suits a custom alert or rollback task.
+
+#### What does disabling a task do?
+
+It skips the task at run time without deleting it, keeping its configuration and run history. Downstream tasks are then evaluated against their "Run if" conditions. It is useful for pausing one step, such as an export, while the rest of the job keeps running.
+
+#### How do you manage jobs as code?
+
+With Declarative Automation Bundles (YAML in Git, deployed by the CLI), or with the Databricks CLI, SDKs, Jobs REST API or Terraform. Job definitions can also pull task code from a Git reference. Defining jobs in the UI is fine for exploration but not for production.
+
+#### What limits should you know for Lakeflow Jobs?
+
+Per workspace: 2,000 concurrent task runs (more returns HTTP 429), 10,000 jobs created per hour (including runs submit) and 12,000 saved jobs. A job can hold up to 1,000 tasks. Very large DAGs are usually a sign to split work into several jobs linked with Run Job tasks or table update triggers.
 
 #### Should you orchestrate Databricks with Airflow or with Jobs?
 
@@ -1422,6 +1787,10 @@ With the maximum concurrent runs setting (usually 1 for jobs that write the same
 #### How do you get alerted when a job fails or is slow?
 
 Configure notifications (email, Slack, Teams, PagerDuty, webhooks) on start, success, failure and duration thresholds, and set a timeout and maximum concurrent runs. System tables on job runs let you build longer-term reliability dashboards.
+
+#### How do you observe jobs, pipelines and ingestion across a workspace?
+
+Combine the run UIs (per-task logs, metrics and timelines) with system tables: the `system.lakeflow` schema records jobs, tasks and run timelines across the account, `system.billing.usage` adds cost per job or pipeline, and each pipeline's event log gives flow progress, data quality and errors. Dashboards and SQL alerts on these tables catch failing, slow or expensive workloads before users notice.
 
 #### How do you run a job for a backfill of many dates?
 
@@ -2022,12 +2391,12 @@ First, DBUs (or cost) per SKU for this month versus last month, to see which pro
 
 <!-- goals -->
 
-- Describe a Databricks project as code with Asset Bundles.
+- Describe a Databricks project as code with Declarative Automation Bundles.
 - Set up testing and deployment through CI/CD.
 
 <!-- concept -->
 
-Production pipelines should be deployed, not clicked together. Databricks Asset Bundles describe jobs, pipelines and their settings in YAML next to the code, with one target per environment. Development targets prefix resources per user and pause schedules; production targets run as a service principal.
+Production pipelines should be deployed, not clicked together. Declarative Automation Bundles (formerly Databricks Asset Bundles) describe jobs, pipelines and their settings in YAML next to the code, with one target per environment. Development targets prefix resources per user and pause schedules; production targets run as a service principal.
 
 A CI pipeline then validates the bundle, runs unit tests on pure transformation functions, deploys to staging for integration tests and promotes to production after approval.
 
@@ -2038,9 +2407,9 @@ pull request ──► lint + pytest (local Spark) ──► bundle validate
 merge to main ──► deploy -t staging ──► integration run ──► approval ──► deploy -t prod
 ```
 
-#### What are Databricks Asset Bundles?
+#### What are Declarative Automation Bundles (formerly Databricks Asset Bundles)?
 
-A way to describe Databricks resources (jobs, pipelines, dashboards, models, permissions) as YAML next to the code in Git, with targets for each environment. The CLI validates, deploys and runs them, which makes Databricks projects deployable through CI/CD.
+A way to describe Databricks resources (jobs, pipelines, dashboards, models, clusters, permissions) as YAML next to the code in Git, with targets for each environment. The CLI validates, previews (`databricks bundle plan`), deploys and runs them, which makes Databricks projects deployable through CI/CD. The 2026 rename kept the `databricks.yml` file and the `databricks bundle` commands unchanged, and the short form is still DABs.
 
 ```yaml
 bundle:
