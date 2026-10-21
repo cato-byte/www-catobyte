@@ -5,7 +5,7 @@
 
 ![dbt study guide: about 200 questions](../../images/dbt_study_guide_title_img.png)
 
-About 200 interview-style questions on dbt (data build tool), from the basics to incremental models, snapshots, testing, deployment and performance. The answers refer to dbt Core 1.x conventions.
+About 200 interview-style questions on dbt (data build tool), from the basics to incremental models, snapshots, testing, deployment and performance. The answers follow current dbt: v2, the Rust engine installed by default, and the YAML conventions shared with dbt v1.10 and later. Where dbt v1 behaves differently, the answer says so.
 
 The guide follows a learning path in four stages. Each section is split into short units: learning goals, a concept explanation and a worked example, then questions (recall first, then application), a practical challenge and key takeaways. To **learn**, read each unit top to bottom. To **review**, switch to review mode or use "Skip to questions", mark answers you want to see again, and try a mixed review across sections.
 
@@ -83,43 +83,47 @@ dbt would derive the run order from `ref()` dependencies and add tests and docum
 
 <!-- goals -->
 
-- Compare dbt with Spark and distinguish dbt Core from the dbt platform.
-- Explain adapters, dbt Fusion and the Semantic Layer.
+- Compare dbt with Spark and distinguish self-hosted dbt from the dbt platform.
+- Explain adapters, dbt v1 and v2, static analysis and the Semantic Layer.
 
 <!-- concept -->
 
-dbt is not an engine. It generates SQL (or Python) and sends it to a platform through an adapter, so the warehouse does the work. That's why it pairs with Spark-based platforms rather than competing with them.
+dbt is not a query engine. It generates SQL (or Python) and sends it to a data platform through an adapter, so the warehouse does the work. That's why it pairs with Spark-based platforms rather than competing with them.
 
-It comes in two forms: the open-source CLI you run yourself, and a managed platform that adds an IDE, scheduling and hosted features. The ecosystem keeps growing, with a faster Rust engine and a semantic layer that defines metrics once for every tool.
+You can run dbt yourself from the command line or use the managed dbt platform, which adds an IDE, scheduling and hosted features. The dbt engine itself comes in two generations: v1, the original Python CLI, and v2, a Rust rewrite (first known as dbt Fusion) that is now the default install. v2 runs the same project code but also understands the SQL it compiles.
 
 <!-- example -->
 
 | Piece | Role |
 |---|---|
-| dbt Core | Open-source CLI: compile, run, test |
-| dbt platform (Cloud) | IDE, jobs, CI, hosted docs, Semantic Layer API |
-| Adapter | Talks to Snowflake, BigQuery, Databricks, Postgres... |
-| dbt Fusion | Rust engine: faster parsing, SQL understanding |
+| dbt v2 | Default engine, written in Rust: fast parsing, SQL comprehension, `dbt lint` |
+| dbt v1 | Original Python engine (formerly dbt Core), still maintained |
+| dbt platform (formerly dbt Cloud) | Studio IDE, jobs, CI, Catalog, Semantic Layer APIs |
+| Adapter | Talks to Snowflake, BigQuery, Databricks, Redshift... |
 
 #### How does dbt compare to Apache Spark?
 
 Spark is a distributed processing engine that you program in Python, Scala or SQL, and you manage its jobs and clusters. dbt is not an engine: it generates SQL and sends it to an engine (Snowflake, BigQuery, Redshift, Databricks, Postgres, and Spark itself through the dbt-spark or dbt-databricks adapters). They are complementary: dbt can orchestrate SQL transformations that Spark executes, while complex non-SQL processing stays in Spark code.
 
-#### What is the difference between dbt Core and dbt Cloud?
+#### What is the difference between self-hosted dbt and the dbt platform?
 
-dbt Core is the open-source command-line tool (Apache 2.0): you install it, run it and orchestrate it yourself. dbt Cloud (now part of the dbt platform) is the managed commercial service: a web IDE, job scheduler, CI, hosted documentation, the semantic layer, alerts, and access control. Both run the same project code.
+Self-hosted dbt is the command-line tool you install (`pip install dbt` or a native installer), run and orchestrate yourself; this is what used to be called dbt Core. The dbt platform (formerly dbt Cloud) is the managed commercial service: Studio IDE, job scheduler, CI jobs, Catalog for documentation and lineage, the Semantic Layer APIs, alerts and access control. Both run the same project code, and the platform supports both engine versions.
+
+#### What are dbt v1 and dbt v2?
+
+The two generations of the dbt engine. dbt v1 is the original Python implementation (the 1.x releases of dbt Core). dbt v2 is a rewrite in Rust, first released as dbt Fusion, and is now what `pip install dbt` installs. Projects carry over, but v2 is stricter: misspelled configs, unknown YAML keys, missing macros and undefined variables fail at parse time instead of being ignored or failing later. In return, v2 parses much faster and adds static analysis, column-level lineage, a built-in linter (`dbt lint`), project checks (`dbt check`) and a language server for the VS Code extension. Both generations produce compatible artifacts, so they can run side by side during a migration.
+
+#### What is static analysis in dbt v2?
+
+After rendering the Jinja, v2 parses each model's SQL into a logical plan without querying the warehouse. That lets it catch SQL errors before anything runs. The `static_analysis` config controls how strict this is. `baseline`, the default, reports problems as warnings. `strict` resolves column types across the whole DAG and fails before execution; it's required for column-level lineage. dbt v1 only renders templates, so SQL errors appear when the warehouse runs the query.
 
 #### What is a dbt adapter?
 
-A plugin that lets dbt talk to a specific data platform, translating dbt's generic operations into that platform's SQL dialect: dbt-postgres, dbt-snowflake, dbt-bigquery, dbt-redshift, dbt-databricks, dbt-spark and many community adapters.
-
-#### What is dbt Fusion?
-
-A new dbt engine written in Rust, introduced in 2025, that parses and compiles projects much faster and understands SQL semantically (column-level lineage, catching errors before they reach the warehouse). It powers the dbt VS Code extension and the dbt platform.
+A plugin that lets dbt talk to a specific data platform, translating dbt's generic operations into that platform's SQL dialect: Snowflake, BigQuery, Databricks, Redshift, Postgres, Spark and many community adapters. In dbt v1 they are Python packages (`dbt-snowflake`, `dbt-bigquery`...). In dbt v2 they connect through ADBC drivers that dbt downloads on first use, so dbt ships as a single binary.
 
 #### What is the dbt Semantic Layer?
 
-A layer, built on MetricFlow, where metrics (revenue, active users) are defined once in YAML on top of semantic models, then queried consistently by BI and other tools through APIs, so every tool computes the metric the same way.
+A layer, built on MetricFlow, where metrics (revenue, active users) are defined once in YAML on top of dbt models, then queried consistently by BI and other tools through APIs, so every tool computes the metric the same way.
 
 <!-- challenge -->
 
@@ -132,8 +136,8 @@ Both: dbt can run SQL (and Python) models on Databricks through the adapter, wit
 <!-- takeaways -->
 
 - dbt generates code; the platform executes it.
-- Core is the CLI; the platform adds managed features.
-- Adapters connect dbt to each data platform.
+- dbt v2 (Rust) is the default engine; v1 is the original Python one.
+- The dbt platform adds managed features on top of either engine.
 
 <!-- unit: Models and the DAG -->
 
@@ -172,11 +176,11 @@ Splitting transformations into small, reusable models with one responsibility ea
 
 #### Which languages can you write dbt models in?
 
-SQL (with Jinja) everywhere, and Python on Snowflake (Snowpark), Databricks and BigQuery (Dataproc). Python models return a DataFrame and are useful for logic that is awkward in SQL.
+SQL (with Jinja) everywhere, and Python on Snowflake (Snowpark), Databricks (PySpark) and BigQuery (BigQuery DataFrames or Dataproc). The Python code runs on the data platform, not on the machine running dbt. Python models return a DataFrame and are useful for logic that is awkward in SQL.
 
 #### What is a Python model in dbt?
 
-A `.py` file defining `model(dbt, session)` that returns a DataFrame. It can reference other models with `dbt.ref()` and is materialized as a table or incremental model.
+A `.py` file defining `model(dbt, session)` that returns a DataFrame. It can reference other models with `dbt.ref()` and is materialized as a table or incremental model; views and ephemeral models aren't possible in Python, and Python models can't reference ephemeral models.
 
 ```python
 def model(dbt, session):
@@ -222,19 +226,19 @@ dbt build --select +fct_orders      # build and test fct_orders and its parents
 
 #### Which commands are the most common in dbt?
 
-`dbt run` (build models), `dbt test` (run tests), `dbt build` (run, test, snapshot and seed in DAG order), `dbt seed`, `dbt snapshot`, `dbt compile`, `dbt docs generate` / `dbt docs serve`, `dbt debug`, `dbt deps`, `dbt clean`, `dbt ls`, `dbt source freshness` and `dbt run-operation`.
+`dbt run` (build models), `dbt test` (run tests), `dbt build` (seeds, models, snapshots and tests in DAG order), `dbt seed`, `dbt snapshot`, `dbt compile`, `dbt show`, `dbt retry`, `dbt docs generate` / `dbt docs serve`, `dbt debug`, `dbt deps`, `dbt clean`, `dbt ls`, `dbt run-operation` and `dbt source freshness`. dbt v2 adds `dbt freshness` (sources and models), `dbt check` (project standards) and `dbt lint` (SQL style).
 
 #### What does `dbt build` do?
 
-It runs seeds, models, snapshots and tests in DAG order. If a test fails on a node, the nodes downstream of it are skipped, so bad data doesn't propagate.
+It runs seeds, models, snapshots and their tests in DAG order, testing each node right after building it. If a test with `error` severity fails, the nodes downstream are skipped, so bad data doesn't propagate. In dbt v2, `dbt build` also runs all unit tests first and evaluates project checks before any warehouse work.
 
 #### What is `dbt debug` used for?
 
-It checks the installation, `dbt_project.yml`, `profiles.yml` and the connection to the warehouse. It is the first thing to run when nothing works.
+It checks the installation, `dbt_project.yml`, `profiles.yml`, required dependencies such as `git`, and the connection to the warehouse. It is the first thing to run when nothing works.
 
 #### What is the difference between `dbt run` and `dbt compile`?
 
-`dbt compile` renders the Jinja and writes the resulting SQL to `target/compiled/` without executing anything. `dbt run` compiles and executes, writing the executed statements (with DDL) to `target/run/`.
+`dbt compile` renders the Jinja and writes the resulting SQL to `target/compiled/` without building anything. It still connects to the warehouse when models need introspection (for example `run_query`). `dbt run` compiles and executes, writing the executed statements (with DDL) to `target/run/`.
 
 <!-- challenge -->
 
@@ -292,7 +296,7 @@ The project name, version, `profile` to use, paths (models, seeds, macros…), `
 
 #### What is `profiles.yml`?
 
-The file (by default in `~/.dbt/`) holding connection details per profile and target: adapter type, host, database, schema, credentials and threads. It is kept out of the project repository because it contains secrets. Values can come from environment variables with `env_var()`.
+The file holding connection details per profile and target: adapter type, host, database, schema, credentials and threads. dbt looks for it in the directory given by `--profiles-dir` or `DBT_PROFILES_DIR`, then in the project directory, then in `~/.dbt/`. It contains connection secrets, so either keep it out of the repository or commit a version that reads every secret with `env_var()`.
 
 #### What is a target in dbt?
 
@@ -300,11 +304,11 @@ A named connection configuration within a profile, such as `dev` and `prod`. You
 
 #### What are threads in dbt?
 
-The maximum number of models dbt runs at the same time. Independent branches of the DAG run in parallel up to that limit.
+The maximum number of nodes dbt builds at the same time. Independent branches of the DAG run in parallel up to that limit. dbt v2 manages parallelism itself on Snowflake and Databricks, where `threads` only acts as a cap, and treats `threads: 0` (or no value) as "optimize automatically" on BigQuery and Redshift.
 
 #### How do you use environment variables in dbt?
 
-With `{{ env_var('DBT_PASSWORD') }}`, optionally with a default value. They're commonly used in `profiles.yml` for credentials, and variables prefixed `DBT_ENV_SECRET_` are masked in logs.
+With `{{ env_var('DBT_PASSWORD') }}`, optionally with a default value: `{{ env_var('DBT_SCHEMA', 'dbt_dev') }}`. They're commonly used in `profiles.yml` for credentials. Variables prefixed `DBT_ENV_SECRET_` are scrubbed from logs and can only be used in `profiles.yml` and `packages.yml`, not in models.
 
 <!-- challenge -->
 
@@ -353,7 +357,7 @@ select * from {{ ref('int_orders') }}
 
 #### What is the difference between configs and properties?
 
-Configs control how dbt builds a node (materialization, schema, tags, hooks). Properties describe it (description, columns, tests, docs). Properties live in YAML files; configs can live in YAML, the model file or `dbt_project.yml`.
+Configs control how dbt builds and manages a node (materialization, schema, tags, meta, hooks, access). Properties describe it (description, columns, tests, docs). Properties live in YAML files; configs can live in YAML under a `config:` key, in the model file or in `dbt_project.yml`, and cascade from general to specific. Since dbt v1.10, configs such as `tags`, `meta` and `access` belong under `config:` in YAML, and dbt v2 rejects them at the top level. Only configs can be used in selection, with `--select config.materialized:incremental`.
 
 #### What are tags used for?
 
@@ -371,7 +375,7 @@ dbt test --select source:stripe+        # tests on a source and everything downs
 
 #### What are variables (`vars`) in dbt?
 
-Values defined in `dbt_project.yml` or passed on the command line (`--vars '{start_date: 2026-01-01}'`) and read with `{{ var('start_date') }}`.
+Values defined in `dbt_project.yml` or passed on the command line (`--vars '{start_date: 2026-01-01}'`) and read with `{{ var('start_date') }}`, optionally with a default: `{{ var('start_date', '2020-01-01') }}`. Command-line values override the project file. A variable with no value and no default is an error (at parse time in dbt v2).
 
 <!-- challenge -->
 
@@ -413,7 +417,7 @@ By default dbt appends a custom schema to the target schema, which protects deve
 {%- endmacro %}
 ```
 
-#### What is project structure?
+#### How is a dbt project usually structured?
 
 The recommended layout:
 
@@ -428,6 +432,8 @@ snapshots/    SCD Type 2 history
 macros/       reusable Jinja
 tests/        singular data tests
 analyses/     SQL that is compiled but not run
+functions/    user-defined functions (UDFs)
+checks/       project standards checked by dbt check (dbt v2)
 ```
 
 #### How does dbt decide which schema a model is built in?
@@ -444,7 +450,7 @@ SQL files in `analyses/` that are compiled (Jinja and `ref` resolved) but never 
 
 #### What does `dbt clean` do?
 
-It deletes the folders listed in `clean-targets` (usually `target/` and `dbt_packages/`).
+It deletes the folders listed in `clean-targets` (usually `target/` and `dbt_packages/`). dbt v2 refuses to delete anything outside the project directory or inside resource paths such as `models/`.
 
 <!-- challenge -->
 
@@ -483,15 +489,16 @@ packages:
 # models/marts/_marts.yml
 models:
   - name: fct_orders
-    access: public
-    group: finance
+    config:
+      access: public
+      group: finance
     latest_version: 2
     versions: [{v: 1}, {v: 2}]
 ```
 
 #### What are packages, and how do you install them?
 
-Reusable dbt projects (macros, models, tests) such as `dbt_utils`, `dbt_expectations` or `codegen`. You list them in `packages.yml` (or `dependencies.yml`) and run `dbt deps`.
+Reusable dbt projects (macros, models, tests) such as `dbt_utils`, `dbt_expectations` or `codegen`. You list them in `packages.yml` and run `dbt deps`, which installs them into `dbt_packages/` and pins the resolved versions in `package-lock.yml`. `dependencies.yml` can hold both packages and cross-project dependencies (dbt Mesh), but dbt v1 doesn't render Jinja in it, so private packages that need a token from an environment variable stay in `packages.yml`.
 
 #### What is `dbt_utils`?
 
@@ -499,11 +506,11 @@ The most used package, with generic tests (`unique_combination_of_columns`, `exp
 
 #### What are model access and groups?
 
-Governance features. A model's `access` can be `private` (only referenced within its group), `protected` (within the project, the default) or `public` (by other projects). Groups assign ownership to a set of models.
+Governance features. A model's `access` config can be `private` (only referenced within its group), `protected` (within the project or when installed as a package; the default) or `public` (also by other projects). Groups gather related models under one owner. dbt Labs recommends `private` for new models that aren't designed for sharing.
 
 #### What are model versions?
 
-A way to publish a new version of a public model (`fct_orders_v2`) while consumers keep using the old one until they migrate, with `ref('fct_orders', v=1)`.
+A way to publish a breaking change to a public model as a new version while consumers keep using the old one until they migrate. Each version lives in its own file (`fct_orders_v1.sql`, `fct_orders_v2.sql`). `ref('fct_orders', v=1)` pins a version, and a plain `ref('fct_orders')` resolves to `latest_version`. Old versions can get a `deprecation_date` so consumers are warned.
 
 <!-- challenge -->
 
@@ -515,7 +522,7 @@ Put your models in a group, mark intermediate models `private` (or `protected`) 
 
 <!-- takeaways -->
 
-- Packages bring tested tests and macros.
+- Packages bring ready-made tests and macros.
 - Access and groups define model interfaces.
 - Versions let breaking changes coexist.
 
@@ -543,10 +550,11 @@ sources:
   - name: shop
     database: raw
     schema: shop
-    loaded_at_field: _loaded_at
-    freshness:
-      warn_after: {count: 6, period: hour}
-      error_after: {count: 24, period: hour}
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after: {count: 6, period: hour}
+        error_after: {count: 24, period: hour}
     tables:
       - name: orders
         columns:
@@ -565,10 +573,11 @@ sources:
     schema: stripe
     tables:
       - name: payments
-        loaded_at_field: _loaded_at
-        freshness:
-          warn_after: {count: 12, period: hour}
-          error_after: {count: 24, period: hour}
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
 ```
 
 #### Why use `source()` rather than writing the table name?
@@ -577,7 +586,7 @@ The table location is defined in one place, lineage starts from the source in th
 
 #### What is source freshness?
 
-A check, run with `dbt source freshness`, that compares the maximum of the `loaded_at_field` with the current time and warns or errors when data is older than the configured thresholds.
+A check that compares the most recent load time of a source with the current time and warns or errors when data is older than the `warn_after` and `error_after` thresholds. dbt reads the maximum of `loaded_at_field` (or the result of a custom `loaded_at_query`), or uses warehouse metadata when neither is set and the platform supports it. Since dbt v1.10, `freshness` and `loaded_at_field` go under `config:`, at source level as defaults or per table as overrides.
 
 #### Can you test sources?
 
@@ -585,7 +594,11 @@ Yes, generic tests can be declared on source columns exactly as on models, catch
 
 #### What is `dbt source freshness` used for in production?
 
-To detect broken or late ingestion before models run on stale data, often as the first step of a scheduled job.
+To detect broken or late ingestion before models run on stale data, often as the first step of a scheduled job. Its results go to `target/sources.json`.
+
+#### What is model freshness, and what does `dbt freshness` do?
+
+dbt v2 extends freshness to models: you set `warn_after` and `error_after` (and a `loaded_at_field` or `loaded_at_query`) in a model's config, and `dbt freshness` checks every source and model with freshness configured in one command, writing `target/freshness.json`. `dbt source freshness` still works but only checks sources. Model freshness is useful on models that consumers query directly, where "the job succeeded" doesn't prove the data is recent.
 
 #### What is the difference between `ref()` and `source()`?
 
@@ -691,7 +704,7 @@ seeds:
 dbt seed --select country_codes --full-refresh
 ```
 
-#### What is seed?
+#### What is a seed?
 
 A CSV file in the `seeds/` folder that `dbt seed` loads into the warehouse as a table. Models reference it with `ref()` like any model.
 
@@ -701,7 +714,7 @@ For small, static reference data that changes rarely and belongs in version cont
 
 #### How do you set column types for a seed?
 
-With `column_types` in the seed's configuration, otherwise dbt infers them:
+With the `column_types` config, in `dbt_project.yml` or in the seed's YAML properties; otherwise dbt infers each type from the values:
 
 ```yaml
 seeds:
@@ -778,7 +791,8 @@ Through `ref()`. When a model calls `{{ ref('stg_orders') }}`, dbt records the e
 - **table**: the result is stored and rebuilt on each run.
 - **incremental**: on later runs, only new or changed rows are inserted or merged.
 - **ephemeral**: not built at all, inlined as a CTE into downstream models.
-- **materialized_view**: a database materialized view, where supported.
+- **materialized_view**: a database materialized view that the platform refreshes itself, where supported. Snowflake's equivalent is the adapter-specific `dynamic_table` materialization.
+
 Snapshots and seeds are separate resource types with their own behavior.
 
 #### When should you use a view versus a table?
@@ -789,7 +803,7 @@ Views are cheap to build and always current, so they fit staging models and ligh
 
 For light, reusable logic that you don't want as a separate object in the warehouse. Overusing them makes debugging harder because they can't be queried directly.
 
-#### How would you create custom materialization in dbt?
+#### How would you create a custom materialization in dbt?
 
 With a `{% materialization name, adapter='default' %}` block in a macro file. It typically gets the target relation, runs pre-hooks, builds the SQL with `{% call statement('main') %}`, handles existing relations, runs post-hooks and returns `{'relations': [target_relation]}`. Custom materializations are rare: most needs are covered by built-ins and incremental strategies.
 
@@ -912,7 +926,7 @@ models:
 
 SQL executed at given moments: `pre-hook` and `post-hook` around a model, and `on-run-start` / `on-run-end` around the whole invocation. Uses include granting privileges, creating indexes or logging runs.
 
-#### What is Pre Hook and Post Hook?
+#### What are pre-hooks and post-hooks?
 
 A `pre-hook` runs SQL just before a model is built, and a `post-hook` just after, inside the same run. For example:
 
@@ -926,11 +940,11 @@ The relation (database.schema.table) of the model being built. It is used in hoo
 
 #### What are model contracts?
 
-A `contract: {enforced: true}` config with declared column names and data types (and constraints where supported). dbt checks that the model's output matches before building it, protecting downstream consumers from schema changes.
+A `contract: {enforced: true}` config with every column's name and data type declared (and constraints where supported). Before building, dbt runs a preflight check that the model's query returns exactly those columns and types, in any order, and fails the build if not. That protects downstream consumers from schema changes. Contracts apply to SQL models materialized as tables, views (names and types only, no constraints) or incremental models with `on_schema_change` set to `append_new_columns` or `fail`.
 
 #### What are constraints in dbt?
 
-Declarations such as `not_null`, `unique`, `primary_key`, `foreign_key` and `check` on contracted models. dbt adds them to the DDL when the platform enforces them. Many warehouses only record some as metadata, so tests are still needed.
+Declarations such as `not_null`, `unique`, `primary_key`, `foreign_key` and `check` on contracted models. dbt adds them to the `create table` DDL where the platform supports them. Support differs: most analytical platforms enforce `not_null`, but they record primary keys, foreign keys and `unique` only as metadata (Snowflake's `primary_key`, for example), so tests are still needed for uniqueness and relationships.
 
 <!-- challenge -->
 
@@ -969,7 +983,7 @@ dbt retry                                                            # rerun fai
 
 #### What is the difference between `dbt run --full-refresh` and a normal run?
 
-`--full-refresh` drops and rebuilds incremental models and reloads seeds from scratch, instead of processing only new data.
+`--full-refresh` rebuilds incremental models from scratch and drops and reloads seeds, instead of processing only new data. Models with `full_refresh: false` ignore it, and snapshots always ignore it and run as normal.
 
 #### What does the `--defer` flag do?
 
@@ -977,21 +991,21 @@ With `--state` pointing to production artifacts, it makes `ref()` resolve to pro
 
 #### What is `dbt clone`?
 
-A command that creates copies (zero-copy clones where supported, otherwise views) of production models in another environment, from production state. It speeds up CI and development setups.
+A command that copies selected nodes from a saved state (for example production artifacts given with `--state`) into the current target. On platforms with zero-copy cloning (Snowflake, Databricks, BigQuery) it creates clones of tables; elsewhere it creates views pointing at the original. It speeds up development and CI setups and supports blue-green deployments.
 
 #### What is `dbt show`?
 
-A command to preview the results of a model or inline query without materializing it: `dbt show --select stg_orders --limit 10`.
+A command that compiles one model, test or analysis (or an inline query with `--inline`), runs it and prints a preview of the results without materializing anything: `dbt show --select stg_orders --limit 10`.
 
 #### What is `dbt retry`?
 
-It reruns only the nodes that failed or were skipped in the previous invocation.
+It re-executes the previous invocation from the point of failure: the nodes that failed or were skipped, with the same flags. If the previous command failed before any node ran (for example on a connection error), there is nothing to retry.
 
-#### How do you deal with the error "relation does not exist" on dbt?
+#### How do you deal with the error "relation does not exist" in dbt?
 
 Common causes: a referenced table was never built in the current target (run the parent, or use `--defer`), the table name is hard-coded instead of using `ref`/`source` (so the dependency isn't known and order is wrong), the source definition points to the wrong database or schema, the user lacks permission to see the object, or the identifier has quoting or case problems. Running `dbt compile` and checking the SQL in `target/compiled/` usually shows which name is wrong.
 
-#### What is data refresh?
+#### What is a data refresh?
 
 Updating the warehouse tables so they reflect the latest source data: a scheduled `dbt build` that rebuilds tables, processes new rows in incremental models and captures changes in snapshots. Its frequency depends on how fresh consumers need the data and how often sources load.
 
@@ -1065,7 +1079,7 @@ It trims whitespace before or after the tag, keeping the compiled SQL tidy.
 
 With `{% set %}`, for example `{% set payment_methods = ['card', 'paypal'] %}`, then use it in loops or expressions.
 
-#### What are Jinja filters, and give examples?
+#### What are Jinja filters? Give examples.
 
 Functions applied with `|`, such as `{{ name | upper }}`, `{{ columns | join(', ') }}` or `{{ value | default('n/a') }}`.
 
@@ -1096,13 +1110,13 @@ Read the list of countries from a variable, seed or `run_query` and loop over it
 <!-- goals -->
 
 - Write macros with arguments, defaults and return values.
-- Run macros as operations and debug them with `log()`.
+- Run macros as operations, debug them with `log()` and know when a UDF fits better.
 
 <!-- concept -->
 
 Macros are functions for SQL: logic you write once and call from many models. They take arguments with defaults, can read a model's config, and can return values instead of text when another macro needs data rather than SQL.
 
-Some macros never run during a build. Run-operations call them directly for admin tasks like granting permissions or cleaning up old schemas, and logging helps trace what they do.
+Some macros never run during a build. Run-operations call them directly for admin tasks like granting permissions or cleaning up old schemas, and logging helps trace what they do. When logic should also be callable outside dbt, a user-defined function that dbt creates in the warehouse is the better tool.
 
 <!-- example -->
 
@@ -1140,11 +1154,15 @@ To print messages to the console or log file during compilation, for debugging: 
 
 #### What is the `config` object in Jinja?
 
-It reads a model's configuration inside macros, for example `config.get('unique_key')`.
+It reads a model's configuration inside macros and materializations: `config.get('unique_key')` returns a value or a default, and `config.require('unique_key')` fails if it's missing. Custom keys stored under `meta` are read with `config.meta_get('owner')` or `config.meta_require('owner')`, not with `config.get`.
 
 #### What is `dbt run-operation` used for?
 
 Running a macro outside the build, for administration tasks: granting permissions, dropping old schemas, loading data, or generating code with the `codegen` package.
+
+#### When should you use a user-defined function (UDF) instead of a macro?
+
+A macro generates SQL text at compile time and only exists inside dbt. A UDF, defined as a SQL or Python file in `functions/` and called with `{{ function('name') }}`, is created as a real function in the warehouse before the models that use it, so BI tools and notebooks can call it too. Use a UDF for reusable row-level logic that should be shared outside dbt; use a macro to generate SQL, adapt it per platform or produce DDL. UDFs need dbt v1.11+ or v2 on platforms such as Snowflake, BigQuery, Databricks and Redshift.
 
 <!-- challenge -->
 
@@ -1190,7 +1208,7 @@ It executes a query during compilation and returns the result as an agate table,
 
 #### What is the `execute` variable?
 
-A boolean that is false during parsing and true when dbt actually runs nodes. Code that queries the database must be wrapped in `{% if execute %}` because the database isn't queried while parsing.
+A boolean that is false while dbt parses the project and true when it compiles or runs nodes. Code that depends on query results must be wrapped in `{% if execute %}`, because during parsing queries return nothing and referenced relations may not exist yet.
 
 #### What are `graph` and `model` context variables?
 
@@ -1210,7 +1228,7 @@ A model using `run_query` fails during `dbt parse` with an error about a missing
 
 <!-- solution -->
 
-Queries run during parsing too, when relations may not exist and results aren't needed. Wrap the `run_query` in `{% if execute %}` and provide a default otherwise.
+The Jinja is rendered during parsing too, when relations may not exist and query results aren't available. Wrap the `run_query` in `{% if execute %}` and provide a default otherwise.
 
 <!-- takeaways -->
 
@@ -1291,14 +1309,17 @@ models:
   - name: fct_order_lines
     data_tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: [order_id, line_number]
+          arguments:
+            combination_of_columns: [order_id, line_number]
     columns:
       - name: status
         data_tests:
-          - accepted_values: {values: [placed, shipped, returned]}
+          - accepted_values:
+              arguments: {values: [placed, shipped, returned]}
       - name: customer_id
         data_tests:
-          - relationships: {to: ref('dim_customer'), field: customer_id}
+          - relationships:
+              arguments: {to: ref('dim_customer'), field: customer_id}
 ```
 
 #### What are the two types of tests in dbt?
@@ -1307,7 +1328,7 @@ models:
 
 #### What types of tests can you run in dbt?
 
-The four built-in generic tests (`unique`, `not_null`, `accepted_values`, `relationships`), generic tests from packages (`dbt_utils`, `dbt_expectations`) or your own, singular SQL tests, unit tests, source freshness checks and model contracts.
+The four built-in generic tests (`unique`, `not_null`, `accepted_values`, `relationships`), generic tests from packages (`dbt_utils`, `dbt_expectations`) or your own, singular SQL tests and unit tests. Related safeguards are source and model freshness, model contracts and, in dbt v2, checks on project metadata.
 
 #### How do the built-in generic tests work?
 
@@ -1320,15 +1341,17 @@ models:
       - name: status
         data_tests:
           - accepted_values:
-              values: ['placed', 'shipped', 'returned']
+              arguments:
+                values: ['placed', 'shipped', 'returned']
       - name: customer_id
         data_tests:
           - relationships:
-              to: ref('dim_customers')
-              field: customer_id
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
 ```
 
-dbt turns each into a query that returns failing rows. The test passes when the query returns no rows.
+dbt turns each into a query that returns failing rows. The test passes when the query returns no rows. Test inputs go under `arguments:` and options such as `severity` under `config:`; older projects put the inputs directly under the test name, which is deprecated since dbt v1.10.
 
 #### What is a singular test?
 
@@ -1341,7 +1364,7 @@ select * from {{ ref('fct_orders') }} where amount < 0
 
 #### How do you write a custom generic test?
 
-With a `{% test name(model, column_name) %}` block that returns failing rows, then use it in YAML like a built-in test:
+With a `{% test name(model, column_name) %}` block, usually in `tests/generic/` or `macros/`, that returns failing rows. Extra parameters become arguments in YAML, where you use the test like a built-in one:
 
 ```sql
 {% test is_positive(model, column_name) %}
@@ -1356,7 +1379,8 @@ With `dbt_utils.unique_combination_of_columns`:
 ```yaml
 data_tests:
   - dbt_utils.unique_combination_of_columns:
-      combination_of_columns: [order_id, line_number]
+      arguments:
+        combination_of_columns: [order_id, line_number]
 ```
 
 <!-- challenge -->
@@ -1422,9 +1446,11 @@ unit_tests:
         - {customer_id: 2, is_valid_email: false}
 ```
 
+Rows can be written as `dict` (the default), `csv` or `sql`, inline or in fixture files, and only the columns relevant to the test need values. `overrides` can fix macros and vars, for example `is_incremental: true` to test the incremental branch.
+
 #### What is the difference between a unit test and a data test?
 
-A unit test checks code against fixed inputs and runs before the model is built, typically in CI. A data test checks real data after the model is built, every run.
+A unit test checks code against fixed inputs and runs before the model is built. Because its inputs never change, dbt Labs recommends running unit tests only in development and CI, and excluding them from production jobs. A data test checks real data after the model is built, on every run. Unit tests currently support SQL models only, and every `ref` or `source` the model uses must be given as an input.
 
 #### What is `dbt_expectations`?
 
@@ -1490,7 +1516,7 @@ A config setting `severity: warn` or `error` (default). With `warn_if` and `erro
 
 #### How do you store test failures?
 
-With `--store-failures` or `store_failures: true`, dbt saves failing rows in a table in an audit schema, so you can inspect them after the run.
+With `--store-failures` or `store_failures: true`, dbt saves the failing rows of each test in a table in an audit schema (by default the target schema with the suffix `_dbt_test__audit`), so you can inspect them after the run. `store_failures_as` chooses `table`, `view` or `ephemeral` (don't store).
 
 #### What does the `where` config on a test do?
 
@@ -1519,13 +1545,13 @@ Review each test: fix real issues, delete tests that don't protect consumers, se
 <!-- goals -->
 
 - Define the minimum tests every model needs.
-- Test at the source and use `dbt build` to stop bad data.
+- Test at the source, use `dbt build` to stop bad data and enforce project standards with checks.
 
 <!-- concept -->
 
 A good strategy puts tests where they protect most. At the entrance, tests on sources and staging catch raw data problems before they spread. On every model, primary keys are unique and not null, and important foreign keys exist. On public models, contracts protect consumers.
 
-`dbt build` ties it together: each model is tested right after it's built, and children of a failing model are skipped.
+`dbt build` ties it together: each model is tested right after it's built, and children of a failing model are skipped. In dbt v2, checks add a layer above the data, enforcing standards such as descriptions and owners before anything runs.
 
 <!-- example -->
 
@@ -1550,6 +1576,15 @@ Through tests at each layer, source freshness, contracts on public models, `dbt 
 #### What is the difference between `dbt test` and `dbt build` regarding tests?
 
 `dbt test` runs tests on already-built models. `dbt build` interleaves building and testing in DAG order, so a failing test stops its children from being built.
+
+#### What are checks in dbt v2?
+
+Rules about the project itself rather than the data: every model has a description, every public model has an owner, names follow conventions. A check is a SQL file in `checks/`, written in DuckDB SQL against the dbt Information Schema (`{{ info_schema('models') }}`), and it fails when it returns rows, like a data test. Checks run locally without a warehouse connection, on demand with `dbt check` and automatically at the start of every `dbt build`.
+
+```sql
+-- checks/all_models_have_descriptions.sql
+select unique_id from {{ info_schema('models') }} where description = ''
+```
 
 <!-- challenge -->
 
@@ -1606,7 +1641,7 @@ where event_time > (select max(event_time) from {{ this }})
 
 #### What does `is_incremental()` return?
 
-True only when the model is incremental, the target table already exists, and the run is not a `--full-refresh`.
+True only when the model is materialized as incremental, the target table already exists, and the run is not a full refresh. The model's SQL must be valid whether it returns true or false.
 
 #### What is `unique_key` in an incremental model?
 
@@ -1622,7 +1657,7 @@ Yes, through `{{ this }}` inside the `is_incremental()` block, typically to read
 
 #### What is an "append-only" incremental model?
 
-One with the `append` strategy and no `unique_key`: rows are only inserted. It suits immutable event logs where records never change.
+One using the `append` strategy, or a model without `unique_key`: new rows are inserted and existing rows are never updated. It suits immutable event logs where records never change, and it's the cheapest strategy, but a rerun over the same rows creates duplicates.
 
 <!-- challenge -->
 
@@ -1647,7 +1682,7 @@ Updated orders are appended again, creating duplicates. Add `unique_key='order_i
 
 <!-- concept -->
 
-How new rows are combined with the table is the strategy. Append just inserts. Merge upserts on the key. Delete+insert removes matching rows first, sometimes faster on large batches. Insert_overwrite replaces whole partitions, which is very efficient when data arrives by day. Microbatch splits work into independent time batches that can be retried and backfilled one by one.
+How new rows are combined with the table is the strategy. Append just inserts. Merge upserts on the key. Delete+insert removes matching rows first, sometimes faster on large batches. Insert_overwrite replaces whole partitions on platforms such as BigQuery and Databricks, which is very efficient when data arrives by day. Microbatch splits work into independent time batches that can be retried and backfilled one by one, with no filter to write.
 
 Large targets need help: predicates and partitioning limit how much of the existing table each merge scans.
 
@@ -1665,7 +1700,7 @@ Large targets need help: predicates and partitioning limit how much of the exist
 
 #### What incremental strategies exist?
 
-Depending on the adapter: `append` (insert only), `merge` (upsert on `unique_key`), `delete+insert` (delete matching keys then insert), `insert_overwrite` (replace whole partitions, BigQuery and Spark), and `microbatch` (process time-based batches).
+Depending on the adapter: `append` (insert only), `merge` (upsert on `unique_key`), `delete+insert` (delete matching keys then insert), `insert_overwrite` (replace whole partitions on BigQuery, Spark, Databricks and Athena) and `microbatch` (process time-based batches). Some adapters add their own, such as `replace_where` on Databricks. BigQuery doesn't support `append` or `delete+insert`.
 
 #### What is the difference between `merge` and `delete+insert`?
 
@@ -1673,7 +1708,7 @@ Depending on the adapter: `append` (insert only), `merge` (upsert on `unique_key
 
 #### What is `insert_overwrite`, and when is it efficient?
 
-It replaces entire partitions (for example the days present in the new batch) instead of merging row by row. It is efficient on partitioned tables in BigQuery, Spark and Databricks when data arrives by partition.
+It replaces entire partitions (for example the days present in the new batch) instead of merging row by row. It is efficient on partitioned tables in BigQuery, Spark and Databricks when data arrives by partition. On Snowflake, which has no partitions, `insert_overwrite` replaces the whole table.
 
 #### What does `incremental_predicates` do?
 
@@ -1681,7 +1716,13 @@ It adds extra conditions to the merge, for example limiting the target scan to r
 
 #### What is the microbatch strategy?
 
-Added in dbt 1.9, it processes data in independent time batches (for example one per day) based on an `event_time` column, so batches can be retried, run in parallel or backfilled with `--event-time-start` and `--event-time-end`.
+Added in dbt 1.9, it processes data in independent time batches based on an `event_time` column. You don't write an `is_incremental()` filter: dbt filters each parent that also declares `event_time` to the batch's time range. `batch_size` sets the granularity (`hour`, `day`, `month` or `year`), `begin` the start date for the first or full build, and `lookback` how many earlier batches to reprocess for late data. Batches can be retried individually, run in parallel or backfilled with `--event-time-start` and `--event-time-end`.
+
+```sql
+{{ config(materialized='incremental', incremental_strategy='microbatch',
+          event_time='occurred_at', begin='2024-01-01', batch_size='day', lookback=3) }}
+select * from {{ ref('stg_app__events') }}   -- filtered per batch automatically
+```
 
 #### How does partitioning or clustering interact with incremental models?
 
@@ -1735,7 +1776,7 @@ where event_time >= (select dateadd(day, -3, max(event_time)) from {{ this }})
 
 #### What does `on_schema_change` do?
 
-It defines what happens when an incremental model's columns change: `ignore` (default), `fail`, `append_new_columns`, or `sync_all_columns`.
+It defines what happens when an incremental model's columns change: `ignore` (default: new columns are not added), `fail`, `append_new_columns` (add new columns, keep removed ones) or `sync_all_columns` (add new columns, drop removed ones, including type changes). None of them backfills values for old rows in new columns; that needs a full refresh. Only top-level columns are tracked, not nested fields.
 
 #### When should you do a full refresh of an incremental model?
 
@@ -1794,7 +1835,7 @@ The merge has to scan an ever-growing target table. Incremental predicates, part
 
 #### What is the difference between an incremental model and a snapshot?
 
-An incremental model keeps the latest state (or appends events) and its logic is yours. A snapshot keeps the full history of changes to mutable records, as SCD Type 2 rows with validity dates.
+An incremental model keeps the latest state (or appends events) and its logic is yours. A snapshot keeps the full history of changes to mutable records, as SCD Type 2 rows with validity dates. They combine well: an incremental staging model keeps runs cheap, and a snapshot on the source records history when the business needs to know what a row looked like in the past.
 
 <!-- challenge -->
 
@@ -1839,13 +1880,13 @@ snapshots:
       hard_deletes: invalidate
 ```
 
-#### What is snapshot?
+#### What is a snapshot?
 
 A dbt resource that records changes to a mutable table over time (Slowly Changing Dimension Type 2). Each run compares the current source rows with the snapshot table, closes changed rows by setting `dbt_valid_to`, and inserts their new version with `dbt_valid_from`.
 
 #### How do you define a snapshot?
 
-In recent dbt versions, in YAML (older projects use a `{% snapshot %}` block in `snapshots/`):
+Since dbt 1.9, in a YAML file that names the relation to snapshot and its config (older projects use a `{% snapshot %}` block with a `select` in `snapshots/`, which still works but is the legacy form):
 
 ```yaml
 snapshots:
@@ -1860,15 +1901,15 @@ snapshots:
 
 #### What snapshot strategies exist?
 
-`timestamp`: a row changed if its `updated_at` column is newer. It is reliable and efficient when the source keeps such a column. `check`: a row changed if any of the listed `check_cols` (or all columns) differ. It is used when there is no trustworthy timestamp.
+`timestamp` (recommended): a row changed if its `updated_at` column is newer. It is reliable and efficient when the source keeps such a column. `check`: a row changed if any of the listed `check_cols` (or all columns) differ. It is used when there is no trustworthy timestamp.
 
 #### Which columns does dbt add to a snapshot?
 
-`dbt_scd_id`, `dbt_updated_at`, `dbt_valid_from` and `dbt_valid_to` (NULL for the current version, unless `dbt_valid_to_current` is configured).
+`dbt_scd_id` (a unique key per version), `dbt_updated_at`, `dbt_valid_from` and `dbt_valid_to` (NULL for the current version, unless `dbt_valid_to_current` sets a value such as `9999-12-31`). With `hard_deletes: new_record`, dbt also adds `dbt_is_deleted`. The names can be changed with `snapshot_meta_column_names`.
 
 #### When would you use the `check` strategy with `check_cols: all`?
 
-When the source has no reliable `updated_at` and any column change matters. It is more expensive because every column is compared.
+When the source has no reliable `updated_at` and any column change matters. It is more expensive because every column is compared, and new source columns change what counts as a change. The docs recommend listing the columns that matter explicitly, or comparing a single hash column built from them.
 
 #### What is an SCD Type 2, and how do dbt snapshots implement it?
 
@@ -1908,11 +1949,11 @@ Deletes need explicit handling, and warehouse time travel is no substitute, sinc
 | Snapshot sources, not marts | Logic changes would rewrite history |
 | Test the source key's uniqueness | Duplicates corrupt versions |
 | Run at least as often as changes matter | Missed changes are lost |
-| Never drop the snapshot table | No full refresh possible |
+| Never drop the snapshot table | Full refresh doesn't apply; history can't be rebuilt |
 
 #### How do snapshots handle deleted source rows?
 
-By default they don't. With `hard_deletes: invalidate` (formerly `invalidate_hard_deletes`), deleted rows get their `dbt_valid_to` set. With `hard_deletes: new_record`, a new row marks the deletion explicitly.
+By default (`hard_deletes: ignore`) they don't: the last version of a deleted row stays current. With `hard_deletes: invalidate` (formerly `invalidate_hard_deletes: true`), deleted rows get their `dbt_valid_to` set. With `hard_deletes: new_record`, dbt inserts a new row with `dbt_is_deleted = True`, and a row that reappears gets a new version with `dbt_is_deleted = False`.
 
 #### Why should snapshots read from sources rather than transformed models?
 
@@ -1928,7 +1969,7 @@ The snapshot produces duplicate or inconsistent versions. Test uniqueness on the
 
 #### Can you full-refresh a snapshot?
 
-No. Snapshots are never rebuilt by dbt, because history would be lost. To change one, you migrate the table manually or start a new snapshot.
+No. Snapshots ignore both the `--full-refresh` flag and the `full_refresh` config: a `dbt build --full-refresh` runs them as normal, because dropping the table would lose history that can't be recreated. To change one, you migrate the table manually or start a new snapshot.
 
 #### How are snapshots different from Delta Lake time travel or warehouse time travel?
 
@@ -2032,13 +2073,14 @@ exposures:
 models:
   - name: fct_revenue
     description: "One row per invoice line. Net of refunds and discounts, in EUR."
-    meta: {owner: finance-data, contains_pii: false}
-    config: {persist_docs: {relation: true, columns: true}}
+    config:
+      meta: {owner: finance-data, contains_pii: false}
+      persist_docs: {relation: true, columns: true}
 ```
 
 #### How does dbt generate documentation?
 
-`dbt docs generate` builds a static site from the project (descriptions, columns, tests, SQL) and from warehouse metadata (column types, row counts). `dbt docs serve` serves it locally. It includes an interactive lineage graph.
+`dbt docs generate` builds a static site from the project (descriptions, columns, tests, SQL) and from warehouse metadata (column types, row counts), and `dbt docs serve` serves it locally, with an interactive lineage graph. In dbt v2, docs v2 stores the metadata as Parquet files that the browser queries with DuckDB-WASM, so the site scales to large projects, can be hosted on any static host and shows column-level lineage when built with `--static-analysis strict`. On the dbt platform, jobs keep Catalog up to date instead.
 
 #### Where do you write descriptions?
 
@@ -2050,11 +2092,11 @@ A config that writes model and column descriptions into the warehouse as table a
 
 #### How do you document a test or a macro?
 
-Tests and macros can have `description` properties in YAML, which appear in the generated docs.
+Macros are documented in YAML under a `macros:` key, with a description and their arguments. Data tests accept a `description` where they're applied, and singular tests can be documented in a properties file under `data_tests:`. These descriptions appear in the generated docs.
 
 #### What are meta fields?
 
-A free `meta:` dictionary on nodes and columns, for example to record owners, PII flags or SLAs, which tools and macros can read.
+A free-form `meta` dictionary, set under `config:` on nodes and columns, for example to record owners, PII flags or SLAs. External tools read it from the manifest, and macros read it with `config.meta_get()`.
 
 #### What are exposures?
 
@@ -2108,11 +2150,11 @@ An artifact with the result, timing and status of each node in the last invocati
 
 #### What are dbt artifacts used for in observability?
 
-Tools parse `manifest.json` and `run_results.json` to track run duration, test failures and freshness over time, and the `dbt_artifacts` package loads them into the warehouse for analysis.
+Tools parse `manifest.json` and `run_results.json` to track run duration, test failures and freshness over time, and the `dbt_artifacts` package loads them into the warehouse for analysis. dbt v2 can also write the dbt Information Schema (`--generate-info-schema`): versioned Parquet tables describing every resource, which checks and `dbt show --info` query directly.
 
 #### What is column-level lineage?
 
-Lineage that shows which upstream columns feed each column, not just which models depend on which. The dbt platform and dbt Fusion provide it.
+Lineage that shows which upstream columns feed each column, not just which models depend on which, so you can see exactly what a column rename or removal affects. dbt Catalog on the dbt platform shows it, and dbt v2 computes it locally when you compile or build with `--static-analysis strict`.
 
 <!-- challenge -->
 
@@ -2132,41 +2174,48 @@ From `run_results.json` of each production run (execution time and status per no
 
 <!-- goals -->
 
-- Describe semantic models, measures, dimensions and metric types.
+- Describe semantic models, entities, dimensions and metric types.
 - Explain why metrics belong in dbt rather than BI tools.
 
 <!-- concept -->
 
-When each BI tool defines "revenue" itself, numbers drift. The semantic layer defines metrics once in dbt, on top of models: semantic models declare entities for joining, dimensions for slicing and measures for aggregating, and metrics combine measures into business definitions.
+When each BI tool defines "revenue" itself, numbers drift. The semantic layer defines metrics once in dbt, on top of models: a semantic model marks a model's columns as entities for joining and dimensions for slicing, simple metrics aggregate a column, and other metric types combine metrics into business definitions.
 
-Tools then query the metric by name, and the layer generates correct SQL with the right joins, grain and filters, so every consumer gets the same answer.
+Tools then query the metric by name, and MetricFlow generates correct SQL with the right joins, grain and filters, so every consumer gets the same answer.
 
 <!-- example -->
 
 ```yaml
-semantic_models:
-  - name: orders
-    model: ref('fct_orders')
-    entities: [{name: order_id, type: primary}, {name: customer_id, type: foreign}]
-    dimensions: [{name: ordered_at, type: time, type_params: {time_granularity: day}}]
-    measures: [{name: revenue, agg: sum, expr: net_amount}]
-metrics:
-  - name: revenue
-    type: simple
-    type_params: {measure: revenue}
+models:
+  - name: fct_orders
+    semantic_model: {enabled: true}
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: customer_id
+        entity: {type: foreign, name: customer}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: revenue
+        type: simple
+        agg: sum
+        expr: net_amount
 ```
 
 #### What is the semantic layer architecture of dbt?
 
-Semantic models are defined in YAML on top of dbt models, declaring entities (join keys), dimensions and measures. Metrics are defined on those measures. MetricFlow turns a metric request (metric, dimensions, filters, grain) into optimized SQL for the warehouse, and the dbt platform exposes it through APIs and integrations to BI tools.
+Semantic models are declared on top of dbt models, marking entities (join keys) and dimensions. Metrics are defined on top of them. MetricFlow turns a metric request (metrics, dimensions, filters, grain) into SQL for the warehouse, using the entities to find joins, and the dbt platform exposes it through APIs (JDBC, GraphQL, Python SDK) and integrations to BI tools and spreadsheets.
 
 #### What is a semantic model?
 
-A YAML definition tied to one dbt model that describes its entities, dimensions and measures, so MetricFlow knows how to aggregate and join it.
+Metadata attached to one dbt model that tells MetricFlow how to join and aggregate it. In the current spec (dbt v1.12+ and v2) it is enabled inside the model's YAML with `semantic_model:`, entities and dimensions are set on columns, and simple metrics are listed next to them. Older projects use a separate top-level `semantic_models:` block with `measures`, which are deprecated in favor of simple metrics.
 
 #### What types of metrics exist in the semantic layer?
 
-Simple (one measure), ratio, cumulative (running totals or windows), derived (expressions over other metrics) and conversion metrics.
+Simple (an aggregation of a column, such as `sum` or `count_distinct`), ratio (one metric divided by another), cumulative (running totals or windows), derived (an expression over other metrics) and conversion (the rate at which an entity moves from one event to another). Simple metrics live with their semantic model; the others are defined under a top-level `metrics:` key.
 
 #### Why define metrics in dbt rather than in the BI tool?
 
@@ -2178,11 +2227,11 @@ Marketing's BI tool and finance's spreadsheet show different "average order valu
 
 <!-- solution -->
 
-Define AOV once as a ratio metric (revenue / orders) in dbt, reviewed in Git, and have both tools query the metric through the semantic layer API instead of computing it themselves.
+Define AOV once as a ratio metric (numerator `revenue`, denominator `orders`) in dbt, reviewed in Git, and have both tools query the metric through the semantic layer API instead of computing it themselves.
 
 <!-- takeaways -->
 
-- Semantic models declare entities, dimensions and measures.
+- Semantic models declare entities and dimensions; simple metrics aggregate columns.
 - Metrics are defined once, in version control.
 - Every tool queries the same definitions.
 
@@ -2193,13 +2242,13 @@ Define AOV once as a ratio metric (revenue / orders) in dbt, reviewed in Git, an
 <!-- goals -->
 
 - Manage dev, staging and production with one codebase.
-- Run Slim CI with `state:modified` and deploy safely.
+- Run Slim CI with `state:modified`, deploy safely and explain what dbt State adds.
 
 <!-- concept -->
 
 dbt makes environments cheap: one codebase, several targets, each writing to its own schemas. Developers build into personal schemas, CI into a schema per pull request, production into production.
 
-Slim CI compares the project with production artifacts and builds only modified models and their children, deferring to production for the rest. For high-stakes changes, building a full new version alongside the old and swapping atomically gives blue-green deployment.
+Slim CI compares the project with production artifacts and builds only modified models and their children, deferring to production for the rest. dbt State takes the same idea further, deciding per node and per run whether anything really needs rebuilding. For high-stakes changes, building a full new version alongside the old and swapping atomically gives blue-green deployment.
 
 <!-- example -->
 
@@ -2219,11 +2268,15 @@ Git with feature branches and pull requests, code review, CI that builds and tes
 
 #### What is Slim CI?
 
-Running only modified models and their dependants in CI, by comparing with production artifacts: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Unchanged parents are read from production instead of rebuilt.
+Running only modified models and their dependents in CI, by comparing with production artifacts: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Unchanged parents are read from production instead of rebuilt. CI jobs on the dbt platform do this automatically and build into a temporary schema per pull request.
 
 #### What does `state:modified` select?
 
-Nodes whose SQL, configuration or properties differ from the manifest given with `--state`. Combined with `+` it includes their children.
+Nodes whose SQL, configuration or properties differ from the manifest given with `--state`. Combined with `+` it includes their children. Sub-selectors narrow it, such as `state:modified.body` or `state:modified.configs`, and `state:new` selects only nodes that don't exist in the comparison manifest.
+
+#### What is dbt State?
+
+A managed service from dbt Labs (it requires a dbt platform login and is billed by usage) that decides, node by node, whether a build is needed. It compares each node's logic and upstream data with earlier builds in every environment, then skips the node if nothing changed, clones an identical up-to-date object from another schema, or builds it normally while deferring unselected parents. It works with dbt v1, v2 and external orchestrators, ignores changes that don't affect logic such as comments and whitespace, and uses `lag_tolerance` to stop rebuilding a model more often than needed. `dbt state explain` shows why each node was skipped, cloned or built. It replaces the platform's earlier state-aware orchestration.
 
 #### What is blue-green deployment with dbt?
 
@@ -2247,12 +2300,12 @@ Switch to Slim CI: download the production manifest, build `state:modified+` wit
 
 <!-- goals -->
 
-- Schedule dbt Core with an orchestrator or use the dbt platform.
+- Schedule self-hosted dbt with an orchestrator or use the dbt platform.
 - Design a production job that runs after ingestion.
 
 <!-- concept -->
 
-dbt doesn't schedule itself. With dbt Core, an orchestrator runs it, ideally as part of a larger pipeline: wait for ingestion, check freshness, build and test, then notify downstream. The dbt platform offers jobs and triggers built in, with APIs for orchestrators.
+dbt doesn't schedule itself. When you host dbt yourself, an orchestrator runs it, ideally as part of a larger pipeline: wait for ingestion, check freshness, build and test, then notify downstream. The dbt platform offers jobs and triggers built in, with APIs for orchestrators.
 
 A typical production job follows the same steps everywhere, and running dbt in a container makes it reproducible wherever it runs.
 
@@ -2273,17 +2326,17 @@ dbt docs generate
 2. Retries, alerts, SLAs, backfills and scheduling come from Airflow.
 3. With tools like Astronomer Cosmos, each dbt model becomes an Airflow task, giving fine-grained visibility and the ability to retry only failed models.
 
-#### How do you schedule dbt in production with dbt Core?
+#### How do you schedule self-hosted dbt in production?
 
-With an orchestrator (Airflow, Dagster, Prefect, cron, GitHub Actions, Databricks Workflows) that runs `dbt build` (or selected commands) in a container or virtual environment with production credentials.
+With an orchestrator (Airflow, Dagster, Prefect, cron, GitHub Actions, Databricks Lakeflow Jobs) that runs `dbt build` (or selected commands) in a container or virtual environment with production credentials.
 
 #### What does a typical production job look like?
 
-`dbt deps`, `dbt source freshness`, `dbt build` (seeds, snapshots, models and tests in order), then `dbt docs generate`, with alerts on failure and artifacts saved for the next CI comparison.
+`dbt deps`, `dbt source freshness` (or `dbt freshness` in dbt v2), `dbt build` (seeds, snapshots, models and tests in order), then `dbt docs generate`, with alerts on failure and artifacts saved for the next CI comparison.
 
-#### How do you deploy dbt in the dbt platform (dbt Cloud)?
+#### How do you deploy dbt on the dbt platform?
 
-Create deployment environments with their credentials, define jobs (commands, schedule or triggers, selected models), enable CI jobs on pull requests, and use job chaining or API triggers to start dbt after ingestion.
+Create deployment environments with their credentials and dbt version (release track), then define jobs: deploy jobs with commands, a schedule or triggers and selected models; CI jobs that run on each pull request; and merge jobs that run after a pull request is merged. Use job chaining or the Administrative API to start dbt after ingestion.
 
 #### How do you trigger dbt after ingestion finishes?
 
@@ -2291,7 +2344,7 @@ Through the orchestrator (a task dependency or sensor), dbt platform API trigger
 
 #### How do you run dbt in a Docker container?
 
-Use an image with dbt Core and the adapter installed, mount or copy the project, pass credentials via environment variables, and run commands such as `dbt build --target prod`.
+Use an image with dbt installed (with dbt v1, plus the adapter package; dbt v2 is a single binary that downloads its adapter driver on first run, so cache or bake it into the image), mount or copy the project, pass credentials via environment variables, and run commands such as `dbt build --target prod`.
 
 <!-- challenge -->
 
@@ -2396,11 +2449,11 @@ Run `dbt compile` and execute the compiled SQL directly in the warehouse, previe
 
 #### How does dbt compile queries?
 
-dbt parses the project and builds the DAG, then for each node renders the Jinja: it resolves `ref`, `source`, `var`, `config` and macro calls into plain SQL for the current target. The compiled `SELECT` is written to `target/compiled/`. At run time the materialization wraps it in DDL/DML (`create table as`, `merge`) and sends it to the warehouse through the adapter.
+dbt parses the project and builds the DAG, then for each node renders the Jinja: it resolves `ref`, `source`, `var`, `config` and macro calls into plain SQL for the current target. The compiled `SELECT` is written to `target/compiled/`. dbt v2 then adds static analysis, parsing that SQL into a logical plan to catch errors and track column lineage without querying the warehouse. At run time the materialization wraps the query in DDL/DML (`create table as`, `merge`) and sends it to the warehouse through the adapter.
 
-#### What is SQLFluff?
+#### What is SQLFluff, and what does `dbt lint` do?
 
-A SQL linter and formatter with a dbt templater, used in CI and pre-commit hooks to enforce a consistent SQL style.
+SQLFluff is a SQL linter and formatter with a dbt templater, used in CI and pre-commit hooks to enforce a consistent SQL style. dbt v2 includes `dbt lint`, a much faster built-in linter that reads the same `.sqlfluff` configuration and rule codes and can fix violations with `--fix`. Results can differ slightly from SQLFluff's.
 
 #### How would you implement dbt in an existing data pipeline?
 
@@ -2408,7 +2461,7 @@ Start by declaring the existing raw tables as sources, then reproduce current tr
 
 #### What is dbt Mesh?
 
-A pattern for large organizations where several dbt projects reference each other's public models (cross-project `ref`), with contracts, versions and access controls, so domains own their projects independently.
+A pattern for large organizations where several dbt projects reference each other's public models with a cross-project `ref('project', 'model')`, with groups, contracts, versions and access controls, so domains own their projects independently. Cross-project references are a dbt platform Enterprise feature, and Catalog shows lineage across the projects.
 
 <!-- challenge -->
 
@@ -2451,13 +2504,13 @@ Measure before changing: run timings show the slowest models, and the cost model
 
 Materialize expensive models as tables and use incremental models for large fact tables, filter and aggregate early, avoid `select *` and unnecessary joins, partition and cluster big tables on filter columns, use the warehouse's native features (clustering keys, sort keys), limit data in development, and look at query profiles and `run_results.json` timings to find the slowest models.
 
-#### Name some optimization techniques for dbt when run in Snowflake.
+#### Which optimization techniques help when running dbt on Snowflake?
 
 Use transient tables for intermediate models (no Fail-safe storage cost), cluster very large tables on common filter columns, size warehouses per job (and use separate warehouses for dbt and BI), use `merge` or `delete+insert` with incremental predicates, rely on zero-copy cloning for dev and CI (`dbt clone`), set `query_tag` to attribute costs, and auto-suspend warehouses.
 
 #### How do you make dbt runs faster overall?
 
-Increase `threads` within warehouse limits, remove unnecessary models, convert rarely queried tables to views (or the reverse for heavy views), use incremental models, run only what changed (`state:modified+`) in CI, and split jobs by freshness needs.
+Increase `threads` within warehouse limits (dbt v2 tunes parallelism itself on most platforms), remove unnecessary models, convert rarely queried tables to views (or the reverse for heavy views), use incremental models, run only what changed (`state:modified+`) in CI, and split jobs by freshness needs.
 
 #### How do you find the slowest models?
 
@@ -2473,7 +2526,7 @@ Each query on the final view executes the whole chain of underlying SQL. Materia
 
 #### How do you limit data in development to save time and cost?
 
-Filter by date or sample with `target.name == 'dev'`, use `--defer` to reuse production parents, or use zero-copy clones.
+Filter by date with `target.name == 'dev'`, use `--defer` to reuse production parents, or use zero-copy clones. dbt also has two built-in flags for `run` and `build`: `--sample="3 days"` filters every `ref` and `source` that has an `event_time` to a recent time window, and `--empty` limits them to zero rows, which checks that the SQL runs and creates the right columns at almost no cost (useful in CI).
 
 #### How would you compare dbt and BigQuery?
 
