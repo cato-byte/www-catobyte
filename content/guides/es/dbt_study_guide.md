@@ -5,7 +5,7 @@
 
 ![Guía de estudio de dbt: unas 200 preguntas](../../images/dbt_study_guide_title_img.png)
 
-Unas 200 preguntas tipo entrevista sobre dbt (data build tool), desde lo básico hasta los modelos incrementales, los snapshots, los tests, el despliegue y el rendimiento. Las respuestas siguen las convenciones de dbt Core 1.x.
+Unas 200 preguntas tipo entrevista sobre dbt (data build tool), desde lo básico hasta los modelos incrementales, los snapshots, los tests, el despliegue y el rendimiento. Las respuestas siguen el dbt actual: v2, el motor en Rust que se instala por defecto, y las convenciones de YAML compartidas con dbt v1.10 y posteriores. Cuando dbt v1 se comporta distinto, la respuesta lo indica.
 
 La guía sigue una ruta de aprendizaje en cuatro etapas. Cada sección se divide en unidades cortas: objetivos de aprendizaje, una explicación del concepto y un ejemplo resuelto, luego preguntas (primero de memoria, después de aplicación), un reto práctico e ideas clave. Para **aprender**, lee cada unidad de principio a fin. Para **repasar**, cambia al modo repaso o usa "Ir a las preguntas", marca las respuestas que quieras volver a ver y prueba un repaso mixto entre secciones.
 
@@ -24,6 +24,7 @@ La guía sigue una ruta de aprendizaje en cuatro etapas. Cada sección se divide
 <!-- concept -->
 
 Una vez cargados los datos crudos en un warehouse, alguien tiene que convertirlos en tablas limpias y confiables. Durante años eso significó stored procedures y scripts corridos en un orden fijo que solo entendía su autor. dbt los reemplaza con un framework: cada transformación es un `SELECT` en un archivo, las dependencias se declaran en el código y dbt construye todo en el orden correcto dentro del warehouse.
+
 Con él llegan prácticas de software: control de versiones, pruebas, documentación y revisiones. Lo que dbt no hace es traer datos ni programarse solo.
 
 <!-- example -->
@@ -52,17 +53,17 @@ Construir un almacén de datos o lakehouse capa a capa (staging, intermedia, mar
 
 Las herramientas ETL tradicionales extraen, transforman en su propio motor y luego cargan, a menudo mediante una interfaz gráfica. dbt solo transforma, dentro del almacén que ya contiene los datos cargados (ELT), con SQL en archivos de texto. Todo es código: versionado en Git, revisado, probado y desplegado como software. La extracción y la carga se dejan a otras herramientas (Fivetran, Airbyte, pipelines propios).
 
-#### ¿Cómo se compara dbt con Apache Spark?
-
-Spark es un motor de procesamiento distribuido que programas en Python, Scala o SQL, y cuyos trabajos y clústeres gestionas. dbt no es un motor: genera SQL y lo envía a un motor (Snowflake, BigQuery, Redshift, Databricks, Postgres, y el propio Spark mediante los adaptadores dbt-spark o dbt-databricks). Son complementarios: dbt puede orquestar transformaciones SQL que ejecuta Spark, mientras que el procesamiento complejo que no es SQL se queda en código Spark.
-
 #### ¿Qué significa ELT y por qué encaja dbt con este enfoque?
 
 Extract, Load, Transform: los datos en bruto se cargan primero en el almacén y se transforman allí. Los almacenes modernos son baratos para guardar y potentes para calcular, así que transformar en SQL donde ya están los datos es más sencillo y escala. dbt aporta la estructura a esa etapa de transformación.
 
-#### ¿Qué diferencia hay entre dbt Core y dbt Cloud?
+#### ¿Qué problemas resuelve dbt frente a los procedimientos almacenados y los scripts?
 
-dbt Core es la herramienta de línea de comandos de código abierto (Apache 2.0): la instalas, la ejecutas y la orquestas tú. dbt Cloud (hoy parte de la dbt platform) es el servicio comercial gestionado: un IDE web, un planificador de trabajos, CI, documentación alojada, la capa semántica, alertas y control de accesos. Los dos ejecutan el mismo código de proyecto.
+Las dependencias son explícitas y se resuelven solas, el código es modular y reutilizable gracias a `ref` y las macros, los tests y la documentación viven junto al código, los entornos se cambian por configuración y no editando, y todo está versionado y se puede revisar.
+
+#### ¿Cuáles son los retos de dbt?
+
+Solo cubre la transformación, así que hacen falta otras herramientas para la ingesta y la orquestación. Los proyectos grandes pueden volverse lentos de compilar y difíciles de recorrer sin convenciones. Los modelos incrementales y los snapshots requieren un diseño cuidadoso. Jinja puede volver ilegible el SQL si se abusa de él. El rendimiento sigue dependiendo del almacén y del SQL que escribas, y los costos pueden dispararse si se hacen full refresh con demasiada frecuencia.
 
 <!-- challenge -->
 
@@ -82,42 +83,47 @@ dbt derivaría el orden de ejecución de las dependencias `ref()` y agregaría p
 
 <!-- goals -->
 
-- Comparar dbt con Spark y distinguir dbt Core de la plataforma dbt.
-- Explicar los adapters, dbt Fusion y la Semantic Layer.
+- Comparar dbt con Spark y distinguir dbt autoalojado de la plataforma dbt.
+- Explicar los adapters, dbt v1 y v2, el análisis estático y la Semantic Layer.
 
 <!-- concept -->
 
-dbt no es un motor. Genera SQL (o Python) y lo envía a una plataforma a través de un adapter, así el warehouse hace el trabajo. Por eso se combina con plataformas basadas en Spark en lugar de competir con ellas.
-Viene en dos formas: el CLI open source que corres tú mismo y una plataforma administrada que agrega IDE, programación y funciones alojadas. El ecosistema sigue creciendo, con un motor más rápido en Rust y una capa semántica que define las métricas una vez para todas las herramientas.
+dbt no es un motor de consultas. Genera SQL (o Python) y lo envía a una plataforma de datos a través de un adapter, así el warehouse hace el trabajo. Por eso se combina con plataformas basadas en Spark en lugar de competir con ellas.
+
+Puedes correr dbt tú mismo desde la línea de comandos o usar la plataforma dbt administrada, que agrega un IDE, programación y funciones alojadas. El motor de dbt tiene dos generaciones: v1, el CLI original en Python, y v2, una reescritura en Rust (conocida primero como dbt Fusion) que hoy es la instalación por defecto. v2 corre el mismo código de proyecto, pero además entiende el SQL que compila.
 
 <!-- example -->
 
 | Pieza | Rol |
 |---|---|
-| dbt Core | CLI open source: compile, run, test |
-| Plataforma dbt (Cloud) | IDE, jobs, CI, docs alojados, API de Semantic Layer |
-| Adapter | Habla con Snowflake, BigQuery, Databricks, Postgres... |
-| dbt Fusion | Motor en Rust: parseo más rápido, entiende SQL |
+| dbt v2 | Motor por defecto, escrito en Rust: parseo rápido, comprensión de SQL, `dbt lint` |
+| dbt v1 | Motor original en Python (antes dbt Core), aún mantenido |
+| Plataforma dbt (antes dbt Cloud) | Studio IDE, jobs, CI, Catalog, API de Semantic Layer |
+| Adapter | Habla con Snowflake, BigQuery, Databricks, Redshift... |
+
+#### ¿Cómo se compara dbt con Apache Spark?
+
+Spark es un motor de procesamiento distribuido que programas en Python, Scala o SQL, y cuyos trabajos y clústeres gestionas. dbt no es un motor: genera SQL y lo envía a un motor (Snowflake, BigQuery, Redshift, Databricks, Postgres, y el propio Spark mediante los adaptadores dbt-spark o dbt-databricks). Son complementarios: dbt puede orquestar transformaciones SQL que ejecuta Spark, mientras que el procesamiento complejo que no es SQL se queda en código Spark.
+
+#### ¿Qué diferencia hay entre dbt autoalojado y la dbt platform?
+
+dbt autoalojado es la herramienta de línea de comandos que instalas (`pip install dbt` o un instalador nativo), ejecutas y orquestas tú; es lo que antes se llamaba dbt Core. La dbt platform (antes dbt Cloud) es el servicio comercial gestionado: Studio IDE, planificador de trabajos, trabajos de CI, Catalog para documentación y linaje, las API de la capa semántica, alertas y control de accesos. Los dos ejecutan el mismo código de proyecto, y la plataforma admite las dos versiones del motor.
+
+#### ¿Qué son dbt v1 y dbt v2?
+
+Las dos generaciones del motor de dbt. dbt v1 es la implementación original en Python (las versiones 1.x de dbt Core). dbt v2 es una reescritura en Rust, lanzada primero como dbt Fusion, y hoy es lo que instala `pip install dbt`. Los proyectos se mantienen, pero v2 es más estricto: configs mal escritas, claves YAML desconocidas, macros inexistentes y variables sin definir fallan al analizar el proyecto en lugar de ignorarse o fallar más tarde. A cambio, v2 analiza mucho más rápido y agrega análisis estático, linaje a nivel de columna, un linter integrado (`dbt lint`), comprobaciones del proyecto (`dbt check`) y un servidor de lenguaje para la extensión de VS Code. Las dos generaciones producen artefactos compatibles, así que pueden convivir durante una migración.
+
+#### ¿Qué es el análisis estático en dbt v2?
+
+Después de renderizar el Jinja, v2 convierte el SQL de cada modelo en un plan lógico sin consultar el almacén. Así detecta errores de SQL antes de ejecutar nada. La config `static_analysis` controla qué tan estricto es. `baseline`, el valor por defecto, reporta los problemas como advertencias. `strict` resuelve los tipos de columna en todo el DAG y falla antes de la ejecución; es necesario para el linaje a nivel de columna. dbt v1 solo renderiza plantillas, así que los errores de SQL aparecen cuando el almacén ejecuta la consulta.
 
 #### ¿Qué es un adaptador de dbt?
 
-Un plugin que permite a dbt hablar con una plataforma de datos concreta, traduciendo las operaciones genéricas de dbt al dialecto SQL de esa plataforma: dbt-postgres, dbt-snowflake, dbt-bigquery, dbt-redshift, dbt-databricks, dbt-spark y muchos adaptadores de la comunidad.
+Un plugin que permite a dbt hablar con una plataforma de datos concreta, traduciendo las operaciones genéricas de dbt al dialecto SQL de esa plataforma: Snowflake, BigQuery, Databricks, Redshift, Postgres, Spark y muchos adaptadores de la comunidad. En dbt v1 son paquetes de Python (`dbt-snowflake`, `dbt-bigquery`...). En dbt v2 se conectan mediante drivers ADBC que dbt descarga en el primer uso, así que dbt se distribuye como un único binario.
 
-#### ¿Qué es un modelo de dbt?
+#### ¿Qué es la capa semántica de dbt?
 
-Un archivo `.sql` de la carpeta `models/` que contiene una sentencia `SELECT`. dbt la envuelve en el DDL necesario para crear una vista, tabla u otro objeto con el nombre del archivo. En algunas plataformas también se admiten modelos Python (`.py`).
-
-#### ¿Qué es el DAG en el contexto de dbt?
-
-El grafo acíclico dirigido de dependencias entre modelos, sources, seeds y snapshots, construido a partir de las llamadas a `ref()` y `source()`. dbt lo usa para ejecutar los nodos en el orden correcto (y en paralelo cuando es posible), para seleccionar partes del proyecto y para dibujar el linaje en la documentación.
-
-#### ¿Cuáles son los retos de dbt?
-
-Solo cubre la transformación, así que hacen falta otras herramientas para la ingesta y la orquestación. Los proyectos grandes pueden volverse lentos de compilar y difíciles de recorrer sin convenciones. Los modelos incrementales y los snapshots requieren un diseño cuidadoso. Jinja puede volver ilegible el SQL si se abusa de él. El rendimiento sigue dependiendo del almacén y del SQL que escribas, y los costos pueden dispararse si se hacen full refresh con demasiada frecuencia.
-
-#### ¿Qué problemas resuelve dbt frente a los procedimientos almacenados y los scripts?
-
-Las dependencias son explícitas y se resuelven solas, el código es modular y reutilizable gracias a `ref` y las macros, los tests y la documentación viven junto al código, los entornos se cambian por configuración y no editando, y todo está versionado y se puede revisar.
+Una capa, basada en MetricFlow, donde las métricas (ingresos, usuarios activos) se definen una sola vez en YAML sobre los modelos de dbt y luego se consultan de forma coherente desde BI y otras herramientas a través de API, para que todas calculen la métrica igual.
 
 <!-- challenge -->
 
@@ -130,8 +136,8 @@ Ambos: dbt puede correr modelos SQL (y Python) en Databricks con el adapter, y S
 <!-- takeaways -->
 
 - dbt genera código; la plataforma lo ejecuta.
-- Core es el CLI; la plataforma agrega funciones administradas.
-- Los adapters conectan dbt con cada plataforma de datos.
+- dbt v2 (Rust) es el motor por defecto; v1 es el original en Python.
+- La plataforma dbt agrega funciones administradas sobre cualquiera de los dos motores.
 
 <!-- unit: Modelos y el DAG -->
 
@@ -143,6 +149,7 @@ Ambos: dbt puede correr modelos SQL (y Python) en Databricks con el adapter, y S
 <!-- concept -->
 
 Un modelo es un archivo con un `SELECT`. Cuando referencia otro modelo con `ref()`, dbt registra una arista, y todas las aristas forman un DAG que decide el orden de construcción y qué puede correr en paralelo.
+
 Eso abarata la modularidad: modelos pequeños con una sola responsabilidad, reutilizados por muchos modelos aguas abajo. Los modelos Python sirven para las pocas transformaciones que SQL maneja mal, y siguen en el mismo DAG.
 
 <!-- example -->
@@ -155,25 +162,32 @@ def model(dbt, session):
     return feats.reset_index()
 ```
 
-#### ¿Qué comandos de dbt son los más habituales?
+#### ¿Qué es un modelo de dbt?
 
-`dbt run` (construir modelos), `dbt test` (ejecutar tests), `dbt build` (run, test, snapshot y seed en el orden del DAG), `dbt seed`, `dbt snapshot`, `dbt compile`, `dbt docs generate` / `dbt docs serve`, `dbt debug`, `dbt deps`, `dbt clean`, `dbt ls`, `dbt source freshness` y `dbt run-operation`.
+Un archivo `.sql` de la carpeta `models/` que contiene una sentencia `SELECT`. dbt la envuelve en el DDL necesario para crear una vista, tabla u otro objeto con el nombre del archivo. En algunas plataformas también se admiten modelos Python (`.py`).
 
-#### ¿Qué hace `dbt build`?
+#### ¿Qué es el DAG en el contexto de dbt?
 
-Ejecuta seeds, modelos, snapshots y tests en el orden del DAG. Si un test falla en un nodo, los nodos que dependen de él se omiten, para que los datos erróneos no se propaguen.
+El grafo acíclico dirigido de dependencias entre modelos, sources, seeds y snapshots, construido a partir de las llamadas a `ref()` y `source()`. dbt lo usa para ejecutar los nodos en el orden correcto (y en paralelo cuando es posible), para seleccionar partes del proyecto y para dibujar el linaje en la documentación.
 
-#### ¿Para qué sirve `dbt debug`?
+#### ¿Qué significa "modelado de datos modular" en dbt?
 
-Comprueba la instalación, `dbt_project.yml`, `profiles.yml` y la conexión con el almacén. Es lo primero que hay que ejecutar cuando nada funciona.
-
-#### ¿Qué diferencia hay entre `dbt run` y `dbt compile`?
-
-`dbt compile` renderiza el Jinja y escribe el SQL resultante en `target/compiled/` sin ejecutar nada. `dbt run` compila y ejecuta, y escribe las sentencias ejecutadas (con su DDL) en `target/run/`.
+Dividir las transformaciones en modelos pequeños y reutilizables con una sola responsabilidad (staging por fuente, lógica intermedia, marts finales), conectados con `ref`, en lugar de consultas monolíticas enormes.
 
 #### ¿En qué lenguajes se pueden escribir los modelos de dbt?
 
-En SQL (con Jinja) en todas partes, y en Python en Snowflake (Snowpark), Databricks y BigQuery (Dataproc). Los modelos Python devuelven un DataFrame y son útiles para la lógica que es incómoda en SQL.
+En SQL (con Jinja) en todas partes, y en Python en Snowflake (Snowpark), Databricks (PySpark) y BigQuery (BigQuery DataFrames o Dataproc). El código Python se ejecuta en la plataforma de datos, no en el computador que corre dbt. Los modelos Python devuelven un DataFrame y son útiles para la lógica que es incómoda en SQL.
+
+#### ¿Qué es un modelo Python en dbt?
+
+Un archivo `.py` que define `model(dbt, session)` y devuelve un DataFrame. Puede referenciar otros modelos con `dbt.ref()` y se materializa como tabla o como modelo incremental; en Python no se pueden crear vistas ni modelos ephemeral, y los modelos Python no pueden referenciar modelos ephemeral.
+
+```python
+def model(dbt, session):
+    dbt.config(materialized="table")
+    orders = dbt.ref("stg_orders")
+    return orders.groupBy("customer_id").count()
+```
 
 <!-- challenge -->
 
@@ -199,6 +213,7 @@ Extrae el join a un modelo intermedio (por ejemplo `int_orders_with_payments`) y
 <!-- concept -->
 
 Un puñado de comandos cubre el trabajo diario. Run construye modelos; test los revisa; build hace ambas cosas, más seeds y snapshots, en orden del DAG y salta lo que depende de una falla. Compile renderiza el SQL sin ejecutarlo, y así ves lo que dbt va a enviar de verdad. Debug revisa la configuración y la conexión.
+
 Saber qué comando usar ahorra tiempo y evita construir encima de datos rotos.
 
 <!-- example -->
@@ -209,28 +224,21 @@ dbt compile --select fct_orders     # see rendered SQL in target/compiled
 dbt build --select +fct_orders      # build and test fct_orders and its parents
 ```
 
-#### ¿Qué es un modelo Python en dbt?
+#### ¿Qué comandos de dbt son los más habituales?
 
-Un archivo `.py` que define `model(dbt, session)` y devuelve un DataFrame. Puede referenciar otros modelos con `dbt.ref()` y se materializa como tabla o como modelo incremental.
+`dbt run` (construir modelos), `dbt test` (ejecutar tests), `dbt build` (seeds, modelos, snapshots y tests en el orden del DAG), `dbt seed`, `dbt snapshot`, `dbt compile`, `dbt show`, `dbt retry`, `dbt docs generate` / `dbt docs serve`, `dbt debug`, `dbt deps`, `dbt clean`, `dbt ls`, `dbt run-operation` y `dbt source freshness`. dbt v2 agrega `dbt freshness` (sources y modelos), `dbt check` (estándares del proyecto) y `dbt lint` (estilo SQL).
 
-```python
-def model(dbt, session):
-    dbt.config(materialized="table")
-    orders = dbt.ref("stg_orders")
-    return orders.groupBy("customer_id").count()
-```
+#### ¿Qué hace `dbt build`?
 
-#### ¿Qué es dbt Fusion?
+Ejecuta seeds, modelos, snapshots y sus tests en el orden del DAG, y testea cada nodo justo después de construirlo. Si falla un test con severidad `error`, los nodos que dependen de él se omiten, para que los datos erróneos no se propaguen. En dbt v2, `dbt build` además ejecuta primero todos los tests unitarios y evalúa las comprobaciones del proyecto antes de cualquier trabajo en el almacén.
 
-Un nuevo motor de dbt escrito en Rust, presentado en 2025, que analiza y compila los proyectos mucho más rápido y entiende el SQL semánticamente (linaje a nivel de columna, detección de errores antes de llegar al almacén). Es la base de la extensión de dbt para VS Code y de la dbt platform.
+#### ¿Para qué sirve `dbt debug`?
 
-#### ¿Qué es la capa semántica de dbt?
+Comprueba la instalación, `dbt_project.yml`, `profiles.yml`, las dependencias necesarias como `git` y la conexión con el almacén. Es lo primero que hay que ejecutar cuando nada funciona.
 
-Una capa, basada en MetricFlow, donde las métricas (ingresos, usuarios activos) se definen una sola vez en YAML sobre modelos semánticos y luego se consultan de forma coherente desde BI y otras herramientas a través de API, para que todas calculen la métrica igual.
+#### ¿Qué diferencia hay entre `dbt run` y `dbt compile`?
 
-#### ¿Qué significa "modelado de datos modular" en dbt?
-
-Dividir las transformaciones en modelos pequeños y reutilizables con una sola responsabilidad (staging por fuente, lógica intermedia, marts finales), conectados con `ref`, en lugar de consultas monolíticas enormes.
+`dbt compile` renderiza el Jinja y escribe el SQL resultante en `target/compiled/` sin construir nada. Aun así se conecta al almacén cuando los modelos necesitan introspección (por ejemplo `run_query`). `dbt run` compila y ejecuta, y escribe las sentencias ejecutadas (con su DDL) en `target/run/`.
 
 <!-- challenge -->
 
@@ -258,6 +266,7 @@ Usa `dbt build`, que prueba cada nodo justo después de construirlo y salta a su
 <!-- concept -->
 
 Un proyecto dbt tiene dos tipos de configuración. El archivo de proyecto viaja con el código: nombre, rutas, configuraciones por defecto por carpeta. El profile se queda con la persona o la máquina que corre dbt: qué plataforma, qué credenciales, qué target, como `dev` o `prod`.
+
 Esa división permite que un mismo código construya en muchos ambientes. Las variables de ambiente la completan y mantienen los secretos fuera de todos los archivos.
 
 <!-- example -->
@@ -281,30 +290,13 @@ shop:
 
 Un directorio que contiene un archivo `dbt_project.yml` además de modelos, tests, macros, seeds, snapshots, análisis y documentación. Es la unidad que dbt compila y ejecuta, normalmente un repositorio Git.
 
-#### ¿Cuál es la estructura de un proyecto?
-
-La organización recomendada:
-
-```
-dbt_project.yml
-models/
-  staging/<source>/      modelos stg_: uno por tabla de origen, limpieza ligera
-  intermediate/          modelos int_: joins y lógica de negocio
-  marts/                 modelos fct_ y dim_ que consumen los usuarios
-seeds/        datos de referencia pequeños en CSV
-snapshots/    historial SCD tipo 2
-macros/       Jinja reutilizable
-tests/        tests de datos singulares
-analyses/     SQL que se compila pero no se ejecuta
-```
-
 #### ¿Qué va en `dbt_project.yml`?
 
 El nombre y la versión del proyecto, el `profile` que se usa, las rutas (models, seeds, macros…), las `vars` y las configuraciones por defecto de cada carpeta, como `+materialized: table` para todos los marts o `+schema: staging`.
 
 #### ¿Qué es `profiles.yml`?
 
-El archivo (por defecto en `~/.dbt/`) que contiene los datos de conexión de cada perfil y target: tipo de adaptador, host, base de datos, esquema, credenciales y threads. Se mantiene fuera del repositorio del proyecto porque contiene secretos. Los valores pueden venir de variables de entorno con `env_var()`.
+El archivo que contiene los datos de conexión de cada perfil y target: tipo de adaptador, host, base de datos, esquema, credenciales y threads. dbt lo busca en el directorio indicado con `--profiles-dir` o `DBT_PROFILES_DIR`, luego en el directorio del proyecto y luego en `~/.dbt/`. Contiene secretos de conexión, así que se mantiene fuera del repositorio o se versiona una copia que lea cada secreto con `env_var()`.
 
 #### ¿Qué es un target en dbt?
 
@@ -312,7 +304,11 @@ Una configuración de conexión con nombre dentro de un perfil, como `dev` y `pr
 
 #### ¿Qué son los threads en dbt?
 
-El número máximo de modelos que dbt ejecuta a la vez. Las ramas independientes del DAG se ejecutan en paralelo hasta ese límite.
+El número máximo de nodos que dbt construye a la vez. Las ramas independientes del DAG se ejecutan en paralelo hasta ese límite. dbt v2 gestiona el paralelismo por su cuenta en Snowflake y Databricks, donde `threads` solo actúa como tope, y en BigQuery y Redshift interpreta `threads: 0` (o la ausencia de valor) como "optimizar automáticamente".
+
+#### ¿Cómo se usan las variables de entorno en dbt?
+
+Con `{{ env_var('DBT_PASSWORD') }}`, opcionalmente con un valor por defecto: `{{ env_var('DBT_SCHEMA', 'dbt_dev') }}`. Se usan mucho en `profiles.yml` para las credenciales. Las variables con el prefijo `DBT_ENV_SECRET_` se ocultan en los registros y solo se pueden usar en `profiles.yml` y `packages.yml`, no en los modelos.
 
 <!-- challenge -->
 
@@ -338,6 +334,7 @@ Rota la contraseña, bórrala del historial del repositorio y reescribe el profi
 <!-- concept -->
 
 La configuración va de lo general a lo específico: valores por defecto por carpeta en el proyecto, sobrescritos en YAML y otra vez en el archivo del modelo. Las configs cambian cómo dbt construye algo; las properties lo describen. Tener clara esa distinción evita la mayoría de preguntas del tipo "¿por qué no se aplicó mi ajuste?".
+
 La selección permite actuar sobre parte del DAG: por nombre, ruta, tag, estado u operadores de grafo. Las variables hacen que el mismo código se comporte distinto en cada ejecución.
 
 <!-- example -->
@@ -360,7 +357,7 @@ select * from {{ ref('int_orders') }}
 
 #### ¿Qué diferencia hay entre configs y properties?
 
-Las configs controlan cómo construye dbt un nodo (materialización, esquema, etiquetas, hooks). Las properties lo describen (descripción, columnas, tests, documentación). Las properties viven en archivos YAML. Las configs pueden estar en YAML, en el archivo del modelo o en `dbt_project.yml`.
+Las configs controlan cómo construye y gestiona dbt un nodo (materialización, esquema, etiquetas, meta, hooks, access). Las properties lo describen (descripción, columnas, tests, documentación). Las properties viven en archivos YAML. Las configs pueden estar en YAML bajo una clave `config:`, en el archivo del modelo o en `dbt_project.yml`, y se heredan de lo general a lo específico. Desde dbt v1.10, configs como `tags`, `meta` y `access` van bajo `config:` en YAML, y dbt v2 las rechaza en el nivel superior. Solo las configs sirven para seleccionar, con `--select config.materialized:incremental`.
 
 #### ¿Para qué sirven las etiquetas (tags)?
 
@@ -376,9 +373,9 @@ dbt run --select staging.stripe         # una carpeta
 dbt test --select source:stripe+        # tests de una source y de todo lo que depende de ella
 ```
 
-#### ¿Qué son los paquetes y cómo se instalan?
+#### ¿Qué son las variables (`vars`) en dbt?
 
-Proyectos dbt reutilizables (macros, modelos, tests) como `dbt_utils`, `dbt_expectations` o `codegen`. Se listan en `packages.yml` (o `dependencies.yml`) y se instalan con `dbt deps`.
+Valores definidos en `dbt_project.yml` o pasados por la línea de comandos (`--vars '{start_date: 2026-01-01}'`) que se leen con `{{ var('start_date') }}`, opcionalmente con un valor por defecto: `{{ var('start_date', '2020-01-01') }}`. Los valores de la línea de comandos tienen prioridad sobre el archivo del proyecto. Una variable sin valor ni valor por defecto es un error (al analizar el proyecto en dbt v2).
 
 <!-- challenge -->
 
@@ -404,6 +401,7 @@ Pon `+materialized: table` para la carpeta de marts en `dbt_project.yml` y sobre
 <!-- concept -->
 
 Una estructura de carpetas consistente le dice a todos dónde va cada cosa: staging por fuente, intermediate para lógica compartida, marts por área de negocio. Las configs por carpeta aplican luego materializaciones y esquemas a capas completas.
+
 Por defecto dbt agrega el esquema personalizado al esquema del target, lo que protege a los desarrolladores de escribir en esquemas de producción. Los equipos suelen sobrescribir la macro para que producción tenga nombres limpios mientras desarrollo sigue aislado. Analyses y comandos de limpieza completan la organización del proyecto.
 
 <!-- example -->
@@ -419,17 +417,24 @@ Por defecto dbt agrega el esquema personalizado al esquema del target, lo que pr
 {%- endmacro %}
 ```
 
-#### ¿Qué es `dbt_utils`?
+#### ¿Cómo se suele estructurar un proyecto de dbt?
 
-El paquete más usado, con tests genéricos (`unique_combination_of_columns`, `expression_is_true`, `accepted_range`) y macros (`generate_surrogate_key`, `star`, `date_spine`, `pivot`, `union_relations`).
+La organización recomendada:
 
-#### ¿Qué son las variables (`vars`) en dbt?
-
-Valores definidos en `dbt_project.yml` o pasados por la línea de comandos (`--vars '{start_date: 2026-01-01}'`) que se leen con `{{ var('start_date') }}`.
-
-#### ¿Cómo se usan las variables de entorno en dbt?
-
-Con `{{ env_var('DBT_PASSWORD') }}`, opcionalmente con un valor por defecto. Se usan mucho en `profiles.yml` para las credenciales, y las variables con el prefijo `DBT_ENV_SECRET_` se ocultan en los registros.
+```
+dbt_project.yml
+models/
+  staging/<source>/      modelos stg_: uno por tabla de origen, limpieza ligera
+  intermediate/          modelos int_: joins y lógica de negocio
+  marts/                 modelos fct_ y dim_ que consumen los usuarios
+seeds/        datos de referencia pequeños en CSV
+snapshots/    historial SCD tipo 2
+macros/       Jinja reutilizable
+tests/        tests de datos singulares
+analyses/     SQL que se compila pero no se ejecuta
+functions/    funciones definidas por el usuario (UDF)
+checks/       estándares del proyecto que revisa dbt check (dbt v2)
+```
 
 #### ¿Cómo decide dbt en qué esquema se construye un modelo?
 
@@ -438,6 +443,14 @@ Mediante la macro `generate_schema_name`. Por defecto, un esquema personalizado 
 #### ¿Qué es la macro `generate_schema_name` y por qué sobrescribirla?
 
 Calcula el esquema de cada nodo. Sobrescribirla permite, por ejemplo, usar nombres de esquema exactos en producción y mantener un prefijo personal en desarrollo, para que los desarrolladores no se pisen.
+
+#### ¿Qué son los analyses en dbt?
+
+Archivos SQL de `analyses/` que se compilan (con Jinja y `ref` resueltos) pero que `dbt run` nunca ejecuta. Son útiles para consultas puntuales que se benefician de las referencias de dbt.
+
+#### ¿Qué hace `dbt clean`?
+
+Borra las carpetas listadas en `clean-targets` (normalmente `target/` y `dbt_packages/`). dbt v2 se niega a borrar nada fuera del directorio del proyecto o dentro de rutas de recursos como `models/`.
 
 <!-- challenge -->
 
@@ -463,6 +476,7 @@ Sobrescribe `generate_schema_name` para que en el target prod se use el esquema 
 <!-- concept -->
 
 Los paquetes son proyectos dbt que importas: pruebas, macros y modelos que otros ya escribieron y probaron. La mayoría de proyectos arranca con `dbt_utils` para pruebas y utilidades comunes.
+
 Cuando los proyectos crecen y sirven a otros equipos, los modelos se vuelven interfaces. Los niveles de acceso y los grupos deciden quién puede referenciar qué, y las versiones permiten que un cambio que rompe salga como versión nueva mientras los consumidores migran a su ritmo.
 
 <!-- example -->
@@ -475,27 +489,28 @@ packages:
 # models/marts/_marts.yml
 models:
   - name: fct_orders
-    access: public
-    group: finance
+    config:
+      access: public
+      group: finance
     latest_version: 2
     versions: [{v: 1}, {v: 2}]
 ```
 
-#### ¿Qué son los analyses en dbt?
+#### ¿Qué son los paquetes y cómo se instalan?
 
-Archivos SQL de `analyses/` que se compilan (con Jinja y `ref` resueltos) pero que `dbt run` nunca ejecuta. Son útiles para consultas puntuales que se benefician de las referencias de dbt.
+Proyectos dbt reutilizables (macros, modelos, tests) como `dbt_utils`, `dbt_expectations` o `codegen`. Se listan en `packages.yml` y se instalan con `dbt deps`, que los descarga en `dbt_packages/` y fija las versiones resueltas en `package-lock.yml`. `dependencies.yml` puede contener tanto paquetes como dependencias entre proyectos (dbt Mesh), pero dbt v1 no renderiza Jinja en él, así que los paquetes privados que necesitan un token de una variable de entorno se quedan en `packages.yml`.
 
-#### ¿Qué hace `dbt clean`?
+#### ¿Qué es `dbt_utils`?
 
-Borra las carpetas listadas en `clean-targets` (normalmente `target/` y `dbt_packages/`).
+El paquete más usado, con tests genéricos (`unique_combination_of_columns`, `expression_is_true`, `accepted_range`) y macros (`generate_surrogate_key`, `star`, `date_spine`, `pivot`, `union_relations`).
 
 #### ¿Qué son el acceso a modelos y los grupos?
 
-Funciones de gobierno. El `access` de un modelo puede ser `private` (solo referenciable dentro de su grupo), `protected` (dentro del proyecto, el valor por defecto) o `public` (desde otros proyectos). Los grupos asignan la propiedad de un conjunto de modelos.
+Funciones de gobierno. La config `access` de un modelo puede ser `private` (solo referenciable dentro de su grupo), `protected` (dentro del proyecto o cuando se instala como paquete; el valor por defecto) o `public` (también desde otros proyectos). Los grupos reúnen modelos relacionados bajo un mismo responsable. dbt Labs recomienda `private` para los modelos nuevos que no están pensados para compartirse.
 
 #### ¿Qué son las versiones de modelos?
 
-Una forma de publicar una nueva versión de un modelo público (`fct_orders_v2`) mientras los consumidores siguen usando la antigua hasta migrar, con `ref('fct_orders', v=1)`.
+Una forma de publicar un cambio incompatible de un modelo público como versión nueva mientras los consumidores siguen usando la antigua hasta migrar. Cada versión vive en su propio archivo (`fct_orders_v1.sql`, `fct_orders_v2.sql`). `ref('fct_orders', v=1)` fija una versión, y un `ref('fct_orders')` sin más se resuelve a `latest_version`. Las versiones antiguas pueden llevar una `deprecation_date` para avisar a los consumidores.
 
 <!-- challenge -->
 
@@ -507,7 +522,7 @@ Pon tus modelos en un group, marca los intermedios como `private` (o `protected`
 
 <!-- takeaways -->
 
-- Los paquetes traen pruebas y macros ya probados.
+- Los paquetes traen pruebas y macros listos para usar.
 - Access y groups definen las interfaces de los modelos.
 - Las versiones dejan convivir cambios que rompen.
 
@@ -525,6 +540,7 @@ Pon tus modelos en un group, marca los intermedios como `private` (o `protected`
 <!-- concept -->
 
 Las tablas crudas que cargan otras herramientas son las entradas de dbt. Declararlas como sources pone su ubicación en un solo lugar, arranca el linaje en el punto correcto y permite probarlas y revisarlas antes de construir algo encima.
+
 Los chequeos de frescura responden una pregunta que las pruebas no: ¿llegaron datos nuevos? Correrlos primero en producción evita que los modelos se reconstruyan en silencio sobre datos viejos.
 
 <!-- example -->
@@ -534,10 +550,11 @@ sources:
   - name: shop
     database: raw
     schema: shop
-    loaded_at_field: _loaded_at
-    freshness:
-      warn_after: {count: 6, period: hour}
-      error_after: {count: 24, period: hour}
+    config:
+      loaded_at_field: _loaded_at
+      freshness:
+        warn_after: {count: 6, period: hour}
+        error_after: {count: 24, period: hour}
     tables:
       - name: orders
         columns:
@@ -556,10 +573,11 @@ sources:
     schema: stripe
     tables:
       - name: payments
-        loaded_at_field: _loaded_at
-        freshness:
-          warn_after: {count: 12, period: hour}
-          error_after: {count: 24, period: hour}
+        config:
+          loaded_at_field: _loaded_at
+          freshness:
+            warn_after: {count: 12, period: hour}
+            error_after: {count: 24, period: hour}
 ```
 
 #### ¿Por qué usar `source()` en lugar de escribir el nombre de la tabla?
@@ -568,19 +586,23 @@ La ubicación de la tabla se define en un solo sitio, el linaje empieza en la so
 
 #### ¿Qué es la frescura de las sources (source freshness)?
 
-Una comprobación, que se lanza con `dbt source freshness`, que compara el máximo de `loaded_at_field` con la hora actual y avisa o falla cuando los datos son más antiguos que los umbrales configurados.
+Una comprobación que compara la carga más reciente de una source con la hora actual y avisa o falla cuando los datos son más antiguos que los umbrales `warn_after` y `error_after`. dbt lee el máximo de `loaded_at_field` (o el resultado de una `loaded_at_query` propia), o usa los metadatos del almacén cuando no hay ninguno de los dos y la plataforma lo permite. Desde dbt v1.10, `freshness` y `loaded_at_field` van bajo `config:`, a nivel de source como valores por defecto o por tabla para sobrescribirlos.
 
 #### ¿Se pueden testear las sources?
 
 Sí, los tests genéricos se declaran en las columnas de las sources exactamente igual que en los modelos, y detectan problemas en los datos en bruto antes de que lleguen a tus modelos.
 
-#### ¿Qué es un modelo de staging?
+#### ¿Para qué se usa `dbt source freshness` en producción?
 
-La primera capa sobre una source: un modelo por tabla de origen, con transformaciones ligeras (renombrar, convertir tipos, limpieza básica, deduplicación). Todo lo que viene después referencia modelos de staging, no sources directamente.
+Para detectar una ingesta rota o retrasada antes de que los modelos se ejecuten sobre datos obsoletos, a menudo como primer paso de un trabajo programado. Sus resultados van a `target/sources.json`.
 
-#### ¿Por qué solo los modelos de staging deben referenciar sources?
+#### ¿Qué es la frescura de los modelos y qué hace `dbt freshness`?
 
-Para que cada tabla en bruto se limpie una sola vez, en un único sitio. Si la source cambia, solo hay que actualizar su modelo de staging.
+dbt v2 extiende la frescura a los modelos: defines `warn_after` y `error_after` (y un `loaded_at_field` o `loaded_at_query`) en la config de un modelo, y `dbt freshness` revisa en un solo comando todas las sources y modelos que tengan frescura configurada, y escribe `target/freshness.json`. `dbt source freshness` sigue funcionando, pero solo revisa sources. La frescura de modelos es útil en los modelos que los consumidores consultan directamente, donde "el trabajo terminó bien" no prueba que los datos sean recientes.
+
+#### ¿Qué diferencia hay entre `ref()` y `source()`?
+
+`ref()` apunta a otro nodo de dbt (modelo, seed, snapshot) y crea una dependencia que el DAG usa para ordenar las ejecuciones. `source()` apunta a datos en bruto cargados fuera de dbt. Ambos se resuelven al nombre completo de la tabla en el target actual.
 
 <!-- challenge -->
 
@@ -606,6 +628,7 @@ Source freshness sobre las tablas crudas con umbrales `error_after`, corrida com
 <!-- concept -->
 
 Los modelos de staging son la entrada limpia: uno por tabla fuente, con renombres, casts y limpieza ligera, sin joins ni lógica de negocio. Si solo staging lee las sources, un cambio en la fuente toca un archivo.
+
 Las capas se apoyan en eso: los modelos intermedios guardan joins y lógica reutilizable, los marts sirven a los consumidores. Como `ref()` resuelve al target actual, las mismas capas se construyen en el esquema de un desarrollador o en producción sin cambiar código.
 
 <!-- example -->
@@ -620,29 +643,21 @@ select
 from {{ source('shop', 'orders') }}
 ```
 
-#### ¿Qué es un seed?
+#### ¿Qué es un modelo de staging?
 
-Un archivo CSV de la carpeta `seeds/` que `dbt seed` carga en el almacén como tabla. Los modelos lo referencian con `ref()` como a cualquier modelo.
+La primera capa sobre una source: un modelo por tabla de origen, con transformaciones ligeras (renombrar, convertir tipos, limpieza básica, deduplicación). Todo lo que viene después referencia modelos de staging, no sources directamente.
 
-#### ¿Cuándo usar seeds y cuándo no?
+#### ¿Por qué solo los modelos de staging deben referenciar sources?
 
-Para datos de referencia pequeños y estáticos que cambian poco y deben estar en el control de versiones: códigos de país, tablas de correspondencia, datos de prueba. No para datos grandes o que cambian a menudo, ni para datos que deberían venir de un sistema de origen.
+Para que cada tabla en bruto se limpie una sola vez, en un único sitio. Si la source cambia, solo hay que actualizar su modelo de staging.
 
-#### ¿Cómo se fijan los tipos de columna de un seed?
+#### ¿Qué es la organización en capas "staging, intermediate, marts"?
 
-Con `column_types` en la configuración del seed. Si no, dbt los infiere:
+Una estructura habitual: staging limpia cada source, intermediate contiene joins y lógica de negocio reutilizables, y los marts son las tablas de hechos y dimensiones finales (o tablas anchas) que consumen BI y los analistas.
 
-```yaml
-seeds:
-  my_project:
-    country_codes:
-      +column_types:
-        code: varchar(2)
-```
+#### ¿A qué se resuelve `ref()` en entornos distintos?
 
-#### ¿Cómo se recarga un seed cuyas columnas han cambiado?
-
-Con `dbt seed --full-refresh`, que elimina y vuelve a crear la tabla en lugar de vaciarla e insertar.
+A la relación en la base de datos y el esquema del target actual, así que el mismo código construye en el esquema de un desarrollador en dev y en los esquemas de producción en prod.
 
 #### ¿Puede dbt trabajar con distintas fuentes de datos y almacenes?
 
@@ -672,6 +687,7 @@ Si solo `stg_shop__orders` leyera la fuente, el arreglo sería una línea ahí (
 <!-- concept -->
 
 Los seeds cargan al warehouse archivos CSV pequeños del repositorio. Son ideales para datos de referencia estáticos que deben estar en control de versiones, como códigos de país o tablas de mapeo, y se revisan como código.
+
 Son la herramienta equivocada para algo grande, sensible o que cambia seguido; eso va en la ingesta. Los tipos deben fijarse explícitamente, porque la inferencia adivina, y los cambios de columnas necesitan un full refresh.
 
 <!-- example -->
@@ -688,21 +704,29 @@ seeds:
 dbt seed --select country_codes --full-refresh
 ```
 
-#### ¿Qué diferencia hay entre `ref()` y `source()`?
+#### ¿Qué es un seed?
 
-`ref()` apunta a otro nodo de dbt (modelo, seed, snapshot) y crea una dependencia que el DAG usa para ordenar las ejecuciones. `source()` apunta a datos en bruto cargados fuera de dbt. Ambos se resuelven al nombre completo de la tabla en el target actual.
+Un archivo CSV de la carpeta `seeds/` que `dbt seed` carga en el almacén como tabla. Los modelos lo referencian con `ref()` como a cualquier modelo.
 
-#### ¿A qué se resuelve `ref()` en entornos distintos?
+#### ¿Cuándo usar seeds y cuándo no?
 
-A la relación en la base de datos y el esquema del target actual, así que el mismo código construye en el esquema de un desarrollador en dev y en los esquemas de producción en prod.
+Para datos de referencia pequeños y estáticos que cambian poco y deben estar en el control de versiones: códigos de país, tablas de correspondencia, datos de prueba. No para datos grandes o que cambian a menudo, ni para datos que deberían venir de un sistema de origen.
 
-#### ¿Qué es la organización en capas "staging, intermediate, marts"?
+#### ¿Cómo se fijan los tipos de columna de un seed?
 
-Una estructura habitual: staging limpia cada source, intermediate contiene joins y lógica de negocio reutilizables, y los marts son las tablas de hechos y dimensiones finales (o tablas anchas) que consumen BI y los analistas.
+Con la config `column_types`, en `dbt_project.yml` o en las propiedades YAML del seed. Si no, dbt infiere cada tipo a partir de los valores:
 
-#### ¿Para qué se usa `dbt source freshness` en producción?
+```yaml
+seeds:
+  my_project:
+    country_codes:
+      +column_types:
+        code: varchar(2)
+```
 
-Para detectar una ingesta rota o retrasada antes de que los modelos se ejecuten sobre datos obsoletos, a menudo como primer paso de un trabajo programado.
+#### ¿Cómo se recarga un seed cuyas columnas han cambiado?
+
+Con `dbt seed --full-refresh`, que elimina y vuelve a crear la tabla en lugar de vaciarla e insertar.
 
 <!-- challenge -->
 
@@ -730,6 +754,7 @@ Pasarla a la capa de ingesta (un loader o conector hacia una tabla cruda declara
 <!-- concept -->
 
 Escribir un modelo es escribir una consulta; la materialización decide qué hace dbt con ella. Una vista no guarda nada y recalcula en cada lectura. Una tabla guarda resultados y recalcula en cada build. Los modelos ephemeral se insertan como CTEs en sus hijos. Los incrementales agregan solo datos nuevos en cada ejecución.
+
 La elección cambia costo de build por costo de consulta y frescura, y un proyecto suele usarlas todas según la capa. Cuando ninguna encaja, existen materializaciones personalizadas, aunque rara vez hacen falta.
 
 <!-- example -->
@@ -766,7 +791,8 @@ Con `ref()`. Cuando un modelo llama a `{{ ref('stg_orders') }}`, dbt registra la
 - **table**: el resultado se guarda y se reconstruye en cada ejecución.
 - **incremental**: en las ejecuciones siguientes solo se insertan o fusionan las filas nuevas o modificadas.
 - **ephemeral**: no se construye, se inserta como CTE en los modelos que dependen de él.
-- **materialized_view**: una vista materializada de la base de datos, donde se admite.
+- **materialized_view**: una vista materializada de la base de datos que la propia plataforma refresca, donde se admite. El equivalente en Snowflake es la materialización `dynamic_table`, propia de su adaptador.
+
 Los snapshots y los seeds son tipos de recurso aparte, con su propio comportamiento.
 
 #### ¿Cuándo conviene una vista y cuándo una tabla?
@@ -805,6 +831,7 @@ Materializa el mart como tabla (y quizá un modelo intermedio costoso), para que
 <!-- concept -->
 
 Los marts son los modelos que usa la gente, así que siguen el diseño dimensional: hechos con un grano declarado, dimensiones para el contexto. Declarar el grano en la descripción y probarlo con una prueba de unicidad atrapa el bug de modelado más común, un join que multiplica filas.
+
 Las convenciones hacen navegable un proyecto: prefijos por capa, llaves sustitutas generadas de forma consistente, alias cuando el nombre en el warehouse debe diferir del archivo y modelos deshabilitados para código que no debe correr en una plataforma.
 
 <!-- example -->
@@ -844,17 +871,13 @@ from {{ ref('stg_order_lines') }}
 
 Lo que representa una fila (un pedido, una línea de pedido, un cliente por día). Declararla, y comprobarla con un test de unicidad, evita filas duplicadas y agregaciones erróneas aguas abajo.
 
-#### ¿Qué son los hooks?
+#### ¿Qué es la configuración `alias`?
 
-SQL que se ejecuta en momentos concretos: `pre-hook` y `post-hook` alrededor de un modelo, y `on-run-start` / `on-run-end` alrededor de toda la invocación. Sirven, por ejemplo, para conceder privilegios, crear índices o registrar las ejecuciones.
+Fija el nombre de la relación en el almacén con independencia del nombre del archivo del modelo.
 
-#### ¿Qué son el pre-hook y el post-hook?
+#### ¿Qué es un modelo desactivado?
 
-Un `pre-hook` ejecuta SQL justo antes de construir un modelo, y un `post-hook` justo después, dentro de la misma ejecución. Por ejemplo:
-
-```sql
-{{ config(post_hook="grant select on {{ this }} to role reporter") }}
-```
+Un modelo con `enabled: false`. dbt lo ignora, lo que es útil para modelos específicos de una plataforma o en desarrollo.
 
 <!-- challenge -->
 
@@ -880,6 +903,7 @@ Una prueba `unique` sobre `order_id` (el grano declarado). La causa usual es un 
 <!-- concept -->
 
 Los hooks corren SQL extra antes o después de un modelo o de toda una ejecución: grants, inserts de auditoría, comandos de mantenimiento. `{{ this }}` se refiere a la relación del propio modelo, que necesitan los hooks y la lógica incremental.
+
 Los contratos van en sentido contrario: en lugar de agregar acciones, agregan garantías. Con un contrato impuesto, las columnas y tipos del modelo deben coincidir con lo declarado, así un refactor no puede cambiar en silencio la interfaz de la que dependen los consumidores. Los constraints agregan reglas a nivel de base donde la plataforma las soporta.
 
 <!-- example -->
@@ -898,25 +922,29 @@ models:
         data_type: varchar
 ```
 
+#### ¿Qué son los hooks?
+
+SQL que se ejecuta en momentos concretos: `pre-hook` y `post-hook` alrededor de un modelo, y `on-run-start` / `on-run-end` alrededor de toda la invocación. Sirven, por ejemplo, para conceder privilegios, crear índices o registrar las ejecuciones.
+
+#### ¿Qué son los pre-hooks y los post-hooks?
+
+Un `pre-hook` ejecuta SQL justo antes de construir un modelo, y un `post-hook` justo después, dentro de la misma ejecución. Por ejemplo:
+
+```sql
+{{ config(post_hook="grant select on {{ this }} to role reporter") }}
+```
+
 #### ¿A qué se refiere `{{ this }}`?
 
 A la relación (base_de_datos.esquema.tabla) del modelo que se está construyendo. Se usa en los hooks y en los modelos incrementales para consultar la tabla existente.
 
 #### ¿Qué son los contratos de modelo?
 
-Una configuración `contract: {enforced: true}` con nombres y tipos de columna declarados (y restricciones donde se admiten). dbt comprueba que la salida del modelo coincide antes de construirlo, y protege así a los consumidores de cambios de esquema.
+Una configuración `contract: {enforced: true}` con el nombre y el tipo de dato de cada columna declarados (y restricciones donde se admiten). Antes de construir, dbt hace una comprobación previa de que la consulta del modelo devuelve exactamente esas columnas y tipos, en cualquier orden, y si no, falla la construcción. Así protege a los consumidores de cambios de esquema. Los contratos se aplican a modelos SQL materializados como tablas, vistas (solo nombres y tipos, sin restricciones) o modelos incrementales con `on_schema_change` en `append_new_columns` o `fail`.
 
 #### ¿Qué son las restricciones (constraints) en dbt?
 
-Declaraciones como `not_null`, `unique`, `primary_key`, `foreign_key` y `check` en modelos con contrato. dbt las añade al DDL cuando la plataforma las aplica. Muchos almacenes solo registran algunas como metadatos, así que los tests siguen siendo necesarios.
-
-#### ¿Qué diferencia hay entre `dbt run --full-refresh` y una ejecución normal?
-
-`--full-refresh` elimina y reconstruye desde cero los modelos incrementales y recarga los seeds, en lugar de procesar solo los datos nuevos.
-
-#### ¿Qué hace la opción `--defer`?
-
-Con `--state` apuntando a los artefactos de producción, hace que `ref()` se resuelva a las relaciones de producción de los modelos que no has construido en tu entorno, así que puedes ejecutar un modelo en dev sin reconstruir todos sus padres.
+Declaraciones como `not_null`, `unique`, `primary_key`, `foreign_key` y `check` en modelos con contrato. dbt las añade al DDL de `create table` donde la plataforma las admite. El soporte varía: la mayoría de las plataformas analíticas aplican `not_null`, pero registran las claves primarias, las foráneas y `unique` solo como metadatos (la `primary_key` de Snowflake, por ejemplo), así que los tests siguen siendo necesarios para la unicidad y las relaciones.
 
 <!-- challenge -->
 
@@ -942,6 +970,7 @@ Un contrato de modelo impuesto que declare `bigint` para esa columna: el build f
 <!-- concept -->
 
 El trabajo diario necesita más que `run`. Los full refresh reconstruyen los modelos incrementales desde cero. Defer y clone permiten construir solo lo que cambiaste leyendo todo lo demás de producción. Show previsualiza resultados sin construir; retry vuelve a correr solo lo que falló.
+
 Muchos errores vienen de los ambientes y no del SQL: un padre que nunca se construyó en tu esquema, un error de tipeo en una source, permisos faltantes. Conocer las herramientas anteriores suele resolverlos en minutos.
 
 <!-- example -->
@@ -952,33 +981,33 @@ dbt show --select fct_orders --limit 10                              # preview
 dbt retry                                                            # rerun failed nodes only
 ```
 
+#### ¿Qué diferencia hay entre `dbt run --full-refresh` y una ejecución normal?
+
+`--full-refresh` reconstruye desde cero los modelos incrementales y borra y recarga los seeds, en lugar de procesar solo los datos nuevos. Los modelos con `full_refresh: false` lo ignoran, y los snapshots siempre lo ignoran y se ejecutan con normalidad.
+
+#### ¿Qué hace la opción `--defer`?
+
+Con `--state` apuntando a los artefactos de producción, hace que `ref()` se resuelva a las relaciones de producción de los modelos que no has construido en tu entorno, así que puedes ejecutar un modelo en dev sin reconstruir todos sus padres.
+
 #### ¿Qué es `dbt clone`?
 
-Un comando que crea copias (clones sin copia de datos donde se admite, si no vistas) de los modelos de producción en otro entorno, a partir del estado de producción. Acelera la CI y la preparación de entornos de desarrollo.
+Un comando que copia los nodos seleccionados desde un estado guardado (por ejemplo, los artefactos de producción indicados con `--state`) al target actual. En plataformas con clonado sin copia de datos (Snowflake, Databricks, BigQuery) crea clones de las tablas; en las demás crea vistas que apuntan al original. Acelera la preparación de entornos de desarrollo y de CI y sirve para despliegues azul-verde.
 
 #### ¿Qué es `dbt show`?
 
-Un comando para previsualizar los resultados de un modelo o de una consulta en línea sin materializarlo: `dbt show --select stg_orders --limit 10`.
+Un comando que compila un modelo, test o análisis (o una consulta en línea con `--inline`), lo ejecuta y muestra una vista previa de los resultados sin materializar nada: `dbt show --select stg_orders --limit 10`.
 
 #### ¿Qué es `dbt retry`?
 
-Vuelve a ejecutar solo los nodos que fallaron o se omitieron en la invocación anterior.
+Vuelve a ejecutar la invocación anterior desde el punto de fallo: los nodos que fallaron o se omitieron, con las mismas opciones. Si el comando anterior falló antes de que corriera algún nodo (por ejemplo, por un error de conexión), no hay nada que reintentar.
 
 #### ¿Cómo se resuelve el error "relation does not exist" en dbt?
 
 Causas habituales: una tabla referenciada nunca se construyó en el target actual (ejecuta el padre o usa `--defer`), el nombre de la tabla está escrito a mano en lugar de usar `ref`/`source` (así que la dependencia no se conoce y el orden es incorrecto), la definición de la source apunta a la base de datos o al esquema equivocados, el usuario no tiene permiso para ver el objeto, o el identificador tiene problemas de comillas o mayúsculas. Ejecutar `dbt compile` y mirar el SQL de `target/compiled/` suele mostrar qué nombre está mal.
 
-#### ¿Qué es el refresco de datos (data refresh)?
+#### ¿Qué es un refresco de datos (data refresh)?
 
 Actualizar las tablas del almacén para que reflejen los últimos datos de origen: un `dbt build` programado que reconstruye las tablas, procesa las filas nuevas de los modelos incrementales y captura los cambios en los snapshots. Su frecuencia depende de lo frescos que necesiten los datos los consumidores y de cada cuánto se cargan las sources.
-
-#### ¿Qué es un modelo desactivado?
-
-Un modelo con `enabled: false`. dbt lo ignora, lo que es útil para modelos específicos de una plataforma o en desarrollo.
-
-#### ¿Qué es la configuración `alias`?
-
-Fija el nombre de la relación en el almacén con independencia del nombre del archivo del modelo.
 
 <!-- challenge -->
 
@@ -1006,6 +1035,7 @@ Construir también los padres (`--select +my_mart`), o usar `--defer --state` co
 <!-- concept -->
 
 Jinja convierte los archivos SQL en plantillas. Las expresiones insertan valores, las sentencias agregan ciclos y condiciones, y los comentarios desaparecen al compilar. Con variables y filtros, el SQL repetitivo, como una columna por método de pago, se vuelve un ciclo sobre una lista.
+
 La variable `target` permite adaptar el código al ambiente, por ejemplo muestreando datos en desarrollo. El control de espacios mantiene legible el SQL compilado, lo que importa porque eso es lo que depuras.
 
 <!-- example -->
@@ -1037,10 +1067,6 @@ from {{ ref('stg_payments') }}
 group by 1
 ```
 
-#### ¿Qué son las macros en dbt y cómo se ejecutan?
-
-Fragmentos reutilizables de Jinja (que a menudo generan SQL) definidos con `{% macro name(args) %}...{% endmacro %}` en la carpeta `macros/`. Se llaman dentro de modelos, tests o hooks con `{{ name(args) }}`, o se ejecutan directamente con `dbt run-operation name --args '{...}'`.
-
 #### ¿Qué diferencia hay entre `{{ }}`, `{% %}` y `{# #}`?
 
 `{{ }}` muestra una expresión, `{% %}` ejecuta una instrucción (if, for, set, macro, call) y `{# #}` es un comentario que no aparece en el SQL compilado.
@@ -1049,19 +1075,21 @@ Fragmentos reutilizables de Jinja (que a menudo generan SQL) definidos con `{% m
 
 Elimina los espacios en blanco antes o después de la etiqueta, para que el SQL compilado quede limpio.
 
-#### ¿Cómo se escribe una macro con un argumento por defecto?
+#### ¿Cómo se define una variable dentro de un modelo?
+
+Con `{% set %}`, por ejemplo `{% set payment_methods = ['card', 'paypal'] %}`, y luego se usa en bucles o expresiones.
+
+#### ¿Qué son los filtros de Jinja? Da ejemplos.
+
+Funciones que se aplican con `|`, como `{{ name | upper }}`, `{{ columns | join(', ') }}` o `{{ value | default('n/a') }}`.
+
+#### ¿Qué es la variable `target` en Jinja?
+
+Información sobre la conexión actual: `target.name`, `target.schema`, `target.type`, `target.threads`. Se usa a menudo para limitar los datos en desarrollo:
 
 ```sql
-{% macro cents_to_euros(column, scale=2) %}
-    round({{ column }} / 100.0, {{ scale }})
-{% endmacro %}
+{% if target.name == 'dev' %} where created_at >= dateadd(day, -3, current_date) {% endif %}
 ```
-
-Se llama con `{{ cents_to_euros('amount') }}`.
-
-#### ¿Qué hace `run_query`?
-
-Ejecuta una consulta durante la compilación y devuelve el resultado como una tabla agate, por ejemplo para construir una lista de valores distintos que se usa en un bucle. Solo devuelve datos en tiempo de ejecución, así que se suele proteger con `{% if execute %}`.
 
 <!-- challenge -->
 
@@ -1082,12 +1110,13 @@ Lee la lista de países desde una variable, un seed o `run_query` y recórrela c
 <!-- goals -->
 
 - Escribir macros con argumentos, valores por defecto y valores de retorno.
-- Correr macros como operaciones y depurarlas con `log()`.
+- Correr macros como operaciones, depurarlas con `log()` y saber cuándo conviene más una UDF.
 
 <!-- concept -->
 
 Las macros son funciones para SQL: lógica que escribes una vez y llamas desde muchos modelos. Reciben argumentos con valores por defecto, pueden leer la config de un modelo y pueden devolver valores en lugar de texto cuando otra macro necesita datos y no SQL.
-Algunas macros nunca corren durante un build. Run-operation las llama directamente para tareas de administración como otorgar permisos o limpiar esquemas viejos, y el logging ayuda a seguir lo que hacen.
+
+Algunas macros nunca corren durante un build. Run-operation las llama directamente para tareas de administración como otorgar permisos o limpiar esquemas viejos, y el logging ayuda a seguir lo que hacen. Cuando la lógica también debe poder llamarse fuera de dbt, la mejor herramienta es una función definida por el usuario que dbt crea en el warehouse.
 
 <!-- example -->
 
@@ -1101,25 +1130,23 @@ Algunas macros nunca corren durante un build. Run-operation las llama directamen
 select order_id, {{ cents_to_currency('amount_cents') }} as amount from {{ ref('stg_shop__payments') }}
 ```
 
-#### ¿Qué es la variable `execute`?
+#### ¿Qué son las macros en dbt y cómo se ejecutan?
 
-Un booleano que vale false durante el análisis del proyecto y true cuando dbt ejecuta realmente los nodos. El código que consulta la base de datos debe ir dentro de `{% if execute %}`, porque la base de datos no se consulta durante el análisis.
+Fragmentos reutilizables de Jinja (que a menudo generan SQL) definidos con `{% macro name(args) %}...{% endmacro %}` en la carpeta `macros/`. Se llaman dentro de modelos, tests o hooks con `{{ name(args) }}`, o se ejecutan directamente con `dbt run-operation name --args '{...}'`.
 
-#### ¿Qué es `adapter.dispatch`?
-
-Un mecanismo para implementar una macro de forma distinta según la base de datos, de modo que los paquetes funcionen con varios adaptadores: dbt elige `snowflake__my_macro`, `bigquery__my_macro` o `default__my_macro` según el adaptador.
-
-#### ¿Qué es la variable `target` en Jinja?
-
-Información sobre la conexión actual: `target.name`, `target.schema`, `target.type`, `target.threads`. Se usa a menudo para limitar los datos en desarrollo:
+#### ¿Cómo se escribe una macro con un argumento por defecto?
 
 ```sql
-{% if target.name == 'dev' %} where created_at >= dateadd(day, -3, current_date) {% endif %}
+{% macro cents_to_euros(column, scale=2) %}
+    round({{ column }} / 100.0, {{ scale }})
+{% endmacro %}
 ```
 
-#### ¿Cómo se define una variable dentro de un modelo?
+Se llama con `{{ cents_to_euros('amount') }}`.
 
-Con `{% set %}`, por ejemplo `{% set payment_methods = ['card', 'paypal'] %}`, y luego se usa en bucles o expresiones.
+#### ¿Qué hace `return()` en una macro?
+
+Devuelve un objeto Python (lista, diccionario, número) en lugar de texto renderizado, para que otra macro pueda usar el valor.
 
 #### ¿Para qué sirve `log()` en las macros?
 
@@ -1127,7 +1154,15 @@ Para mostrar mensajes en la consola o en el archivo de registro durante la compi
 
 #### ¿Qué es el objeto `config` en Jinja?
 
-Lee la configuración de un modelo dentro de las macros, por ejemplo `config.get('unique_key')`.
+Lee la configuración de un modelo dentro de las macros y las materializaciones: `config.get('unique_key')` devuelve un valor o un valor por defecto, y `config.require('unique_key')` falla si no existe. Las claves propias guardadas en `meta` se leen con `config.meta_get('owner')` o `config.meta_require('owner')`, no con `config.get`.
+
+#### ¿Para qué se usa `dbt run-operation`?
+
+Para ejecutar una macro fuera de la construcción, en tareas de administración: conceder permisos, borrar esquemas antiguos, cargar datos o generar código con el paquete `codegen`.
+
+#### ¿Cuándo conviene una función definida por el usuario (UDF) en lugar de una macro?
+
+Una macro genera texto SQL al compilar y solo existe dentro de dbt. Una UDF, definida como archivo SQL o Python en `functions/` y llamada con `{{ function('name') }}`, se crea como una función real en el almacén antes de los modelos que la usan, así que las herramientas de BI y los notebooks también pueden llamarla. Usa una UDF para lógica reutilizable fila a fila que deba compartirse fuera de dbt; usa una macro para generar SQL, adaptarlo a cada plataforma o producir DDL. Las UDF requieren dbt v1.11+ o v2 en plataformas como Snowflake, BigQuery, Databricks y Redshift.
 
 <!-- challenge -->
 
@@ -1153,6 +1188,7 @@ Escribe una macro que consulte el information schema buscando esquemas de dev, f
 <!-- concept -->
 
 Hay SQL que no se puede escribir hasta saber algo: los valores distintos de una columna, las columnas de una tabla, la plataforma en la que estás. dbt puede consultar el warehouse mientras compila y leer su propio grafo de proyecto, pero solo cuando de verdad está ejecutando, no mientras parsea el proyecto.
+
 Dispatch elige la implementación de una macro según la plataforma, que es como los paquetes funcionan en todas partes, y cualquier macro incorporada se puede sobrescribir definiendo una con el mismo nombre.
 
 <!-- example -->
@@ -1166,25 +1202,25 @@ Dispatch elige la implementación de una macro según la plataforma, que es como
 {% endif %}
 ```
 
+#### ¿Qué hace `run_query`?
+
+Ejecuta una consulta durante la compilación y devuelve el resultado como una tabla agate, por ejemplo para construir una lista de valores distintos que se usa en un bucle. Solo devuelve datos en tiempo de ejecución, así que se suele proteger con `{% if execute %}`.
+
+#### ¿Qué es la variable `execute`?
+
+Un booleano que vale false mientras dbt analiza el proyecto y true cuando compila o ejecuta los nodos. El código que depende de resultados de consultas debe ir dentro de `{% if execute %}`, porque durante el análisis las consultas no devuelven nada y las relaciones referenciadas pueden no existir todavía.
+
 #### ¿Qué son las variables de contexto `graph` y `model`?
 
 `graph` expone el proyecto analizado (todos los nodos y sus metadatos), y `model` el nodo actual, que las macros pueden inspeccionar, por ejemplo para generar documentación o auditorías.
 
-#### ¿Para qué se usa `dbt run-operation`?
+#### ¿Qué es `adapter.dispatch`?
 
-Para ejecutar una macro fuera de la construcción, en tareas de administración: conceder permisos, borrar esquemas antiguos, cargar datos o generar código con el paquete `codegen`.
-
-#### ¿Qué es el paquete `codegen`?
-
-Un paquete con macros que generan YAML y SQL repetitivos, como las definiciones de sources a partir de un esquema o un modelo de staging a partir de una tabla de origen.
+Un mecanismo para implementar una macro de forma distinta según la base de datos, de modo que los paquetes funcionen con varios adaptadores: dbt elige `snowflake__my_macro`, `bigquery__my_macro` o `default__my_macro` según el adaptador.
 
 #### ¿Cómo se sobrescribe una macro integrada de dbt?
 
 Definiendo una macro con el mismo nombre en tu proyecto, por ejemplo `generate_schema_name` o `generate_alias_name`. La versión del proyecto tiene prioridad sobre la que trae dbt.
-
-#### ¿Qué hace `return()` en una macro?
-
-Devuelve un objeto Python (lista, diccionario, número) en lugar de texto renderizado, para que otra macro pueda usar el valor.
 
 <!-- challenge -->
 
@@ -1192,7 +1228,7 @@ Un modelo que usa `run_query` falla durante `dbt parse` con un error de relació
 
 <!-- solution -->
 
-Las consultas también corren durante el parseo, cuando las relaciones pueden no existir y los resultados no hacen falta. Envuelve el `run_query` en `{% if execute %}` y da un valor por defecto en el otro caso.
+El Jinja también se renderiza durante el parseo, cuando las relaciones pueden no existir y los resultados de las consultas no están disponibles. Envuelve el `run_query` en `{% if execute %}` y da un valor por defecto en el otro caso.
 
 <!-- takeaways -->
 
@@ -1210,6 +1246,7 @@ Las consultas también corren durante el parseo, cuando las relaciones pueden no
 <!-- concept -->
 
 Las macros ya hechas ahorran mucho tecleo: generar el YAML de sources y los modelos de staging, listar columnas salvo unas pocas. Vale la pena conocerlas antes de escribir las propias.
+
 El riesgo opuesto también es real. El SQL muy templado es difícil de leer, revisar y depurar, porque el código que ves no es el que corre. SQL plano primero, y una macro solo cuando la lógica de verdad se repite o debe variar por plataforma, mantiene mantenible un proyecto.
 
 <!-- example -->
@@ -1222,17 +1259,17 @@ select {{ dbt_utils.star(from=ref('stg_shop__customers'), except=['_loaded_at', 
 from {{ ref('stg_shop__customers') }}
 ```
 
-#### ¿Qué son los filtros de Jinja? Da ejemplos.
+#### ¿Qué es el paquete `codegen`?
 
-Funciones que se aplican con `|`, como `{{ name | upper }}`, `{{ columns | join(', ') }}` o `{{ value | default('n/a') }}`.
-
-#### ¿Cómo se evita complicar de más el código con Jinja?
-
-Escribe primero SQL normal, extrae una macro solo cuando la lógica se repite o debe variar según el adaptador, documenta los argumentos de las macros y comprueba que el SQL compilado se lee bien.
+Un paquete con macros que generan YAML y SQL repetitivos, como las definiciones de sources a partir de un esquema o un modelo de staging a partir de una tabla de origen.
 
 #### ¿Qué es la macro `star` de dbt_utils?
 
 `{{ dbt_utils.star(ref('model'), except=['col']) }}` genera la lista de columnas de una relación, menos algunas, para evitar `select *` sin escribir todas las columnas.
+
+#### ¿Cómo se evita complicar de más el código con Jinja?
+
+Escribe primero SQL normal, extrae una macro solo cuando la lógica se repite o debe variar según el adaptador, documenta los argumentos de las macros y comprueba que el SQL compilado se lee bien.
 
 <!-- challenge -->
 
@@ -1262,6 +1299,7 @@ Reservar la generación para modelos de verdad repetitivos y mecánicos (si acas
 <!-- concept -->
 
 Una prueba de datos es una consulta que devuelve las filas que rompen una regla; ninguna fila significa que pasa. Las pruebas genéricas son reglas reutilizables aplicadas en YAML, como unicidad o valores aceptados. Las singulares son archivos SQL puntuales para reglas demasiado específicas para reutilizar. Cuando una regla aparece en varios lugares, una prueba genérica personalizada la vuelve reutilizable.
+
 Como las pruebas corren sobre datos reales en el warehouse, atrapan problemas en las fuentes además de en el código.
 
 <!-- example -->
@@ -1271,14 +1309,17 @@ models:
   - name: fct_order_lines
     data_tests:
       - dbt_utils.unique_combination_of_columns:
-          combination_of_columns: [order_id, line_number]
+          arguments:
+            combination_of_columns: [order_id, line_number]
     columns:
       - name: status
         data_tests:
-          - accepted_values: {values: [placed, shipped, returned]}
+          - accepted_values:
+              arguments: {values: [placed, shipped, returned]}
       - name: customer_id
         data_tests:
-          - relationships: {to: ref('dim_customer'), field: customer_id}
+          - relationships:
+              arguments: {to: ref('dim_customer'), field: customer_id}
 ```
 
 #### ¿Cuáles son los dos tipos de tests en dbt?
@@ -1287,7 +1328,7 @@ Los **tests de datos** comprueban los datos del almacén: tests genéricos (reut
 
 #### ¿Qué tipos de tests se pueden ejecutar en dbt?
 
-Los cuatro tests genéricos integrados (`unique`, `not_null`, `accepted_values`, `relationships`), tests genéricos de paquetes (`dbt_utils`, `dbt_expectations`) o propios, tests SQL singulares, tests unitarios, comprobaciones de frescura de sources y contratos de modelo.
+Los cuatro tests genéricos integrados (`unique`, `not_null`, `accepted_values`, `relationships`), tests genéricos de paquetes (`dbt_utils`, `dbt_expectations`) o propios, tests SQL singulares y tests unitarios. Salvaguardas relacionadas son la frescura de sources y modelos, los contratos de modelo y, en dbt v2, las comprobaciones (checks) sobre los metadatos del proyecto.
 
 #### ¿Cómo funcionan los tests genéricos integrados?
 
@@ -1300,15 +1341,17 @@ models:
       - name: status
         data_tests:
           - accepted_values:
-              values: ['placed', 'shipped', 'returned']
+              arguments:
+                values: ['placed', 'shipped', 'returned']
       - name: customer_id
         data_tests:
           - relationships:
-              to: ref('dim_customers')
-              field: customer_id
+              arguments:
+                to: ref('dim_customers')
+                field: customer_id
 ```
 
-dbt convierte cada uno en una consulta que devuelve las filas que fallan. El test pasa cuando la consulta no devuelve ninguna fila.
+dbt convierte cada uno en una consulta que devuelve las filas que fallan. El test pasa cuando la consulta no devuelve ninguna fila. Los parámetros del test van bajo `arguments:` y opciones como `severity` bajo `config:`; los proyectos antiguos ponen los parámetros directamente bajo el nombre del test, algo obsoleto desde dbt v1.10.
 
 #### ¿Qué es un test singular?
 
@@ -1321,7 +1364,7 @@ select * from {{ ref('fct_orders') }} where amount < 0
 
 #### ¿Cómo se escribe un test genérico propio?
 
-Con un bloque `{% test name(model, column_name) %}` que devuelve las filas que fallan, y luego se usa en YAML como un test integrado:
+Con un bloque `{% test name(model, column_name) %}`, normalmente en `tests/generic/` o `macros/`, que devuelve las filas que fallan. Los parámetros adicionales se convierten en argumentos en YAML, donde se usa como un test integrado:
 
 ```sql
 {% test is_positive(model, column_name) %}
@@ -1329,23 +1372,15 @@ select * from {{ model }} where {{ column_name }} <= 0
 {% endtest %}
 ```
 
-#### ¿Qué es un test unitario en dbt?
+#### ¿Cómo se comprueba que una combinación de columnas es única?
 
-Una definición YAML que da filas de entrada fijas para los padres de un modelo y la salida esperada, para que dbt compruebe la lógica de la transformación (casos límite, sentencias case, funciones de ventana) sin datos reales:
+Con `dbt_utils.unique_combination_of_columns`:
 
 ```yaml
-unit_tests:
-  - name: test_is_valid_email
-    model: dim_customers
-    given:
-      - input: ref('stg_customers')
-        rows:
-          - {customer_id: 1, email: a@b.com}
-          - {customer_id: 2, email: not-an-email}
-    expect:
-      rows:
-        - {customer_id: 1, is_valid_email: true}
-        - {customer_id: 2, is_valid_email: false}
+data_tests:
+  - dbt_utils.unique_combination_of_columns:
+      arguments:
+        combination_of_columns: [order_id, line_number]
 ```
 
 <!-- challenge -->
@@ -1372,6 +1407,7 @@ Escribe una prueba genérica personalizada (por ejemplo `non_negative_unless_ref
 <!-- concept -->
 
 Las pruebas de datos revisan los datos que existen en ese momento; los unit tests revisan la lógica contra entradas que tú eliges. Un unit test da filas fijas para los padres del modelo y la salida esperada, así casos borde como reembolsos o nulos se prueban antes de que el modelo corra sobre datos reales.
+
 Los paquetes extienden las pruebas de datos con chequeos comunes: valores en un rango, datos recientes, conteos de filas que coinciden entre modelos. Cubren la mayoría de necesidades sin SQL personalizado.
 
 <!-- example -->
@@ -1391,35 +1427,46 @@ unit_tests:
         - {order_id: 1, line_number: 2, net_amount: -30}
 ```
 
+#### ¿Qué es un test unitario en dbt?
+
+Una definición YAML que da filas de entrada fijas para los padres de un modelo y la salida esperada, para que dbt compruebe la lógica de la transformación (casos límite, sentencias case, funciones de ventana) sin datos reales:
+
+```yaml
+unit_tests:
+  - name: test_is_valid_email
+    model: dim_customers
+    given:
+      - input: ref('stg_customers')
+        rows:
+          - {customer_id: 1, email: a@b.com}
+          - {customer_id: 2, email: not-an-email}
+    expect:
+      rows:
+        - {customer_id: 1, is_valid_email: true}
+        - {customer_id: 2, is_valid_email: false}
+```
+
+Las filas se pueden escribir como `dict` (por defecto), `csv` o `sql`, en línea o en archivos de fixtures, y solo hace falta dar valores a las columnas que importan para el test. `overrides` permite fijar macros y variables, por ejemplo `is_incremental: true` para probar la rama incremental.
+
 #### ¿Qué diferencia hay entre un test unitario y un test de datos?
 
-Un test unitario comprueba el código con entradas fijas y se ejecuta antes de construir el modelo, normalmente en CI. Un test de datos comprueba los datos reales después de construir el modelo, en cada ejecución.
-
-#### ¿Qué es la severidad de un test?
-
-Un ajuste `severity: warn` o `error` (por defecto). Con umbrales `warn_if` y `error_if` como `">10"`, un test puede avisar con pocos fallos y solo fallar por encima de un límite.
-
-#### ¿Cómo se guardan los fallos de los tests?
-
-Con `--store-failures` o `store_failures: true`, dbt guarda las filas que fallan en una tabla de un esquema de auditoría, para poder revisarlas después de la ejecución.
-
-#### ¿Qué hace la configuración `where` de un test?
-
-Limita el test a un subconjunto de filas, por ejemplo solo los datos recientes: `config: {where: "order_date >= current_date - 7"}`.
+Un test unitario comprueba el código con entradas fijas y se ejecuta antes de construir el modelo. Como sus entradas no cambian, dbt Labs recomienda ejecutar los tests unitarios solo en desarrollo y en CI, y excluirlos de los trabajos de producción. Un test de datos comprueba los datos reales después de construir el modelo, en cada ejecución. Por ahora los tests unitarios solo admiten modelos SQL, y cada `ref` o `source` que use el modelo debe darse como entrada.
 
 #### ¿Qué es `dbt_expectations`?
 
 Un paquete de tests genéricos inspirado en Great Expectations: rangos de valores, expresiones regulares, número de filas, distribuciones, tipos de columna y más.
 
-#### ¿Cómo se comprueba que una combinación de columnas es única?
+#### ¿Cómo se compara el número de filas de un modelo con el de otro?
 
-Con `dbt_utils.unique_combination_of_columns`:
+Con un test de paquete como `dbt_utils.equal_rowcount` o `dbt_expectations.expect_table_row_count_to_equal_other_table`, o con un test singular que compare los recuentos.
 
-```yaml
-data_tests:
-  - dbt_utils.unique_combination_of_columns:
-      combination_of_columns: [order_id, line_number]
-```
+#### ¿Cómo se comprueba que un valor está dentro de un rango?
+
+Con `dbt_utils.accepted_range` (`min_value`, `max_value`) o `dbt_expectations.expect_column_values_to_be_between`.
+
+#### ¿Qué es un test de actualidad (recency)?
+
+Un test como `dbt_utils.recency` que falla cuando la marca de tiempo más reciente de un modelo es más antigua que un umbral, y detecta los modelos que han dejado de recibir datos.
 
 <!-- challenge -->
 
@@ -1445,6 +1492,7 @@ Un unit test con filas de entrada simuladas que cubran esa combinación de cupon
 <!-- concept -->
 
 No toda prueba fallida significa lo mismo. Severidad y umbrales separan "detener todo" de "vale la pena mirar": unas pocas filas malas pueden advertir mientras mil fallan. Un filtro `where` limita la prueba a datos recientes, lo que la mantiene rápida y relevante.
+
 Guardar las fallas convierte una prueba en rojo en algo que puedes investigar. Sin estos ajustes, los equipos se ahogan en alertas y empiezan a ignorarlas, lo que es peor que tener menos pruebas.
 
 <!-- example -->
@@ -1462,21 +1510,21 @@ columns:
             store_failures: true
 ```
 
-#### ¿Qué hay que testear como mínimo en cada modelo?
+#### ¿Qué es la severidad de un test?
 
-La clave primaria con `unique` y `not_null`, las claves foráneas de los joins importantes con `relationships` y las columnas categóricas con `accepted_values`. Añade reglas de negocio donde un error saldría caro.
+Un ajuste `severity: warn` o `error` (por defecto). Con umbrales `warn_if` y `error_if` como `">10"`, un test puede avisar con pocos fallos y solo fallar por encima de un límite.
 
-#### ¿Qué significa "testear en el origen"?
+#### ¿Cómo se guardan los fallos de los tests?
 
-Poner tests en las sources y en los modelos de staging, para detectar los problemas de los datos en bruto a la entrada en lugar de descubrirlos en un cuadro de mando.
+Con `--store-failures` o `store_failures: true`, dbt guarda las filas que fallan de cada test en una tabla de un esquema de auditoría (por defecto, el esquema del target con el sufijo `_dbt_test__audit`), para poder revisarlas después de la ejecución. `store_failures_as` elige `table`, `view` o `ephemeral` (no guardar).
+
+#### ¿Qué hace la configuración `where` de un test?
+
+Limita el test a un subconjunto de filas, por ejemplo solo los datos recientes: `config: {where: "order_date >= current_date - 7"}`.
 
 #### ¿Cómo se evita la fatiga de alertas con los tests de dbt?
 
 Usa la severidad `warn` y umbrales para las comprobaciones no críticas, testea lo que importa a los consumidores, elimina los tests que nunca detectan nada relevante y envía los errores a sus responsables.
-
-#### ¿Cómo garantiza dbt la calidad de los datos a lo largo del pipeline?
-
-Con tests en cada capa, frescura de las sources, contratos en los modelos públicos, `dbt build` omitiendo los modelos dependientes cuando un test falla, y CI que ejecuta los modelos modificados y sus tests antes de fusionar.
 
 <!-- challenge -->
 
@@ -1497,12 +1545,13 @@ Revisa cada prueba: corrige los problemas reales, borra las pruebas que no prote
 <!-- goals -->
 
 - Definir las pruebas mínimas que necesita todo modelo.
-- Probar en la fuente y usar `dbt build` para frenar datos malos.
+- Probar en la fuente, usar `dbt build` para frenar datos malos y hacer cumplir los estándares del proyecto con checks.
 
 <!-- concept -->
 
 Una buena estrategia pone las pruebas donde más protegen. A la entrada, las pruebas sobre sources y staging atrapan problemas de datos crudos antes de que se propaguen. En cada modelo, las llaves primarias son únicas y no nulas, y las llaves foráneas importantes existen. En los modelos públicos, los contratos protegen a los consumidores.
-`dbt build` lo une todo: cada modelo se prueba justo después de construirse, y los hijos de un modelo que falla se saltan.
+
+`dbt build` lo une todo: cada modelo se prueba justo después de construirse, y los hijos de un modelo que falla se saltan. En dbt v2, los checks agregan una capa por encima de los datos, que hace cumplir estándares como descripciones y responsables antes de que corra nada.
 
 <!-- example -->
 
@@ -1512,21 +1561,30 @@ Una buena estrategia pone las pruebas donde más protegen. A la entrada, las pru
 | Staging | Llave primaria única + no nula |
 | Marts | Unicidad del grano, relaciones, valores aceptados, contratos |
 
+#### ¿Qué hay que testear como mínimo en cada modelo?
+
+La clave primaria con `unique` y `not_null`, las claves foráneas de los joins importantes con `relationships` y las columnas categóricas con `accepted_values`. Añade reglas de negocio donde un error saldría caro.
+
+#### ¿Qué significa "testear en el origen"?
+
+Poner tests en las sources y en los modelos de staging, para detectar los problemas de los datos en bruto a la entrada en lugar de descubrirlos en un cuadro de mando.
+
+#### ¿Cómo garantiza dbt la calidad de los datos a lo largo del pipeline?
+
+Con tests en cada capa, frescura de las sources, contratos en los modelos públicos, `dbt build` omitiendo los modelos dependientes cuando un test falla, y CI que ejecuta los modelos modificados y sus tests antes de fusionar.
+
 #### ¿Qué diferencia hay entre `dbt test` y `dbt build` en cuanto a los tests?
 
 `dbt test` ejecuta tests sobre modelos ya construidos. `dbt build` intercala construcción y tests en el orden del DAG, así que un test que falla impide construir sus hijos.
 
-#### ¿Cómo se compara el número de filas de un modelo con el de otro?
+#### ¿Qué son los checks en dbt v2?
 
-Con un test de paquete como `dbt_utils.equal_rowcount` o `dbt_expectations.expect_table_row_count_to_equal_other_table`, o con un test singular que compare los recuentos.
+Reglas sobre el propio proyecto y no sobre los datos: cada modelo tiene descripción, cada modelo público tiene responsable, los nombres siguen las convenciones. Un check es un archivo SQL en `checks/`, escrito en SQL de DuckDB sobre el dbt Information Schema (`{{ info_schema('models') }}`), y falla cuando devuelve filas, como un test de datos. Los checks corren en local sin conexión al almacén, a pedido con `dbt check` y automáticamente al inicio de cada `dbt build`.
 
-#### ¿Cómo se comprueba que un valor está dentro de un rango?
-
-Con `dbt_utils.accepted_range` (`min_value`, `max_value`) o `dbt_expectations.expect_column_values_to_be_between`.
-
-#### ¿Qué es un test de actualidad (recency)?
-
-Un test como `dbt_utils.recency` que falla cuando la marca de tiempo más reciente de un modelo es más antigua que un umbral, y detecta los modelos que han dejado de recibir datos.
+```sql
+-- checks/all_models_have_descriptions.sql
+select unique_id from {{ info_schema('models') }} where description = ''
+```
 
 <!-- challenge -->
 
@@ -1554,6 +1612,7 @@ En la source o en su modelo de staging: una prueba de unicidad sobre la llave de
 <!-- concept -->
 
 Reconstruir una tabla de mil millones de filas en cada ejecución desperdicia tiempo y dinero cuando solo las filas de hoy son nuevas. Un modelo incremental construye la tabla completa una vez y luego, en las siguientes ejecuciones, procesa solo filas nuevas o cambiadas y las agrega a la tabla existente.
+
 El modelo decide qué es nuevo filtrando dentro de un bloque `is_incremental()`, normalmente contra el timestamp máximo que ya hay en `{{ this }}`. Un `unique_key` convierte los inserts en upserts.
 
 <!-- example -->
@@ -1582,23 +1641,23 @@ where event_time > (select max(event_time) from {{ this }})
 
 #### ¿Qué devuelve `is_incremental()`?
 
-True solo cuando el modelo es incremental, la tabla destino ya existe y la ejecución no es un `--full-refresh`.
+True solo cuando el modelo está materializado como incremental, la tabla destino ya existe y la ejecución no es un full refresh. El SQL del modelo debe ser válido tanto si devuelve true como false.
 
 #### ¿Qué es `unique_key` en un modelo incremental?
 
 La columna (o lista de columnas) que identifica una fila. Con ella, las filas que ya existen se actualizan en lugar de duplicarse, según la estrategia.
 
-#### ¿Qué estrategias incrementales existen?
-
-Según el adaptador: `append` (solo inserción), `merge` (upsert por `unique_key`), `delete+insert` (borra las claves coincidentes y luego inserta), `insert_overwrite` (sustituye particiones enteras, en BigQuery y Spark) y `microbatch` (procesa lotes por tiempo).
-
 #### ¿Cómo gestiona dbt la carga incremental de datos de los sistemas de origen?
 
 dbt no extrae de los sistemas de origen: procesa datos ya cargados en el almacén. Los modelos incrementales seleccionan solo las filas más recientes que las ya procesadas (con una marca de tiempo o un ID) y las fusionan o añaden. Herramientas de carga como Fivetran o Airbyte traen los datos de forma incremental, y dbt los transforma de forma incremental.
 
-#### ¿Qué es la estrategia microbatch?
+#### ¿Puede un modelo incremental referenciarse a sí mismo?
 
-Añadida en dbt 1.9, procesa los datos en lotes de tiempo independientes (por ejemplo uno por día) según una columna `event_time`, de modo que los lotes se pueden reintentar, ejecutar en paralelo o rellenar con `--event-time-start` y `--event-time-end`.
+Sí, con `{{ this }}` dentro del bloque `is_incremental()`, normalmente para leer la marca de tiempo máxima actual.
+
+#### ¿Qué es un modelo incremental "append-only"?
+
+Uno que usa la estrategia `append`, o un modelo sin `unique_key`: las filas nuevas se insertan y las existentes nunca se actualizan. Encaja con registros de eventos inmutables en los que nada cambia y es la estrategia más barata, pero volver a procesar las mismas filas crea duplicados.
 
 <!-- challenge -->
 
@@ -1623,7 +1682,8 @@ Las órdenes actualizadas se vuelven a anexar y crean duplicados. Agrega `unique
 
 <!-- concept -->
 
-Cómo se combinan las filas nuevas con la tabla es la estrategia. Append solo inserta. Merge hace upsert sobre la llave. Delete+insert borra primero las filas que coinciden, a veces más rápido en lotes grandes. Insert_overwrite reemplaza particiones completas, muy eficiente cuando los datos llegan por día. Microbatch divide el trabajo en lotes de tiempo independientes que se pueden reintentar y rellenar uno a uno.
+Cómo se combinan las filas nuevas con la tabla es la estrategia. Append solo inserta. Merge hace upsert sobre la llave. Delete+insert borra primero las filas que coinciden, a veces más rápido en lotes grandes. Insert_overwrite reemplaza particiones completas en plataformas como BigQuery y Databricks, muy eficiente cuando los datos llegan por día. Microbatch divide el trabajo en lotes de tiempo independientes que se pueden reintentar y rellenar uno a uno, sin escribir ningún filtro.
+
 Los destinos grandes necesitan ayuda: predicados y particionamiento limitan cuánto de la tabla existente escanea cada merge.
 
 <!-- example -->
@@ -1638,27 +1698,9 @@ Los destinos grandes necesitan ayuda: predicados y particionamiento limitan cuá
 ) }}
 ```
 
-#### ¿Cómo se gestionan los datos que llegan tarde en los modelos incrementales?
+#### ¿Qué estrategias incrementales existen?
 
-Con una ventana de revisión en lugar de un "mayor que" estricto: reprocesa los últimos días y apóyate en `unique_key` con `merge` para actualizar las filas ya cargadas.
-
-```sql
-{% if is_incremental() %}
-where event_time >= (select dateadd(day, -3, max(event_time)) from {{ this }})
-{% endif %}
-```
-
-#### ¿Qué hace `on_schema_change`?
-
-Define qué pasa cuando cambian las columnas de un modelo incremental: `ignore` (por defecto), `fail`, `append_new_columns` o `sync_all_columns`.
-
-#### ¿Cuándo hay que hacer un full refresh de un modelo incremental?
-
-Cuando la lógica cambia de una forma que afecta a las filas históricas, cuando las columnas cambian de formas que `on_schema_change` no gestiona, o para reparar datos. Algunas tablas se protegen con `full_refresh: false` porque reconstruirlas es demasiado caro.
-
-#### ¿Qué riesgos tienen los modelos incrementales?
-
-Duplicados si `unique_key` falta o es incorrecta, filas perdidas si el filtro no contempla los datos tardíos, divergencia respecto a una reconstrucción completa si la lógica cambia, y más complejidad para testear. Un full refresh periódico en un entorno inferior ayuda a detectar desviaciones.
+Según el adaptador: `append` (solo inserción), `merge` (upsert por `unique_key`), `delete+insert` (borra las claves coincidentes y luego inserta), `insert_overwrite` (sustituye particiones enteras en BigQuery, Spark, Databricks y Athena) y `microbatch` (procesa lotes por tiempo). Algunos adaptadores agregan las suyas, como `replace_where` en Databricks. BigQuery no admite `append` ni `delete+insert`.
 
 #### ¿Qué diferencia hay entre `merge` y `delete+insert`?
 
@@ -1666,7 +1708,25 @@ Duplicados si `unique_key` falta o es incorrecta, filas perdidas si el filtro no
 
 #### ¿Qué es `insert_overwrite` y cuándo es eficiente?
 
-Sustituye particiones enteras (por ejemplo los días presentes en el nuevo lote) en lugar de fusionar fila a fila. Es eficiente en tablas particionadas de BigQuery, Spark y Databricks cuando los datos llegan por partición.
+Sustituye particiones enteras (por ejemplo los días presentes en el nuevo lote) en lugar de fusionar fila a fila. Es eficiente en tablas particionadas de BigQuery, Spark y Databricks cuando los datos llegan por partición. En Snowflake, que no tiene particiones, `insert_overwrite` reemplaza la tabla completa.
+
+#### ¿Qué hace `incremental_predicates`?
+
+Añade condiciones al merge, por ejemplo limitar la lectura de la tabla destino a las particiones recientes, lo que reduce el costo en tablas grandes.
+
+#### ¿Qué es la estrategia microbatch?
+
+Añadida en dbt 1.9, procesa los datos en lotes de tiempo independientes según una columna `event_time`. No escribes un filtro con `is_incremental()`: dbt filtra al rango de tiempo del lote cada padre que también declare `event_time`. `batch_size` fija la granularidad (`hour`, `day`, `month` o `year`), `begin` la fecha de inicio para la primera construcción o una completa, y `lookback` cuántos lotes anteriores reprocesar por datos tardíos. Los lotes se pueden reintentar uno por uno, ejecutar en paralelo o rellenar con `--event-time-start` y `--event-time-end`.
+
+```sql
+{{ config(materialized='incremental', incremental_strategy='microbatch',
+          event_time='occurred_at', begin='2024-01-01', batch_size='day', lookback=3) }}
+select * from {{ ref('stg_app__events') }}   -- filtered per batch automatically
+```
+
+#### ¿Cómo interactúan el particionado o el clustering con los modelos incrementales?
+
+Particionar o agrupar la tabla destino por la columna del filtro (normalmente una fecha) hace que tanto el filtro incremental como el merge lean menos datos, que es de donde sale la mayor parte del ahorro.
 
 <!-- challenge -->
 
@@ -1692,6 +1752,7 @@ Una tabla de BigQuery particionada por día recibe un día completo de eventos e
 <!-- concept -->
 
 Los modelos incrementales cambian simplicidad por velocidad, y el cambio se nota en los casos borde. Un filtro estricto de "más nuevo que el máximo" pierde filas tardías; una ventana de lookback reprocesa los días recientes para atraparlas. Los cambios de columnas necesitan una política. Los cambios de lógica necesitan un full refresh o un backfill, porque las filas existentes se construyeron con la lógica vieja.
+
 Las pruebas importan más que en las tablas: las llaves duplicadas son el bug clásico, y comparar de vez en cuando con una reconstrucción completa demuestra que los incrementos siguen cuadrando.
 
 <!-- example -->
@@ -1703,29 +1764,35 @@ where occurred_at >= (select dateadd(day, -3, max(occurred_at)) from {{ this }})
 {% endif %}
 ```
 
-#### ¿Qué hace `incremental_predicates`?
+#### ¿Cómo se gestionan los datos que llegan tarde en los modelos incrementales?
 
-Añade condiciones al merge, por ejemplo limitar la lectura de la tabla destino a las particiones recientes, lo que reduce el costo en tablas grandes.
+Con una ventana de revisión en lugar de un "mayor que" estricto: reprocesa los últimos días y apóyate en `unique_key` con `merge` para actualizar las filas ya cargadas.
 
-#### ¿Puede un modelo incremental referenciarse a sí mismo?
+```sql
+{% if is_incremental() %}
+where event_time >= (select dateadd(day, -3, max(event_time)) from {{ this }})
+{% endif %}
+```
 
-Sí, con `{{ this }}` dentro del bloque `is_incremental()`, normalmente para leer la marca de tiempo máxima actual.
+#### ¿Qué hace `on_schema_change`?
+
+Define qué pasa cuando cambian las columnas de un modelo incremental: `ignore` (por defecto: las columnas nuevas no se agregan), `fail`, `append_new_columns` (agrega las nuevas y conserva las eliminadas) o `sync_all_columns` (agrega las nuevas y borra las eliminadas, incluidos los cambios de tipo). Ninguna rellena los valores de las filas antiguas en las columnas nuevas; para eso hace falta un full refresh. Solo se siguen las columnas de primer nivel, no los campos anidados.
+
+#### ¿Cuándo hay que hacer un full refresh de un modelo incremental?
+
+Cuando la lógica cambia de una forma que afecta a las filas históricas, cuando las columnas cambian de formas que `on_schema_change` no gestiona, o para reparar datos. Algunas tablas se protegen con `full_refresh: false` porque reconstruirlas es demasiado caro.
+
+#### ¿Qué riesgos tienen los modelos incrementales?
+
+Duplicados si `unique_key` falta o es incorrecta, filas perdidas si el filtro no contempla los datos tardíos, divergencia respecto a una reconstrucción completa si la lógica cambia, y más complejidad para testear. Un full refresh periódico en un entorno inferior ayuda a detectar desviaciones.
 
 #### ¿Cómo se testea bien un modelo incremental?
 
 Comprueba la unicidad de la clave primaria (los duplicados son el error típico), compáralo con un full refresh en un entorno inferior y escribe tests unitarios que fuercen `is_incremental` a true y a false.
 
-#### ¿Qué es un modelo incremental "append-only"?
+#### ¿Cómo se rellena (backfill) un modelo incremental?
 
-Uno con la estrategia `append` y sin `unique_key`: las filas solo se insertan. Encaja con registros de eventos inmutables en los que nada cambia.
-
-#### ¿Cómo interactúan el particionado o el clustering con los modelos incrementales?
-
-Particionar o agrupar la tabla destino por la columna del filtro (normalmente una fecha) hace que tanto el filtro incremental como el merge lean menos datos, que es de donde sale la mayor parte del ahorro.
-
-#### ¿Por qué un modelo incremental puede volverse más lento con el tiempo?
-
-El merge tiene que recorrer una tabla destino cada vez mayor. Los incremental predicates, la poda de particiones, el clustering o las estrategias `insert_overwrite` y `microbatch` mantienen cada ejecución acotada.
+Con `--full-refresh`, o en los modelos microbatch con `--event-time-start` y `--event-time-end` para reprocesar un periodo, o ejecutándolo con una variable que cambie la ventana del filtro.
 
 <!-- challenge -->
 
@@ -1751,6 +1818,7 @@ Reconstruye la historia: corre con `--full-refresh` (o un backfill de microbatch
 <!-- concept -->
 
 Un modelo incremental rápido al lanzarse puede volverse lento un año después, porque cada merge escanea un destino que crece sin parar. Limitar el escaneo con predicados, particionamiento o clustering mantiene el costo proporcional a los datos nuevos.
+
 Los modelos incrementales y los snapshots "agregan con el tiempo", pero responden preguntas distintas. Los incrementales guardan el último estado o el flujo de eventos según tu lógica; los snapshots registran cómo cambiaron las filas mutables de la fuente.
 
 <!-- example -->
@@ -1761,13 +1829,13 @@ Los modelos incrementales y los snapshots "agregan con el tiempo", pero responde
 | Mantener las órdenes actuales, actualizadas en sitio | Incremental (merge) |
 | Historia de los cambios de plan de cada cliente | Snapshot |
 
-#### ¿Cómo se rellena (backfill) un modelo incremental?
+#### ¿Por qué un modelo incremental puede volverse más lento con el tiempo?
 
-Con `--full-refresh`, o en los modelos microbatch con `--event-time-start` y `--event-time-end` para reprocesar un periodo, o ejecutándolo con una variable que cambie la ventana del filtro.
+El merge tiene que recorrer una tabla destino cada vez mayor. Los incremental predicates, la poda de particiones, el clustering o las estrategias `insert_overwrite` y `microbatch` mantienen cada ejecución acotada.
 
 #### ¿Qué diferencia hay entre un modelo incremental y un snapshot?
 
-Un modelo incremental guarda el último estado (o añade eventos) y su lógica es tuya. Un snapshot guarda el historial completo de los cambios de registros mutables, como filas SCD tipo 2 con fechas de validez.
+Un modelo incremental guarda el último estado (o añade eventos) y su lógica es tuya. Un snapshot guarda el historial completo de los cambios de registros mutables, como filas SCD tipo 2 con fechas de validez. Se combinan bien: un modelo de staging incremental mantiene baratas las ejecuciones, y un snapshot sobre la source registra el historial cuando el negocio necesita saber cómo era una fila en el pasado.
 
 <!-- challenge -->
 
@@ -1795,6 +1863,7 @@ Limita el escaneo del destino: agrega `incremental_predicates` sobre un rango de
 <!-- concept -->
 
 Las tablas fuente suelen sobrescribir filas: cambia el plan de un cliente y el valor viejo desaparece. Los snapshots registran esos cambios. Cada ejecución compara la fuente con la última versión registrada y, si algo cambió, cierra la versión vieja e inserta una nueva, que es exactamente una dimensión de cambio lento tipo 2.
+
 Detectar el cambio es la estrategia: una columna updated-at confiable es lo más barato; sin ella, comparar columnas seleccionadas o todas funciona a mayor costo.
 
 <!-- example -->
@@ -1817,7 +1886,7 @@ Un recurso de dbt que registra los cambios de una tabla mutable a lo largo del t
 
 #### ¿Cómo se define un snapshot?
 
-En las versiones recientes de dbt, en YAML (los proyectos antiguos usan un bloque `{% snapshot %}` en `snapshots/`):
+Desde dbt 1.9, en un archivo YAML que nombra la relación de la que se hace el snapshot y su configuración (los proyectos antiguos usan un bloque `{% snapshot %}` con un `select` en `snapshots/`, que sigue funcionando pero es la forma heredada):
 
 ```yaml
 snapshots:
@@ -1832,19 +1901,19 @@ snapshots:
 
 #### ¿Qué estrategias de snapshot existen?
 
-`timestamp`: una fila cambió si su columna `updated_at` es más reciente. Es fiable y eficiente cuando la source mantiene esa columna. `check`: una fila cambió si alguna de las `check_cols` listadas (o todas las columnas) es distinta. Se usa cuando no hay una marca de tiempo fiable.
+`timestamp` (la recomendada): una fila cambió si su columna `updated_at` es más reciente. Es fiable y eficiente cuando la source mantiene esa columna. `check`: una fila cambió si alguna de las `check_cols` listadas (o todas las columnas) es distinta. Se usa cuando no hay una marca de tiempo fiable.
 
 #### ¿Qué columnas añade dbt a un snapshot?
 
-`dbt_scd_id`, `dbt_updated_at`, `dbt_valid_from` y `dbt_valid_to` (NULL para la versión actual, salvo que se configure `dbt_valid_to_current`).
+`dbt_scd_id` (una clave única por versión), `dbt_updated_at`, `dbt_valid_from` y `dbt_valid_to` (NULL para la versión actual, salvo que `dbt_valid_to_current` fije un valor como `9999-12-31`). Con `hard_deletes: new_record`, dbt añade además `dbt_is_deleted`. Los nombres se pueden cambiar con `snapshot_meta_column_names`.
 
-#### ¿Cómo gestionan los snapshots las filas borradas en la source?
+#### ¿Cuándo usarías la estrategia `check` con `check_cols: all`?
 
-Por defecto, no las gestionan. Con `hard_deletes: invalidate` (antes `invalidate_hard_deletes`), las filas borradas reciben su `dbt_valid_to`. Con `hard_deletes: new_record`, una nueva fila marca el borrado de forma explícita.
+Cuando la source no tiene un `updated_at` fiable y cualquier cambio de columna importa. Es más costosa porque compara todas las columnas, y las columnas nuevas de la source cambian lo que cuenta como cambio. La documentación recomienda listar explícitamente las columnas que importan, o comparar una sola columna hash construida a partir de ellas.
 
-#### ¿Por qué los snapshots deben leer de sources y no de modelos transformados?
+#### ¿Qué es una SCD tipo 2 y cómo la implementan los snapshots de dbt?
 
-Los snapshots capturan un historial que no se puede recrear después. Hacer el snapshot de los datos en bruto con la mínima lógica significa que un error en el código de transformación no corrompe el historial, y que las transformaciones se pueden volver a ejecutar encima.
+Una dimensión de cambio lento que guarda una fila nueva por cada versión de un registro, con fechas de validez. Los snapshots de dbt son exactamente eso: una fila por versión, con `dbt_valid_from` y `dbt_valid_to` delimitando su validez.
 
 <!-- challenge -->
 
@@ -1870,6 +1939,7 @@ Usa la estrategia `check` con `check_cols: ['plan', 'status']`, para que dbt com
 <!-- concept -->
 
 Los snapshots son la única parte de un proyecto dbt que no se puede regenerar: si un cambio no se capturó, se perdió. Eso define todas sus reglas. Lee las fuentes crudas para que la historia refleje la realidad y no tu lógica actual. Córrelos con la frecuencia suficiente para atrapar cambios que se revierten. Asegúrate de que la llave sea única, o las versiones se revuelven.
+
 Los borrados necesitan manejo explícito, y el time travel del warehouse no los reemplaza: su retención es corta y está hecho para recuperar, no para historia.
 
 <!-- example -->
@@ -1879,35 +1949,31 @@ Los borrados necesitan manejo explícito, y el time travel del warehouse no los 
 | Haz snapshot de sources, no de marts | Los cambios de lógica reescribirían la historia |
 | Prueba la unicidad de la llave de la fuente | Los duplicados corrompen las versiones |
 | Córrelos al menos tan seguido como importan los cambios | Los cambios no capturados se pierden |
-| Nunca borres la tabla del snapshot | No hay full refresh posible |
+| Nunca borres la tabla del snapshot | El full refresh no aplica; la historia no se puede reconstruir |
+
+#### ¿Cómo gestionan los snapshots las filas borradas en la source?
+
+Por defecto (`hard_deletes: ignore`) no las gestionan: la última versión de una fila borrada sigue como vigente. Con `hard_deletes: invalidate` (antes `invalidate_hard_deletes: true`), las filas borradas reciben su `dbt_valid_to`. Con `hard_deletes: new_record`, dbt inserta una fila nueva con `dbt_is_deleted = True`, y una fila que reaparece recibe una versión nueva con `dbt_is_deleted = False`.
+
+#### ¿Por qué los snapshots deben leer de sources y no de modelos transformados?
+
+Los snapshots capturan un historial que no se puede recrear después. Hacer el snapshot de los datos en bruto con la mínima lógica significa que un error en el código de transformación no corrompe el historial, y que las transformaciones se pueden volver a ejecutar encima.
 
 #### ¿Con qué frecuencia deben ejecutarse los snapshots?
 
 Tan a menudo como haga falta para capturar los cambios: los cambios que ocurren y se deshacen entre dos ejecuciones se pierden. Muchos equipos los ejecutan cada hora o cada día, antes de los modelos que los usan.
 
-#### ¿Cómo se consulta la versión actual de cada registro de un snapshot?
-
-`where dbt_valid_to is null` (o el valor actual configurado).
-
-#### ¿Cómo se obtiene el estado de un registro en una fecha dada?
-
-```sql
-select * from {{ ref('customers_snapshot') }}
-where '2026-06-30' >= dbt_valid_from
-  and ('2026-06-30' < dbt_valid_to or dbt_valid_to is null)
-```
-
-#### ¿Se puede hacer un full refresh de un snapshot?
-
-No. dbt nunca reconstruye los snapshots, porque se perdería el historial. Para cambiar uno, se migra la tabla a mano o se empieza un snapshot nuevo.
-
 #### ¿Qué pasa si la `unique_key` no es única en la source?
 
 El snapshot produce versiones duplicadas o incoherentes. Testea la unicidad en la source y deduplica antes si hace falta.
 
-#### ¿Cuándo usarías la estrategia `check` con `check_cols: all`?
+#### ¿Se puede hacer un full refresh de un snapshot?
 
-Cuando la source no tiene un `updated_at` fiable y cualquier cambio de columna importa. Es más costosa porque compara todas las columnas.
+No. Los snapshots ignoran tanto la opción `--full-refresh` como la config `full_refresh`: un `dbt build --full-refresh` los ejecuta con normalidad, porque borrar la tabla perdería un historial que no se puede recrear. Para cambiar uno, se migra la tabla a mano o se empieza un snapshot nuevo.
+
+#### ¿En qué se diferencian los snapshots del time travel de Delta Lake o del almacén?
+
+El time travel del almacén guarda versiones pasadas de la tabla durante un periodo de retención limitado y sirve para recuperar datos. Los snapshots construyen una tabla de historial permanente y consultable a nivel de fila, pensada para el análisis.
 
 <!-- challenge -->
 
@@ -1933,6 +1999,7 @@ Corre el snapshot con más frecuencia (por ejemplo cada hora) o captura los camb
 <!-- concept -->
 
 Un snapshot es historia cruda, y como otros datos crudos se consume mejor a través de un modelo. Las versiones actuales son las filas cuya vigencia no ha terminado; una vista en un punto del tiempo elige la versión cuyo rango contiene una fecha.
+
 Un modelo de dimensión encima renombra las columnas de vigencia, agrega un flag de actual y una llave sustituta, y da a los hechos algo limpio con qué cruzarse.
 
 <!-- example -->
@@ -1948,13 +2015,17 @@ select
 from {{ ref('customers_snapshot') }}
 ```
 
-#### ¿En qué se diferencian los snapshots del time travel de Delta Lake o del almacén?
+#### ¿Cómo se consulta la versión actual de cada registro de un snapshot?
 
-El time travel del almacén guarda versiones pasadas de la tabla durante un periodo de retención limitado y sirve para recuperar datos. Los snapshots construyen una tabla de historial permanente y consultable a nivel de fila, pensada para el análisis.
+`where dbt_valid_to is null` (o el valor actual configurado).
 
-#### ¿Qué es una SCD tipo 2 y cómo la implementan los snapshots de dbt?
+#### ¿Cómo se obtiene el estado de un registro en una fecha dada?
 
-Una dimensión de cambio lento que guarda una fila nueva por cada versión de un registro, con fechas de validez. Los snapshots de dbt son exactamente eso: una fila por versión, con `dbt_valid_from` y `dbt_valid_to` delimitando su validez.
+```sql
+select * from {{ ref('customers_snapshot') }}
+where '2026-06-30' >= dbt_valid_from
+  and ('2026-06-30' < dbt_valid_to or dbt_valid_to is null)
+```
 
 #### ¿Cómo se construye una dimensión con historial a partir de un snapshot?
 
@@ -1988,6 +2059,7 @@ Finanzas pide el plan de cada cliente al 30 de junio. Escribe el filtro.
 <!-- concept -->
 
 La documentación de dbt vive junto al código: descripciones en YAML para modelos y columnas, textos más largos en doc blocks. Generar el sitio de docs las combina con el DAG y las pruebas, así el lector ve qué significa una tabla y de dónde viene.
+
 La documentación llega más lejos cuando sale de dbt: persistir las descripciones en el warehouse las muestra en las herramientas de BI, los campos meta registran dueños y sensibilidad, y las exposures declaran qué dashboards dependen de qué modelos.
 
 <!-- example -->
@@ -2001,13 +2073,14 @@ exposures:
 models:
   - name: fct_revenue
     description: "One row per invoice line. Net of refunds and discounts, in EUR."
-    meta: {owner: finance-data, contains_pii: false}
-    config: {persist_docs: {relation: true, columns: true}}
+    config:
+      meta: {owner: finance-data, contains_pii: false}
+      persist_docs: {relation: true, columns: true}
 ```
 
 #### ¿Cómo genera dbt la documentación?
 
-`dbt docs generate` construye un sitio estático a partir del proyecto (descripciones, columnas, tests, SQL) y de los metadatos del almacén (tipos de columna, número de filas). `dbt docs serve` lo sirve en local. Incluye un grafo de linaje interactivo.
+`dbt docs generate` construye un sitio estático a partir del proyecto (descripciones, columnas, tests, SQL) y de los metadatos del almacén (tipos de columna, número de filas), y `dbt docs serve` lo sirve en local, con un grafo de linaje interactivo. En dbt v2, docs v2 guarda los metadatos como archivos Parquet que el navegador consulta con DuckDB-WASM, así que el sitio escala a proyectos grandes, se puede alojar en cualquier hosting estático y muestra el linaje a nivel de columna cuando se construye con `--static-analysis strict`. En la dbt platform, en cambio, los trabajos mantienen Catalog al día.
 
 #### ¿Dónde se escriben las descripciones?
 
@@ -2017,17 +2090,17 @@ En archivos de propiedades YAML junto a los modelos (`description:` en modelos y
 
 Una configuración que escribe las descripciones de modelos y columnas en el almacén como comentarios de tablas y columnas, para que se vean en otras herramientas.
 
+#### ¿Cómo se documenta un test o una macro?
+
+Las macros se documentan en YAML bajo una clave `macros:`, con una descripción y sus argumentos. Los tests de datos aceptan una `description` donde se aplican, y los tests singulares se pueden documentar en un archivo de propiedades bajo `data_tests:`. Estas descripciones aparecen en la documentación generada.
+
+#### ¿Qué son los campos meta?
+
+Un diccionario libre `meta`, definido bajo `config:` en nodos y columnas, por ejemplo para registrar responsables, marcas de datos personales o acuerdos de nivel de servicio. Las herramientas externas lo leen del manifest, y las macros con `config.meta_get()`.
+
 #### ¿Qué son las exposures?
 
 Declaraciones YAML de los usos aguas abajo de los modelos de dbt (cuadros de mando, modelos de ML, aplicaciones) con sus responsables, para que el linaje muestre qué depende de cada modelo.
-
-#### ¿Qué hace `dbt ls`?
-
-Lista los nodos que coinciden con una selección sin ejecutarlos, lo que es útil para comprobar los selectores.
-
-#### ¿Qué es el artefacto `manifest.json`?
-
-Un archivo JSON de `target/` que describe todo el proyecto (nodos, configuraciones, dependencias). Se usa para comparar estados (`state:modified`), para la documentación y en herramientas externas.
 
 <!-- challenge -->
 
@@ -2053,6 +2126,7 @@ Con exposures declaradas para los dashboards: el DAG muestra qué exposures depe
 <!-- concept -->
 
 Cada invocación de dbt escribe artefactos: un manifest que describe todo el proyecto y run results con el resultado y la duración de cada nodo. Muchas herramientas se construyen sobre ellos: comparación de estado en CI, dashboards de observabilidad, catálogos y grafos de linaje.
+
 El linaje a nivel de modelo muestra qué tablas dependen de cuáles; el de columna va más allá y rastrea cada columna hasta sus fuentes, lo que responde con precisión "¿qué se rompe si borro esta columna?".
 
 <!-- example -->
@@ -2062,25 +2136,25 @@ dbt ls --select state:modified+ --state prod-artifacts/    # check a selection b
 jq '.results[] | {node: .unique_id, s: .execution_time}' target/run_results.json | head
 ```
 
+#### ¿Qué hace `dbt ls`?
+
+Lista los nodos que coinciden con una selección sin ejecutarlos, lo que es útil para comprobar los selectores.
+
+#### ¿Qué es el artefacto `manifest.json`?
+
+Un archivo JSON de `target/` que describe todo el proyecto (nodos, configuraciones, dependencias). Se usa para comparar estados (`state:modified`), para la documentación y en herramientas externas.
+
 #### ¿Qué es `run_results.json`?
 
 Un artefacto con el resultado, la duración y el estado de cada nodo de la última invocación, que se usa para la monitorización y para `dbt retry`.
 
-#### ¿Cuál es la arquitectura de la capa semántica de dbt?
+#### ¿Para qué sirven los artefactos de dbt en la observabilidad?
 
-Los modelos semánticos se definen en YAML sobre los modelos de dbt, declarando entidades (claves de unión), dimensiones y medidas. Las métricas se definen sobre esas medidas. MetricFlow convierte una solicitud de métrica (métrica, dimensiones, filtros, granularidad) en SQL optimizado para el almacén, y la dbt platform la expone mediante API e integraciones con herramientas de BI.
+Las herramientas analizan `manifest.json` y `run_results.json` para seguir la duración de las ejecuciones, los fallos de tests y la frescura a lo largo del tiempo, y el paquete `dbt_artifacts` los carga en el almacén para analizarlos. dbt v2 también puede escribir el dbt Information Schema (`--generate-info-schema`): tablas Parquet versionadas que describen cada recurso y que los checks y `dbt show --info` consultan directamente.
 
-#### ¿Qué es un modelo semántico?
+#### ¿Qué es el linaje a nivel de columna?
 
-Una definición YAML ligada a un modelo de dbt que describe sus entidades, dimensiones y medidas, para que MetricFlow sepa cómo agregarlo y unirlo.
-
-#### ¿Qué tipos de métricas existen en la capa semántica?
-
-Simples (una medida), de ratio, acumuladas (totales acumulados o ventanas), derivadas (expresiones sobre otras métricas) y de conversión.
-
-#### ¿Por qué definir las métricas en dbt y no en la herramienta de BI?
-
-Para que la definición exista una sola vez, en el control de versiones, con tests y revisión, y todas las herramientas devuelvan el mismo número para "ingresos" o "usuarios activos".
+Un linaje que muestra qué columnas de origen alimentan cada columna, y no solo qué modelos dependen de cuáles, para ver con exactitud qué afecta renombrar o quitar una columna. Lo muestra dbt Catalog en la dbt platform, y dbt v2 lo calcula en local cuando compilas o construyes con `--static-analysis strict`.
 
 <!-- challenge -->
 
@@ -2100,44 +2174,52 @@ Del `run_results.json` de cada ejecución de producción (tiempo y estado por no
 
 <!-- goals -->
 
-- Describir semantic models, measures, dimensions y tipos de métricas.
+- Describir semantic models, entidades, dimensiones y tipos de métricas.
 - Explicar por qué las métricas van en dbt y no en las herramientas de BI.
 
 <!-- concept -->
 
-Cuando cada herramienta de BI define "ingresos" por su cuenta, las cifras se desvían. La capa semántica define las métricas una vez en dbt, sobre los modelos: los semantic models declaran entidades para cruzar, dimensiones para segmentar y medidas para agregar, y las métricas combinan medidas en definiciones de negocio.
-Las herramientas consultan la métrica por nombre, y la capa genera el SQL correcto con los joins, el grano y los filtros adecuados, así cada consumidor recibe la misma respuesta.
+Cuando cada herramienta de BI define "ingresos" por su cuenta, las cifras se desvían. La capa semántica define las métricas una vez en dbt, sobre los modelos: un semantic model marca las columnas de un modelo como entidades para cruzar y dimensiones para segmentar, las métricas simples agregan una columna y los demás tipos de métrica combinan métricas en definiciones de negocio.
+
+Las herramientas consultan la métrica por nombre, y MetricFlow genera el SQL correcto con los joins, el grano y los filtros adecuados, así cada consumidor recibe la misma respuesta.
 
 <!-- example -->
 
 ```yaml
-semantic_models:
-  - name: orders
-    model: ref('fct_orders')
-    entities: [{name: order_id, type: primary}, {name: customer_id, type: foreign}]
-    dimensions: [{name: ordered_at, type: time, type_params: {time_granularity: day}}]
-    measures: [{name: revenue, agg: sum, expr: net_amount}]
-metrics:
-  - name: revenue
-    type: simple
-    type_params: {measure: revenue}
+models:
+  - name: fct_orders
+    semantic_model: {enabled: true}
+    agg_time_dimension: ordered_at
+    columns:
+      - name: order_id
+        entity: {type: primary, name: order}
+      - name: customer_id
+        entity: {type: foreign, name: customer}
+      - name: ordered_at
+        granularity: day
+        dimension: {type: time}
+    metrics:
+      - name: revenue
+        type: simple
+        agg: sum
+        expr: net_amount
 ```
 
-#### ¿Qué es el linaje a nivel de columna?
+#### ¿Cuál es la arquitectura de la capa semántica de dbt?
 
-Un linaje que muestra qué columnas de origen alimentan cada columna, y no solo qué modelos dependen de cuáles. Lo ofrecen la dbt platform y dbt Fusion.
+Los modelos semánticos se declaran sobre los modelos de dbt y marcan entidades (claves de unión) y dimensiones. Las métricas se definen sobre ellos. MetricFlow convierte una solicitud de métricas (métricas, dimensiones, filtros, granularidad) en SQL para el almacén, usando las entidades para encontrar los joins, y la dbt platform la expone mediante API (JDBC, GraphQL, SDK de Python) e integraciones con herramientas de BI y hojas de cálculo.
 
-#### ¿Para qué sirven los artefactos de dbt en la observabilidad?
+#### ¿Qué es un modelo semántico?
 
-Las herramientas analizan `manifest.json` y `run_results.json` para seguir la duración de las ejecuciones, los fallos de tests y la frescura a lo largo del tiempo, y el paquete `dbt_artifacts` los carga en el almacén para analizarlos.
+Metadatos asociados a un modelo de dbt que le indican a MetricFlow cómo unirlo y agregarlo. En la especificación actual (dbt v1.12+ y v2) se activa dentro del YAML del modelo con `semantic_model:`, las entidades y dimensiones se definen en las columnas y las métricas simples se listan junto a ellas. Los proyectos antiguos usan un bloque `semantic_models:` aparte, en el nivel superior, con `measures`, que quedaron obsoletas en favor de las métricas simples.
 
-#### ¿Qué son los campos meta?
+#### ¿Qué tipos de métricas existen en la capa semántica?
 
-Un diccionario libre `meta:` en nodos y columnas, por ejemplo para registrar responsables, marcas de datos personales o acuerdos de nivel de servicio, que pueden leer las herramientas y las macros.
+Simples (una agregación de una columna, como `sum` o `count_distinct`), de ratio (una métrica dividida por otra), acumuladas (totales acumulados o ventanas), derivadas (una expresión sobre otras métricas) y de conversión (la tasa a la que una entidad pasa de un evento a otro). Las métricas simples viven con su modelo semántico; las demás se definen bajo una clave `metrics:` de nivel superior.
 
-#### ¿Cómo se documenta un test o una macro?
+#### ¿Por qué definir las métricas en dbt y no en la herramienta de BI?
 
-Los tests y las macros pueden tener propiedades `description` en YAML, que aparecen en la documentación generada.
+Para que la definición exista una sola vez, en el control de versiones, con tests y revisión, y todas las herramientas devuelvan el mismo número para "ingresos" o "usuarios activos".
 
 <!-- challenge -->
 
@@ -2145,11 +2227,11 @@ La herramienta de BI de marketing y la hoja de cálculo de finanzas muestran dis
 
 <!-- solution -->
 
-Define el AOV una vez como métrica de ratio (ingresos / órdenes) en dbt, revisada en Git, y haz que ambas herramientas consulten la métrica por la API de la capa semántica en lugar de calcularla por su cuenta.
+Define el AOV una vez como métrica de ratio (numerador `revenue`, denominador `orders`) en dbt, revisada en Git, y haz que ambas herramientas consulten la métrica por la API de la capa semántica en lugar de calcularla por su cuenta.
 
 <!-- takeaways -->
 
-- Los semantic models declaran entidades, dimensiones y medidas.
+- Los semantic models declaran entidades y dimensiones; las métricas simples agregan columnas.
 - Las métricas se definen una vez, en control de versiones.
 - Todas las herramientas consultan las mismas definiciones.
 
@@ -2160,12 +2242,13 @@ Define el AOV una vez como métrica de ratio (ingresos / órdenes) en dbt, revis
 <!-- goals -->
 
 - Manejar dev, staging y producción con un solo código.
-- Correr Slim CI con `state:modified` y desplegar con seguridad.
+- Correr Slim CI con `state:modified`, desplegar con seguridad y explicar qué agrega dbt State.
 
 <!-- concept -->
 
 dbt abarata los ambientes: un solo código, varios targets, cada uno escribiendo en sus propios esquemas. Los desarrolladores construyen en esquemas personales, CI en un esquema por pull request, producción en producción.
-Slim CI compara el proyecto con los artefactos de producción y construye solo los modelos modificados y sus hijos, haciendo defer a producción para el resto. Para cambios de alto riesgo, construir una versión completa nueva junto a la vieja y cambiarlas de forma atómica da un despliegue blue-green.
+
+Slim CI compara el proyecto con los artefactos de producción y construye solo los modelos modificados y sus hijos, haciendo defer a producción para el resto. dbt State lleva la misma idea más lejos y decide por nodo y por ejecución si de verdad hace falta reconstruir algo. Para cambios de alto riesgo, construir una versión completa nueva junto a la vieja y cambiarlas de forma atómica da un despliegue blue-green.
 
 <!-- example -->
 
@@ -2185,17 +2268,19 @@ Git con ramas de funcionalidad y pull requests, revisión de código, CI que con
 
 #### ¿Qué es Slim CI?
 
-Ejecutar en CI solo los modelos modificados y sus dependientes, comparándolos con los artefactos de producción: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Los padres sin cambios se leen de producción en lugar de reconstruirse.
+Ejecutar en CI solo los modelos modificados y sus dependientes, comparándolos con los artefactos de producción: `dbt build --select state:modified+ --defer --state prod-artifacts/`. Los padres sin cambios se leen de producción en lugar de reconstruirse. Los trabajos de CI de la dbt platform lo hacen automáticamente y construyen en un esquema temporal por pull request.
 
 #### ¿Qué selecciona `state:modified`?
 
-Los nodos cuyo SQL, configuración o propiedades difieren del manifest dado con `--state`. Combinado con `+`, incluye a sus hijos.
+Los nodos cuyo SQL, configuración o propiedades difieren del manifest dado con `--state`. Combinado con `+`, incluye a sus hijos. Los subselectores lo acotan, como `state:modified.body` o `state:modified.configs`, y `state:new` selecciona solo los nodos que no existen en el manifest de comparación.
 
-#### Nombra tres ventajas de integrar dbt con Airflow.
+#### ¿Qué es dbt State?
 
-1. Las ejecuciones de dbt se orquestan con el resto del pipeline (esperar a la ingesta, transformar y luego refrescar los cuadros de mando o entrenar modelos).
-2. Los reintentos, las alertas, los SLA, los backfills y la planificación vienen de Airflow.
-3. Con herramientas como Astronomer Cosmos, cada modelo de dbt se convierte en una tarea de Airflow, lo que da visibilidad detallada y permite reintentar solo los modelos que fallaron.
+Un servicio gestionado de dbt Labs (requiere iniciar sesión en la dbt platform y se cobra por uso) que decide, nodo por nodo, si hace falta construir. Compara la lógica y los datos de origen de cada nodo con construcciones anteriores en todos los entornos y luego omite el nodo si nada cambió, clona un objeto idéntico y al día desde otro esquema, o lo construye con normalidad haciendo defer de los padres no seleccionados. Funciona con dbt v1, v2 y orquestadores externos, ignora los cambios que no afectan la lógica, como comentarios y espacios, y usa `lag_tolerance` para no reconstruir un modelo más seguido de lo necesario. `dbt state explain` muestra por qué cada nodo se omitió, se clonó o se construyó. Reemplaza la orquestación basada en estado (state-aware orchestration) que tenía antes la plataforma.
+
+#### ¿Qué es un despliegue azul-verde con dbt?
+
+Construir producción en un esquema o base de datos nuevos, testearla y luego intercambiarla de forma atómica (renombrando esquemas o cambiando vistas), para que los consumidores nunca vean datos construidos a medias.
 
 <!-- challenge -->
 
@@ -2215,12 +2300,13 @@ Pasa a Slim CI: descarga el manifest de producción, construye `state:modified+`
 
 <!-- goals -->
 
-- Programar dbt Core con un orquestador o usar la plataforma dbt.
+- Programar dbt autoalojado con un orquestador o usar la plataforma dbt.
 - Diseñar un job de producción que corra después de la ingesta.
 
 <!-- concept -->
 
-dbt no se programa solo. Con dbt Core, un orquestador lo corre, idealmente como parte de un pipeline mayor: esperar la ingesta, revisar la frescura, construir y probar, y avisar aguas abajo. La plataforma dbt trae jobs y triggers incorporados, con APIs para orquestadores.
+dbt no se programa solo. Cuando alojas dbt tú mismo, un orquestador lo corre, idealmente como parte de un pipeline mayor: esperar la ingesta, revisar la frescura, construir y probar, y avisar aguas abajo. La plataforma dbt trae jobs y triggers incorporados, con APIs para orquestadores.
+
 Un job típico de producción sigue los mismos pasos en todas partes, y correr dbt en un contenedor lo hace reproducible donde sea que corra.
 
 <!-- example -->
@@ -2234,29 +2320,31 @@ dbt docs generate
 # then: upload artifacts, alert on failure, trigger downstream
 ```
 
-#### ¿Cómo implantarías dbt en un pipeline de datos existente?
+#### Nombra tres ventajas de integrar dbt con Airflow.
 
-Empieza declarando las tablas en bruto existentes como sources, luego reproduce las transformaciones actuales como modelos de staging y marts, un dominio cada vez, comparando las salidas con las tablas heredadas (por ejemplo con `audit_helper`). Añade tests y documentación, ejecuta dbt desde el orquestador existente después de la ingesta, cambia a los consumidores a las nuevas tablas y retira los scripts heredados poco a poco.
+1. Las ejecuciones de dbt se orquestan con el resto del pipeline (esperar a la ingesta, transformar y luego refrescar los cuadros de mando o entrenar modelos).
+2. Los reintentos, las alertas, los SLA, los backfills y la planificación vienen de Airflow.
+3. Con herramientas como Astronomer Cosmos, cada modelo de dbt se convierte en una tarea de Airflow, lo que da visibilidad detallada y permite reintentar solo los modelos que fallaron.
 
-#### ¿Cómo se programa dbt en producción con dbt Core?
+#### ¿Cómo se programa dbt autoalojado en producción?
 
-Con un orquestador (Airflow, Dagster, Prefect, cron, GitHub Actions, Databricks Workflows) que ejecuta `dbt build` (o los comandos seleccionados) en un contenedor o entorno virtual con las credenciales de producción.
+Con un orquestador (Airflow, Dagster, Prefect, cron, GitHub Actions, Databricks Lakeflow Jobs) que ejecuta `dbt build` (o los comandos seleccionados) en un contenedor o entorno virtual con las credenciales de producción.
 
 #### ¿Cómo es un trabajo de producción típico?
 
-`dbt deps`, `dbt source freshness`, `dbt build` (seeds, snapshots, modelos y tests en orden) y luego `dbt docs generate`, con alertas en caso de fallo y los artefactos guardados para la siguiente comparación de CI.
+`dbt deps`, `dbt source freshness` (o `dbt freshness` en dbt v2), `dbt build` (seeds, snapshots, modelos y tests en orden) y luego `dbt docs generate`, con alertas en caso de fallo y los artefactos guardados para la siguiente comparación de CI.
 
-#### ¿Cómo se despliega dbt en la dbt platform (dbt Cloud)?
+#### ¿Cómo se despliega dbt en la dbt platform?
 
-Crea entornos de despliegue con sus credenciales, define trabajos (comandos, planificación o disparadores, modelos seleccionados), activa trabajos de CI en las pull requests y usa el encadenamiento de trabajos o disparadores por API para lanzar dbt después de la ingesta.
+Crea entornos de despliegue con sus credenciales y su versión de dbt (release track), y luego define los trabajos: trabajos de despliegue con comandos, planificación o disparadores y modelos seleccionados; trabajos de CI que corren en cada pull request; y trabajos de merge que corren cuando se fusiona una pull request. Usa el encadenamiento de trabajos o la API de administración para lanzar dbt después de la ingesta.
 
-#### ¿Qué medidas de seguridad ofrece dbt para el acceso a los datos y su transformación?
+#### ¿Cómo se lanza dbt cuando termina la ingesta?
 
-dbt se ejecuta con los permisos del almacén de las credenciales que usa, así que las cuentas de servicio con mínimo privilegio por entorno son el control principal. También ofrece la configuración `grants` para gestionar los privilegios de los objetos construidos, secretos en variables de entorno (ocultos con el prefijo `DBT_ENV_SECRET_`), niveles de acceso de los modelos y contratos. La dbt platform añade SSO, control de acceso basado en roles, registros de auditoría y restricciones por IP.
+Mediante el orquestador (una dependencia entre tareas o un sensor), los disparadores por API o el encadenamiento de trabajos de la dbt platform, o la integración de la herramienta de ingesta (por ejemplo Fivetran lanzando un trabajo de dbt).
 
-#### ¿Cómo garantiza dbt la seguridad de los datos?
+#### ¿Cómo se ejecuta dbt en un contenedor Docker?
 
-dbt nunca guarda ni mueve los datos: las transformaciones se ejecutan dentro del almacén, así que los datos siguen bajo los controles de acceso, el cifrado y la gobernanza del almacén. dbt solo guarda credenciales de conexión, que deben ser secretos con privilegios mínimos.
+Usa una imagen con dbt instalado (con dbt v1, más el paquete del adaptador; dbt v2 es un único binario que descarga el driver del adaptador en la primera ejecución, así que guárdalo en caché o inclúyelo en la imagen), monta o copia el proyecto, pasa las credenciales por variables de entorno y ejecuta comandos como `dbt build --target prod`.
 
 <!-- challenge -->
 
@@ -2282,6 +2370,7 @@ Dispara dbt desde el orquestador cuando termine la ingesta (dependencia de tarea
 <!-- concept -->
 
 dbt no agrega ningún acceso a datos propio: corre SQL con los permisos que tengan sus credenciales, dentro del warehouse. La seguridad se reduce entonces a esas credenciales, un usuario de servicio dedicado por ambiente con solo los privilegios que necesita, y a mantener los secretos fuera del repositorio.
+
 Los grants pueden vivir con los modelos, así los permisos se revisan y se aplican en cada build en lugar de darse a mano.
 
 <!-- example -->
@@ -2297,6 +2386,14 @@ models:
         select: []          # no direct access for consumers
 ```
 
+#### ¿Qué medidas de seguridad ofrece dbt para el acceso a los datos y su transformación?
+
+dbt se ejecuta con los permisos del almacén de las credenciales que usa, así que las cuentas de servicio con mínimo privilegio por entorno son el control principal. También ofrece la configuración `grants` para gestionar los privilegios de los objetos construidos, secretos en variables de entorno (ocultos con el prefijo `DBT_ENV_SECRET_`), niveles de acceso de los modelos y contratos. La dbt platform añade SSO, control de acceso basado en roles, registros de auditoría y restricciones por IP.
+
+#### ¿Cómo garantiza dbt la seguridad de los datos?
+
+dbt nunca guarda ni mueve los datos: las transformaciones se ejecutan dentro del almacén, así que los datos siguen bajo los controles de acceso, el cifrado y la gobernanza del almacén. dbt solo guarda credenciales de conexión, que deben ser secretos con privilegios mínimos.
+
 #### ¿Qué hace la configuración `grants`?
 
 Declara privilegios, y dbt los aplica después de construir un modelo:
@@ -2306,14 +2403,6 @@ models:
   +grants:
     select: ['reporter', 'analyst']
 ```
-
-#### ¿Cómo se monitorizan y diagnostican los problemas en dbt?
-
-Revisa la salida de la consola y `logs/dbt.log`, lee el SQL compilado en `target/compiled` y `target/run`, inspecciona `run_results.json` para ver fallos y duraciones, guarda los fallos de los tests, usa `dbt retry` después de corregir, y sigue el historial y la duración de las ejecuciones en el orquestador o en la dbt platform. Las alertas sobre fallos de trabajos y frescura de sources detectan los problemas pronto.
-
-#### ¿Cómo se depuran los modelos de dbt?
-
-Ejecuta `dbt compile` y lanza el SQL compilado directamente en el almacén, previsualiza con `dbt show`, aísla los CTE paso a paso, usa `{{ log() }}` en Jinja, ejecuta con `--debug` para ver los registros completos y revisa los datos de origen con tests.
 
 <!-- challenge -->
 
@@ -2339,6 +2428,7 @@ Crea un usuario de servicio para producción con privilegios solo sobre las base
 <!-- concept -->
 
 La mayor parte de la depuración en dbt empieza por el SQL compilado: lo que dbt envió de verdad al warehouse, que puedes correr directamente. Logs, artefactos e historial de consultas del warehouse completan el resto. El linting con SQLFluff mantiene el código lo bastante consistente para leerlo rápido.
+
 Adoptar dbt rara vez parte de cero: las tablas existentes se vuelven sources, las transformaciones existentes se reconstruyen modelo a modelo y se comparan. A mayor escala, varios proyectos referencian los modelos públicos de otros con dbt Mesh.
 
 <!-- example -->
@@ -2349,29 +2439,29 @@ dbt --debug run --select fct_orders        # verbose logs
 sqlfluff lint models/marts/fct_orders.sql
 ```
 
+#### ¿Cómo se monitorizan y diagnostican los problemas en dbt?
+
+Revisa la salida de la consola y `logs/dbt.log`, lee el SQL compilado en `target/compiled` y `target/run`, inspecciona `run_results.json` para ver fallos y duraciones, guarda los fallos de los tests, usa `dbt retry` después de corregir, y sigue el historial y la duración de las ejecuciones en el orquestador o en la dbt platform. Las alertas sobre fallos de trabajos y frescura de sources detectan los problemas pronto.
+
+#### ¿Cómo se depuran los modelos de dbt?
+
+Ejecuta `dbt compile` y lanza el SQL compilado directamente en el almacén, previsualiza con `dbt show`, aísla los CTE paso a paso, usa `{{ log() }}` en Jinja, ejecuta con `--debug` para ver los registros completos y revisa los datos de origen con tests.
+
 #### ¿Cómo compila dbt las consultas?
 
-dbt analiza el proyecto y construye el DAG, y luego, para cada nodo, renderiza el Jinja: resuelve `ref`, `source`, `var`, `config` y las llamadas a macros en SQL normal para el target actual. El `SELECT` compilado se escribe en `target/compiled/`. En la ejecución, la materialización lo envuelve en DDL/DML (`create table as`, `merge`) y lo envía al almacén a través del adaptador.
+dbt analiza el proyecto y construye el DAG, y luego, para cada nodo, renderiza el Jinja: resuelve `ref`, `source`, `var`, `config` y las llamadas a macros en SQL normal para el target actual. El `SELECT` compilado se escribe en `target/compiled/`. dbt v2 añade después el análisis estático: convierte ese SQL en un plan lógico para detectar errores y seguir el linaje de columnas sin consultar el almacén. En la ejecución, la materialización envuelve la consulta en DDL/DML (`create table as`, `merge`) y la envía al almacén a través del adaptador.
 
-#### ¿Qué es SQLFluff?
+#### ¿Qué es SQLFluff y qué hace `dbt lint`?
 
-Un linter y formateador de SQL con un modo para plantillas de dbt, que se usa en CI y en hooks de pre-commit para imponer un estilo SQL coherente.
+SQLFluff es un linter y formateador de SQL con un modo para plantillas de dbt, que se usa en CI y en hooks de pre-commit para imponer un estilo SQL coherente. dbt v2 incluye `dbt lint`, un linter integrado mucho más rápido que lee la misma configuración `.sqlfluff` y los mismos códigos de regla, y puede corregir las infracciones con `--fix`. Sus resultados pueden diferir un poco de los de SQLFluff.
 
-#### ¿Cómo se ejecuta dbt en un contenedor Docker?
+#### ¿Cómo implantarías dbt en un pipeline de datos existente?
 
-Usa una imagen con dbt Core y el adaptador instalados, monta o copia el proyecto, pasa las credenciales por variables de entorno y ejecuta comandos como `dbt build --target prod`.
+Empieza declarando las tablas en bruto existentes como sources, luego reproduce las transformaciones actuales como modelos de staging y marts, un dominio cada vez, comparando las salidas con las tablas heredadas (por ejemplo con `audit_helper`). Añade tests y documentación, ejecuta dbt desde el orquestador existente después de la ingesta, cambia a los consumidores a las nuevas tablas y retira los scripts heredados poco a poco.
 
 #### ¿Qué es dbt Mesh?
 
-Un patrón para organizaciones grandes en el que varios proyectos de dbt referencian los modelos públicos de los demás (`ref` entre proyectos), con contratos, versiones y controles de acceso, para que cada dominio gestione su proyecto de forma independiente.
-
-#### ¿Cómo se lanza dbt cuando termina la ingesta?
-
-Mediante el orquestador (una dependencia entre tareas o un sensor), los disparadores por API o el encadenamiento de trabajos de la dbt platform, o la integración de la herramienta de ingesta (por ejemplo Fivetran lanzando un trabajo de dbt).
-
-#### ¿Qué es un despliegue azul-verde con dbt?
-
-Construir producción en un esquema o base de datos nuevos, testearla y luego intercambiarla de forma atómica (renombrando esquemas o cambiando vistas), para que los consumidores nunca vean datos construidos a medias.
+Un patrón para organizaciones grandes en el que varios proyectos de dbt referencian los modelos públicos de los demás con un `ref('project', 'model')` entre proyectos, con grupos, contratos, versiones y controles de acceso, para que cada dominio gestione su proyecto de forma independiente. Las referencias entre proyectos son una función de los planes Enterprise de la dbt platform, y Catalog muestra el linaje entre los proyectos.
 
 <!-- challenge -->
 
@@ -2399,6 +2489,7 @@ Compílalo y corre el SQL compilado directamente en el warehouse, luego consulta
 <!-- concept -->
 
 El tiempo de ejecución de un proyecto dbt es la suma de sus consultas, así que el trabajo de rendimiento es sobre todo trabajo del warehouse. Materializa lo que se consulta seguido, vuelve incrementales los hechos grandes, evita cadenas largas de vistas que lo recalculan todo y corre en paralelo los modelos independientes con suficientes threads.
+
 Mide antes de cambiar: los tiempos de ejecución muestran los modelos más lentos, y el modelo de costo de vistas, tablas e incrementales explica a dónde va el dinero. El desarrollo puede ser aún más barato trabajando con muestras y haciendo defer a producción.
 
 <!-- example -->
@@ -2413,21 +2504,13 @@ Mide antes de cambiar: los tiempos de ejecución muestran los modelos más lento
 
 Materializa como tablas los modelos costosos y usa modelos incrementales para las grandes tablas de hechos, filtra y agrega pronto, evita `select *` y los joins innecesarios, particiona y agrupa las tablas grandes por las columnas de filtro, usa las funciones nativas del almacén (claves de clustering, claves de ordenación), limita los datos en desarrollo y revisa los perfiles de las consultas y los tiempos de `run_results.json` para encontrar los modelos más lentos.
 
-#### Nombra algunas técnicas de optimización de dbt en Snowflake.
+#### ¿Qué técnicas de optimización ayudan al correr dbt en Snowflake?
 
 Usa tablas transitorias para los modelos intermedios (sin costo de almacenamiento Fail-safe), agrupa (clustering) las tablas muy grandes por las columnas de filtro habituales, dimensiona los warehouses por trabajo (y separa los de dbt y los de BI), usa `merge` o `delete+insert` con incremental predicates, apóyate en el clonado sin copia para dev y CI (`dbt clone`), fija `query_tag` para atribuir costos y activa la suspensión automática de los warehouses.
 
-#### ¿Cómo compararías dbt y BigQuery?
-
-No son alternativas: BigQuery es un almacén de datos serverless que guarda y procesa los datos, mientras que dbt es un framework de transformación que genera SQL y lo ejecuta en BigQuery (a través de dbt-bigquery). Las consultas programadas de BigQuery o Dataform cubren un terreno parecido al de dbt, pero dbt añade portabilidad entre plataformas, un gran ecosistema de paquetes y una comunidad amplia. En BigQuery, dbt admite particionado, clustering e `insert_overwrite`.
-
 #### ¿Cómo se aceleran en general las ejecuciones de dbt?
 
-Aumenta los `threads` dentro de los límites del almacén, elimina los modelos innecesarios, convierte en vistas las tablas poco consultadas (o al revés para las vistas pesadas), usa modelos incrementales, ejecuta solo lo que ha cambiado (`state:modified+`) en CI y separa los trabajos según sus necesidades de frescura.
-
-#### ¿Por qué una cadena larga de vistas puede ser lenta?
-
-Cada consulta a la vista final ejecuta toda la cadena de SQL subyacente. Materializar como tablas los modelos intermedios clave evita repetir el cálculo.
+Aumenta los `threads` dentro de los límites del almacén (dbt v2 ajusta el paralelismo por su cuenta en la mayoría de las plataformas), elimina los modelos innecesarios, convierte en vistas las tablas poco consultadas (o al revés para las vistas pesadas), usa modelos incrementales, ejecuta solo lo que ha cambiado (`state:modified+`) en CI y separa los trabajos según sus necesidades de frescura.
 
 #### ¿Cómo se encuentran los modelos más lentos?
 
@@ -2437,9 +2520,17 @@ Con los tiempos de `run_results.json`, la vista de tiempos de modelos de la dbt 
 
 Las vistas cuestan cómputo cada vez que se consultan. Las tablas cuestan cómputo en cada construcción, más almacenamiento. Los modelos incrementales cuestan poco por ejecución, pero requieren cuidado para seguir siendo correctos.
 
-#### ¿Qué provoca el "fan-out" en los modelos de dbt y cómo se detecta?
+#### ¿Por qué una cadena larga de vistas puede ser lenta?
 
-Unir por una clave que no es única en uno de los lados multiplica las filas e infla las sumas. Los tests de unicidad sobre las claves de unión y sobre la granularidad de cada modelo lo detectan.
+Cada consulta a la vista final ejecuta toda la cadena de SQL subyacente. Materializar como tablas los modelos intermedios clave evita repetir el cálculo.
+
+#### ¿Cómo se limitan los datos en desarrollo para ahorrar tiempo y dinero?
+
+Filtrando por fecha cuando `target.name == 'dev'`, usando `--defer` para reutilizar los padres de producción, o usando clones sin copia. dbt también trae dos opciones integradas para `run` y `build`: `--sample="3 days"` filtra a una ventana de tiempo reciente cada `ref` y `source` que tenga `event_time`, y `--empty` los limita a cero filas, lo que comprueba casi sin costo que el SQL corre y crea las columnas correctas (útil en CI).
+
+#### ¿Cómo compararías dbt y BigQuery?
+
+No son alternativas: BigQuery es un almacén de datos serverless que guarda y procesa los datos, mientras que dbt es un framework de transformación que genera SQL y lo ejecuta en BigQuery (a través de dbt-bigquery). Las consultas programadas de BigQuery o Dataform cubren un terreno parecido al de dbt, pero dbt añade portabilidad entre plataformas, un gran ecosistema de paquetes y una comunidad amplia. En BigQuery, dbt admite particionado, clustering e `insert_overwrite`.
 
 <!-- challenge -->
 
@@ -2465,6 +2556,7 @@ Una ejecución nocturna tarda 3 horas, pero el warehouse muestra largos huecos o
 <!-- concept -->
 
 Algunos problemas producen cifras erróneas en lugar de errores. Los joins sobre llaves que no son únicas multiplican filas; las fuentes que reenvían registros crean duplicados; las columnas de la fuente que cambian rompen modelos o botan datos en silencio. Las pruebas de unicidad y las listas explícitas de columnas atrapan la mayoría temprano.
+
 Los ciclos son el único problema que dbt rechaza de plano: si dos modelos se necesitan entre sí, la lógica compartida va en un tercer modelo aguas arriba de ambos.
 
 <!-- example -->
@@ -2475,17 +2567,23 @@ select * from {{ source('shop', 'orders') }}
 qualify row_number() over (partition by id order by _loaded_at desc) = 1
 ```
 
-#### ¿Cómo se limitan los datos en desarrollo para ahorrar tiempo y dinero?
+#### ¿Qué provoca el "fan-out" en los modelos de dbt y cómo se detecta?
 
-Filtrando por fecha o con una muestra cuando `target.name == 'dev'`, usando `--defer` para reutilizar los padres de producción, o usando clones sin copia.
+Unir por una clave que no es única en uno de los lados multiplica las filas e infla las sumas. Los tests de unicidad sobre las claves de unión y sobre la granularidad de cada modelo lo detectan.
 
 #### ¿Qué haces con dependencias entre modelos que forman un ciclo?
 
 dbt rechaza los ciclos. Reestructura la lógica, normalmente extrayendo la parte común a un modelo previo que referencien ambos modelos.
 
-#### ¿Qué pasa cuando un modelo falla a mitad de una ejecución?
+#### ¿Qué haces con filas duplicadas que vienen de una source?
 
-Los modelos que dependen de él se omiten, las ramas independientes continúan y la ejecución informa del fallo. Corrígelo y ejecuta `dbt retry`, o vuelve a ejecutar el modelo que falló y sus hijos con `model+`.
+Deduplicarlas en el modelo de staging, normalmente con una función de ventana que conserve la fila más reciente por clave, y testear la unicidad después:
+
+```sql
+select *
+from {{ source('crm', 'customers') }}
+qualify row_number() over (partition by customer_id order by updated_at desc) = 1
+```
 
 #### ¿Cómo se gestionan los cambios de esquema en las sources?
 
@@ -2515,6 +2613,7 @@ Pasa la lógica compartida a un nuevo modelo aguas arriba (por ejemplo `int_cust
 <!-- concept -->
 
 En producción, el DAG contiene las fallas: un modelo que falla salta a sus hijos mientras las ramas independientes terminan. Volver a correr solo la parte fallida tras un arreglo evita reconstruirlo todo.
+
 El monitoreo convierte las ejecuciones en tendencias: fallas, resultados de pruebas y duraciones en el tiempo. Cuando un job tarda de pronto el doble, la causa suele ser crecimiento de datos, un filtro incremental perdido, una materialización cambiada o contención en el warehouse, y comparar ejecuciones señala cuál.
 
 <!-- example -->
@@ -2525,15 +2624,9 @@ slowest node change: fct_events 6 min → 52 min
 manifest diff: fct_events materialized 'incremental' → 'table' (PR #212)
 ```
 
-#### ¿Qué haces con filas duplicadas que vienen de una source?
+#### ¿Qué pasa cuando un modelo falla a mitad de una ejecución?
 
-Deduplicarlas en el modelo de staging, normalmente con una función de ventana que conserve la fila más reciente por clave, y testear la unicidad después:
-
-```sql
-select *
-from {{ source('crm', 'customers') }}
-qualify row_number() over (partition by customer_id order by updated_at desc) = 1
-```
+Los modelos que dependen de él se omiten, las ramas independientes continúan y la ejecución informa del fallo. Corrígelo y ejecuta `dbt retry`, o vuelve a ejecutar el modelo que falló y sus hijos con `model+`.
 
 #### ¿Cómo monitorizas y diagnosticas los problemas de dbt en producción?
 
