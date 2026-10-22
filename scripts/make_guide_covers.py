@@ -41,6 +41,7 @@ COVERS = {
     "cicd_automation_for_data": ("CI/CD", (36, 41, 47), "Data CI/CD", "Automating data pipelines, with GitHub Actions examples", ARTICLE),
     "prompt_engineering_in_practice": ("Prompt", (217, 119, 87), "Prompt engineering", "Techniques that still matter, with examples", ARTICLE),
     "retrieval_augmented_generation_in_practice": ("RAG", (16, 163, 127), "RAG in practice", "Retrieval, reranking, grounded answers and evaluation", ARTICLE),
+    "ai_agents_how_to_use_them": ("Agents", (124, 58, 237), "AI agents", "How they work and how to use Claude, Codex and others", ARTICLE),
     "ai_agents_and_data_engineering": ("AI", (124, 58, 237), "AI agents and data", "What teams delegate, the risks and what changes for the role", ARTICLE),
 }
 

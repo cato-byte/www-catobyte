@@ -606,5 +606,24 @@
         },
         "creation_date": "2026-10-22",
         "publication_date": "2026-10-22"
+    },
+    {
+        "post_id": "ai_agents_how_to_use_them",
+        "languages": {
+            "en": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "AI Agents in 2026: How They Work and How to Use Them Effectively, With Claude, Codex and Others"
+            },
+            "es": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "Agentes de IA en 2026: cómo funcionan y cómo usarlos bien, con Claude, Codex y otros"
+            },
+            "fr": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "Les agents IA en 2026 : comment ils fonctionnent et comment bien les utiliser, avec Claude, Codex et les autres"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
     }
 ]
