@@ -39,6 +39,8 @@ COVERS = {
     "data_architecture_patterns": ("Arch", (37, 84, 217), "Data architecture", "Kimball, microservices, medallion and how to choose", ARTICLE),
     "testing_and_performance_big_data": ("Test", (15, 138, 95), "Big data testing", "Proving pipelines right, then making them fast", ARTICLE),
     "cicd_automation_for_data": ("CI/CD", (36, 41, 47), "Data CI/CD", "Automating data pipelines, with GitHub Actions examples", ARTICLE),
+    "prompt_engineering_in_practice": ("Prompt", (217, 119, 87), "Prompt engineering", "Techniques that still matter, with examples", ARTICLE),
+    "retrieval_augmented_generation_in_practice": ("RAG", (16, 163, 127), "RAG in practice", "Retrieval, reranking, grounded answers and evaluation", ARTICLE),
     "ai_agents_and_data_engineering": ("AI", (124, 58, 237), "AI agents and data", "What teams delegate, the risks and what changes for the role", ARTICLE),
 }
 
