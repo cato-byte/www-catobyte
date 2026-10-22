@@ -3,9 +3,9 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Guía de estudio de Snowflake: unas 200 preguntas](../../images/snowflake_study_guide_title_img.png)
+![Guía de estudio de Snowflake: unas 225 preguntas](../../images/snowflake_study_guide_title_img.png)
 
-Unas 200 preguntas tipo entrevista sobre Snowflake, desde su arquitectura hasta los virtual warehouses, las micro-particiones, la carga de datos, los datos semiestructurados, los streams y tasks, las dynamic tables, la seguridad, el uso compartido de datos, el rendimiento y el control de costos. Las respuestas reflejan la plataforma en 2026.
+Unas 225 preguntas tipo entrevista sobre Snowflake, desde su arquitectura hasta los virtual warehouses, las micro-particiones, la carga de datos, los datos semiestructurados, los streams y tasks, las dynamic tables, la seguridad, el uso compartido de datos, el rendimiento y el control de costos. Las respuestas siguen la documentación de Snowflake de octubre de 2026.
 
 La guía sigue una ruta de aprendizaje en seis etapas. Cada sección se divide en unidades cortas: objetivos de aprendizaje, una explicación del concepto y un ejemplo resuelto, luego preguntas (primero de memoria, después de aplicación), un reto práctico e ideas clave. Para **aprender**, lee cada unidad de principio a fin. Para **repasar**, cambia al modo repaso o usa "Ir a las preguntas", marca las respuestas que quieras volver a ver y prueba un repaso mixto entre secciones.
 
@@ -24,6 +24,7 @@ La guía sigue una ruta de aprendizaje en seis etapas. Cada sección se divide e
 <!-- concept -->
 
 Los warehouses clásicos atan los datos a las máquinas que los procesan, así que todas las cargas compiten por el mismo clúster y escalar implica mover datos. Snowflake divide el problema en tres. Los datos viven una sola vez en almacenamiento central en la nube. Clústeres de cómputo independientes, llamados virtual warehouses, los leen sin interferir entre sí. Una capa de servicios maneja todo lo que rodea a las consultas: seguridad, metadatos, optimización y transacciones.
+
 El resultado es un warehouse que no ajustas físicamente: dimensionas el cómputo por carga y pagas solo mientras corre.
 
 <!-- example -->
@@ -88,6 +89,7 @@ Dando a la carga y a BI virtual warehouses separados: ambos leen y escriben el m
 <!-- concept -->
 
 Todo en Snowflake está en una jerarquía: una organización tiene cuentas, cada cuenta vive en una región de nube y tiene bases de datos, que tienen esquemas, que tienen tablas, vistas, stages y otros objetos. Warehouses, usuarios y roles viven a nivel de cuenta.
+
 Las ediciones deciden qué funciones tiene una cuenta, y una sesión siempre corre en un contexto: el rol, el warehouse, la base y el esquema actuales, lo que explica la mayoría de sorpresas de "object does not exist".
 
 <!-- example -->
@@ -123,6 +125,10 @@ AWS, Azure y Google Cloud, en muchas regiones. Una cuenta vive en una región de
 
 Con Snowsight (la interfaz web), la Snowflake CLI y SnowSQL, los drivers (JDBC, ODBC, conector de Python, Go, Node.js, .NET, conectores de Spark y Kafka), la API REST de SQL y las herramientas de socios (BI, ETL, dbt).
 
+#### ¿Qué son los parámetros y qué valor prevalece?
+
+Ajustes que controlan el comportamiento, como `STATEMENT_TIMEOUT_IN_SECONDS`, `TIMEZONE`, `QUERY_TAG` o `DATA_RETENTION_TIME_IN_DAYS`. Los parámetros de sesión se pueden fijar en la cuenta, el usuario o la sesión, y gana el nivel más específico; los parámetros de objeto se heredan de la cuenta hacia bases de datos, esquemas y tablas salvo que se sobrescriban. `SHOW PARAMETERS` muestra cada valor y el nivel donde se fijó.
+
 <!-- challenge -->
 
 Una consulta falla con "Object does not exist or not authorized", aunque un colega ve la tabla. ¿Qué revisas primero?
@@ -147,6 +153,7 @@ El contexto de la sesión y el rol: al rol actual pueden faltarle privilegios, o
 <!-- concept -->
 
 Un virtual warehouse es cómputo que enciendes y apagas. Mientras corre consume créditos, cobrados por segundo después de un primer minuto. Cada paso de tamaño duplica la potencia y la tasa de créditos, así que el precio por hora de un warehouse grande es alto, pero una consulta que paraleliza bien termina en la mitad del tiempo y cuesta casi lo mismo.
+
 Eso vuelve el tamaño una decisión de velocidad más que de costo, siempre que los warehouses se suspendan cuando están ociosos.
 
 <!-- example -->
@@ -194,6 +201,7 @@ Si la consulta paraleliza, un Large (4× la tasa) termina en más o menos la cua
 <!-- concept -->
 
 Snowflake se usa por muchas puertas: la interfaz web Snowsight para worksheets, notebooks y dashboards; herramientas de línea de comandos para scripts y despliegues; drivers y conectores para aplicaciones, herramientas de BI y pipelines.
+
 El gobierno viene incorporado en la plataforma bajo el nombre Horizon: control de acceso, clasificación, políticas, linaje y auditoría, así la seguridad y el descubrimiento no dependen de una herramienta aparte.
 
 <!-- example -->
@@ -216,9 +224,13 @@ El identificador de cuenta (nombre de la organización más nombre de la cuenta,
 
 El rol, el warehouse, la base de datos y el esquema actuales de una sesión (`USE ROLE`, `USE WAREHOUSE`, `USE DATABASE`, `USE SCHEMA`). Las consultas corren con los privilegios del rol actual en el warehouse actual, y los nombres sin calificar se resuelven en la base y el esquema actuales.
 
-#### ¿Qué es una micro-partición?
+#### ¿Qué son los Workspaces de Snowsight?
 
-La unidad física de almacenamiento de una tabla de Snowflake: un archivo inmutable de 50 a 500 MB de datos sin comprimir (mucho menos comprimido), guardado en formato columnar. Snowflake las crea automáticamente al cargar los datos, en el orden en que llegan.
+Un entorno de desarrollo basado en archivos dentro de Snowsight: archivos SQL y Python, notebooks y proyectos dbt o DCM organizados en carpetas, opcionalmente conectados a un repositorio Git. Son el sucesor de las worksheets para escribir y versionar código dentro de Snowflake.
+
+#### ¿Qué es Snowflake Horizon?
+
+La capa integrada de gobierno y catálogo de Snowflake, documentada como Horizon Catalog: control de acceso, clasificación de datos sensibles, políticas de enmascaramiento y de acceso a filas, etiquetas, linaje, monitoreo de calidad de datos, auditoría y descubrimiento, aplicados a tablas, tablas Iceberg y datos compartidos.
 
 <!-- challenge -->
 
@@ -226,7 +238,7 @@ Un pipeline se conecta con usuario y contraseña guardados en un archivo de conf
 
 <!-- solution -->
 
-Autenticación por key pair (u OAuth/workload identity), con la llave privada en un gestor de secretos, para que no se guarde ninguna contraseña ni aparezcan solicitudes de MFA en la automatización.
+Un usuario `SERVICE` con autenticación por par de claves (u OAuth o workload identity federation), con la clave privada en un gestor de secretos. Los usuarios de servicio ya no pueden iniciar sesión con contraseña.
 
 <!-- takeaways -->
 
@@ -246,6 +258,7 @@ Autenticación por key pair (u OAuth/workload identity), con la llave privada en
 <!-- concept -->
 
 Snowflake guarda las tablas como muchos archivos pequeños e inmutables, las micro-particiones, cada una con una porción de filas guardada por columna y comprimida automáticamente. De cada una registra metadatos como el valor mínimo y máximo de cada columna.
+
 Esos metadatos son la forma en que las consultas se vuelven rápidas sin índices: un filtro sobre una columna permite saltarse cada micro-partición cuyo rango no puede coincidir. Como los archivos nunca cambian, updates y deletes escriben micro-particiones nuevas, lo que además abarata el Time Travel y la clonación.
 
 <!-- example -->
@@ -303,6 +316,7 @@ Los datos se cargaron en orden de fecha, así que cada micro-partición cubre un
 <!-- concept -->
 
 La poda solo funciona cuando los valores parecidos quedan juntos en las mismas micro-particiones. Los datos cargados en orden de tiempo quedan agrupados naturalmente por fecha sin costo. Para otras columnas de filtro en tablas muy grandes, una clustering key le dice a Snowflake que reorganice los datos en segundo plano, lo que cuesta créditos mientras la tabla siga cambiando.
+
 Así que el clustering es un compromiso: vale la pena en tablas de varios terabytes con filtros selectivos frecuentes, y es un desperdicio en tablas pequeñas o poco consultadas.
 
 <!-- example -->
@@ -362,6 +376,7 @@ Quitar las keys de las tablas pequeñas o poco filtradas (ahí el clustering nat
 <!-- concept -->
 
 Los tipos de tabla cambian protección, ubicación y encaje con la carga. Las permanentes tienen Time Travel y Fail-safe; las transient y temporales no tienen Fail-safe, lo que ahorra almacenamiento en datos que puedes reconstruir. Las tablas Iceberg guardan los datos en formato abierto en tu almacenamiento; las híbridas sirven operaciones rápidas por fila; las externas leen los archivos en sitio.
+
 El almacenamiento se cobra por bytes comprimidos, incluida la historia guardada para Time Travel y Fail-safe, que puede superar los datos activos en tablas que cambian constantemente.
 
 <!-- example -->
@@ -381,6 +396,10 @@ Una tabla de solo lectura cuyos datos se quedan en archivos de un stage externo 
 
 Sobre el promedio mensual de bytes comprimidos de las tablas, los datos de Time Travel y Fail-safe y los archivos en stages, a una tarifa por TB que depende de la modalidad (capacidad o bajo demanda) y de la región.
 
+#### ¿Qué es una catalog-linked database?
+
+Una base de datos de Snowflake conectada a un catálogo Iceberg REST externo (como AWS Glue o Snowflake Open Catalog) que descubre sus namespaces y tablas automáticamente y los mantiene sincronizados, de modo que puedes consultar todo un lakehouse externo sin crear cada tabla Iceberg a mano.
+
 #### ¿Qué hace `ALTER TABLE … SUSPEND RECLUSTER`?
 
 Pausa el clustering automático de una tabla y detiene los costos de reagrupamiento, por ejemplo durante un backfill grande; `RESUME RECLUSTER` lo vuelve a activar.
@@ -396,6 +415,10 @@ En `ACCOUNT_USAGE.TABLE_STORAGE_METRICS`, que informa por tabla los bytes activo
 #### ¿Qué pasa cuando se suspende un warehouse?
 
 Deja de consumir créditos y se borra su caché local. Con auto-resume, la siguiente consulta lo vuelve a encender en uno o dos segundos.
+
+#### ¿Qué son las storage lifecycle policies?
+
+Políticas a nivel de esquema que archivan o eliminan filas de una tabla automáticamente según una condición, como su antigüedad. Snowflake las ejecuta a diario: las filas que cumplen la condición se borran o pasan a un nivel de archivo más barato (COOL, o COLD a cerca de una cuarta parte del precio pero con recuperación de hasta 48 horas), desde donde se pueden restaurar en una tabla nueva. Reemplazan los jobs de borrado escritos a mano para las reglas de retención.
 
 <!-- challenge -->
 
@@ -423,6 +446,7 @@ Vuélvela una tabla transient con Time Travel corto (o cero): se puede reconstru
 <!-- concept -->
 
 Los warehouses cuestan solo mientras corren, así que sus ajustes de ciclo de vida importan más que su tamaño. Auto-suspend lo detiene tras un periodo corto sin uso; auto-resume lo reinicia cuando llega una consulta. Suspender también borra su caché local, así que timeouts muy cortos pueden frenar las consultas repetidas.
+
 El tamaño es un experimento: empieza pequeño, mide consultas representativas y ajusta. Redimensionar afecta las consultas nuevas; las que están corriendo terminan donde empezaron. Los timeouts detienen las consultas descontroladas antes de quemar créditos.
 
 <!-- example -->
@@ -480,6 +504,7 @@ Activa auto-suspend (por ejemplo entre 60 y 300 segundos) y auto-resume. El comp
 <!-- concept -->
 
 Dos problemas se parecen pero necesitan arreglos distintos. Una sola consulta pesada que va lenta necesita un warehouse más grande: más memoria, menos spill. Muchas consultas concurrentes en fila necesitan más clústeres del mismo tamaño: un warehouse multi-cluster los agrega cuando crecen las colas y los quita cuando baja la carga.
+
 Primero van, eso sí, warehouses separados por carga, para que cargas, transformaciones y dashboards no compitan en absoluto.
 
 <!-- example -->
@@ -544,6 +569,7 @@ Probablemente no: la fila viene de la concurrencia, así que escala hacia afuera
 <!-- concept -->
 
 Los warehouses estándar sirven para casi todo el SQL, pero algunas cargas necesitan otro hardware. Los Snowpark-optimized ofrecen mucha más memoria por nodo para trabajo de Python y ML. Las generaciones nuevas de warehouses traen hardware más rápido y mejoras del motor, sobre todo para pipelines con mucho DML.
+
 El Query Acceleration Service toma otro camino: en lugar de un warehouse más grande para escaneos enormes ocasionales, presta cómputo serverless a las partes de las consultas elegibles que lo necesitan.
 
 <!-- example -->
@@ -562,9 +588,13 @@ Empieza pequeño (X-Small o Small) para desarrollo y cargas sencillas, prueba co
 
 El caché de resultados (en la capa de servicios: los resultados se reutilizan durante 24 horas si la consulta y los datos no cambiaron), el caché del warehouse (datos de micro-particiones en el SSD local del warehouse mientras está encendido) y el caché de metadatos (estadísticas que responden algunas consultas como `COUNT(*)` o `MIN` sin warehouse).
 
-#### ¿Cuándo se usa el caché de resultados?
+#### ¿Qué son los warehouses estándar Gen2?
 
-Cuando el mismo texto de consulta se vuelve a ejecutar, los datos no cambiaron, el usuario tiene los privilegios necesarios y la consulta no usa funciones no deterministas como `CURRENT_TIMESTAMP()`. Cada reutilización extiende la retención, hasta 31 días. No cuesta cómputo.
+Una generación más nueva de warehouses estándar con hardware más rápido y mejoras del motor, sobre todo para DML y escaneos grandes, facturada a una tarifa de créditos algo mayor. No son la opción por defecto ni están disponibles en todas las regiones; se eligen por warehouse con `RESOURCE_CONSTRAINT = STANDARD_GEN_2`.
+
+#### ¿Qué son las tablas y los warehouses interactivos?
+
+Un tipo de tabla y un tipo de warehouse para servir datos con baja latencia y alta concurrencia, como dashboards para clientes y APIs de datos. Las tablas interactivas se crean con `CREATE INTERACTIVE TABLE ... CLUSTER BY (...)` y pueden refrescarse desde tablas fuente con un target lag; los warehouses interactivos mantienen esos datos en caché y están pensados para quedarse encendidos. Las consultas se limitan a unos pocos segundos, así que la analítica pesada sigue en warehouses estándar.
 
 <!-- challenge -->
 
@@ -592,6 +622,7 @@ Activa el Query Acceleration Service en ese warehouse: los escaneos grandes eleg
 <!-- concept -->
 
 Tres cachés abaratan el trabajo repetido. La caché de resultados devuelve durante un día los resultados de consultas idénticas sin usar ningún warehouse. Cada warehouse guarda en disco local los datos leídos recientemente, así los escaneos repetidos se saltan el almacenamiento remoto. La caché de metadatos responde al instante preguntas como el conteo de filas.
+
 La caché del warehouse vive solo mientras corre el warehouse, así que el momento de suspender es un compromiso entre costo y datos calientes para los dashboards.
 
 <!-- example -->
@@ -634,6 +665,7 @@ Un auto-suspend más largo en horario laboral (por ejemplo 5–10 minutos) manti
 <!-- concept -->
 
 La caché de resultados es la consulta más barata: cero créditos. Aplica cuando el mismo texto de consulta se vuelve a correr, los datos no cambiaron y el rol puede leerlos, incluso para otro usuario. Pequeñas diferencias la rompen: datos cambiados, texto distinto, funciones no deterministas o algunos ajustes de sesión.
+
 Los benchmarks deben desactivarla, o miden la caché en lugar de la consulta.
 
 <!-- example -->
@@ -688,6 +720,7 @@ Las funciones no deterministas hacen distinta cada ejecución, así que los resu
 <!-- concept -->
 
 Cargar empieza por dónde están los archivos. Un stage apunta a archivos, dentro de Snowflake o en tu almacenamiento en la nube; una storage integration permite que Snowflake acceda a ese almacenamiento con un rol de nube en lugar de llaves; un file format dice cómo parsear los archivos.
+
 Antes de cargar puedes consultar directamente los archivos en stage e inferir su esquema, lo que agiliza revisar fuentes nuevas.
 
 <!-- example -->
@@ -753,6 +786,10 @@ COPY INTO raw.orders FROM @raw_stage/orders/ FILE_FORMAT = (TYPE = 'JSON');
 
 Por cómputo serverless más una pequeña sobrecarga por archivo (en la tarifa reciente, un monto fijo por GB ingerido). Con archivos muy pequeños domina la sobrecarga, así que los productores deberían agrupar los datos en archivos de tamaño razonable, idealmente enviados cada minuto más o menos y no por cada evento.
 
+#### ¿Qué es una directory table?
+
+Un catálogo de los archivos de un stage (ruta, tamaño, fecha de modificación, URL), que se activa con `DIRECTORY = (ENABLE = TRUE)` y se consulta con `SELECT * FROM DIRECTORY(@stage)`. Es el punto de partida para datos no estructurados: listar PDFs o imágenes nuevos y luego procesarlos con código Python o funciones de IA como `AI_PARSE_DOCUMENT`.
+
 <!-- challenge -->
 
 Un stage se creó con access keys de AWS incrustadas en su definición. ¿Con qué lo reemplazas?
@@ -777,6 +814,7 @@ Con una storage integration que use un rol de IAM en el que confíe Snowflake, l
 <!-- concept -->
 
 `COPY INTO` carga en paralelo archivos en stage a una tabla, un archivo por hilo, así que el tamaño de los archivos define la velocidad: muchos archivos diminutos desperdician sobrecarga y un archivo enorme no se puede dividir. Snowflake recuerda qué archivos cargó durante 64 días, así que las re-ejecuciones los saltan salvo que se fuerce.
+
 Los errores necesitan una política: abortar, saltar filas o saltar archivos. Se pueden hacer transformaciones simples durante la carga, y el mismo comando en sentido inverso descarga resultados de consultas a archivos.
 
 <!-- example -->
@@ -809,6 +847,10 @@ Una función que lee archivos Parquet, Avro, ORC, JSON o CSV en un stage y devue
 
 `FORCE = TRUE` vuelve a cargar los archivos aunque los metadatos digan que ya se cargaron, lo que puede crear duplicados; se usa a propósito para recargas tras vaciar una tabla.
 
+#### ¿Cómo verificas lo que cargaron `COPY` y Snowpipe?
+
+Con la función de tabla `COPY_HISTORY` (information schema, últimos 14 días) o la vista `ACCOUNT_USAGE.COPY_HISTORY` (un año, con algo de latencia), que listan cada archivo con su estado, número de filas y primer error. Para un pipe concreto, `SYSTEM$PIPE_STATUS` muestra si está corriendo y cuántos archivos tiene pendientes.
+
 #### ¿Cómo maneja `COPY` los archivos de más de 64 días?
 
 Los metadatos de carga vencen a los 64 días, así que para los archivos más viejos Snowflake puede no saber si se cargaron. `LOAD_UNCERTAIN_FILES = TRUE` los carga de todos modos; para evitar la ambigüedad, mueve o borra los archivos una vez cargados, o usa Snowpipe, que guarda 14 días de historial por pipe.
@@ -840,8 +882,9 @@ Divide la entrada en archivos de unos 100–250 MB comprimidos (en el productor 
 
 <!-- concept -->
 
-Cuando los datos llegan todo el día, esperar un `COPY` nocturno agrega latencia. Snowpipe corre el mismo `COPY` de forma serverless a medida que cae cada archivo, avisado por eventos de la nube; los archivos pequeños suben su sobrecarga por archivo. Snowpipe Streaming se salta los archivos y escribe filas desde Kafka o SDKs con segundos de latencia.
-Los cambios de bases de datos suelen llegar por herramientas de CDC a tablas crudas y luego se aplican con `MERGE`. Los duplicados vienen de productores que reenvían datos, no de Snowpipe, así que los pipelines deduplican aguas abajo.
+Cuando los datos llegan todo el día, esperar un `COPY` nocturno añade latencia. Snowpipe ejecuta el mismo `COPY` sin servidor a medida que llega cada archivo, avisado por eventos de la nube, y factura por GB cargado. Snowpipe Streaming se salta los archivos por completo y escribe filas desde Kafka o SDKs con segundos de latencia.
+
+Los cambios de bases de datos suelen llegar con herramientas de CDC a tablas raw y luego se aplican con `MERGE`. Los duplicados vienen de productores que reenvían datos, no de Snowpipe, así que los pipelines deduplican más adelante.
 
 <!-- example -->
 
@@ -856,9 +899,9 @@ SELECT SYSTEM$PIPE_STATUS('raw.orders_pipe');
 
 `SELECT $1, $2, METADATA$FILENAME FROM @stage/ruta (FILE_FORMAT => 'my_csv')`, útil para inspeccionar los archivos antes de cargarlos.
 
-#### ¿Qué es Openflow?
+#### ¿Cómo se factura Snowpipe y por qué el tamaño de los archivos sigue importando?
 
-El servicio administrado de integración de datos de Snowflake, basado en Apache NiFi, con conectores para bases de datos, aplicaciones SaaS y flujos, desplegado en Snowflake o en tu propia nube (bring your own cloud), para ingerir datos estructurados y no estructurados.
+Desde diciembre de 2025, por volumen de datos: un número fijo de créditos por GB cargado (tamaño sin comprimir para archivos de texto como CSV y JSON, tamaño almacenado para Parquet, Avro y ORC), sin importar el número de archivos ni el cómputo usado. El tamaño de los archivos ya no determina la factura, pero sigue afectando la latencia y el rendimiento: archivos de unos 100–250 MB, o uno cada minuto más o menos, mantienen las cargas eficientes.
 
 #### ¿Cómo se carga en Snowflake una base relacional con CDC?
 
@@ -890,11 +933,11 @@ FROM raw.events e, LATERAL FLATTEN(input => e.payload:items) i;
 
 <!-- challenge -->
 
-Un productor escribe un archivo diminuto por evento, y los costos de Snowpipe crecen más rápido que el volumen de datos. ¿Qué cambias?
+Un dashboard necesita los datos un minuto después de cada evento, pero el productor escribe un archivo grande cada hora, que Snowpipe carga de una vez. ¿Qué cambias?
 
 <!-- solution -->
 
-Agrupa los archivos en el productor (por ejemplo con el buffering de Firehose a ~100 MB o unos minutos), o pasa a Snowpipe Streaming para ingesta por filas, evitando la sobrecarga por archivo.
+Acorta el salto: que el productor escriba archivos más pequeños cada minuto (por ejemplo Firehose con un intervalo de buffer corto) para que Snowpipe cargue de forma continua, o pasa a Snowpipe Streaming, que escribe filas en segundos sin archivos.
 
 <!-- takeaways -->
 
@@ -914,6 +957,7 @@ Agrupa los archivos en el productor (por ejemplo con el buffering de Firehose a 
 <!-- concept -->
 
 Los datos semiestructurados llegan tal cual a columnas `VARIANT`, que Snowflake guarda internamente en forma columnar, así las consultas sobre rutas comunes siguen siendo rápidas. Navegas con notación de rutas y haces cast a tipos SQL al leer.
+
 Dos sutilezas importan para la corrección: un campo que llega a veces como número y a veces como string necesita casts defensivos, y una clave faltante es `NULL` de SQL mientras que un `null` de JSON es un null de `VARIANT`, que se comporta distinto en las comparaciones.
 
 <!-- example -->
@@ -970,6 +1014,7 @@ Un null de JSON es un null de `VARIANT`, no `NULL` de SQL. Haz cast primero (`pa
 <!-- concept -->
 
 Los arrays dentro del JSON se vuelven filas con `FLATTEN`, una por elemento, unidas a su padre con un join lateral. La dirección opuesta, construir JSON a partir de filas, sirve para APIs y exportaciones.
+
 La decisión de modelado es por capas: deja el JSON crudo en `VARIANT` por flexibilidad y auditoría, y extrae los campos estables y de uso frecuente a columnas tipadas en tablas curadas, donde tipos, restricciones y poda funcionan mejor. Los archivos columnares pueden cargar directo a columnas que coincidan.
 
 <!-- example -->
@@ -1080,6 +1125,15 @@ Procedimientos escritos en Snowflake Scripting (SQL), JavaScript, Python, Java o
 
 Una extensión procedural de SQL con variables, `IF`, bucles, cursores, manejo de excepciones y `RETURN`, que se usa en procedimientos almacenados y bloques anónimos.
 
+#### ¿Qué es el operador pipe `->>`?
+
+Un operador de flujo que encadena sentencias SQL, donde cada una lee el resultado anterior como `$1`. Permite procesar con SQL la salida de comandos `SHOW` o `DESCRIBE` en una sola expresión:
+
+```sql
+SHOW WAREHOUSES
+->> SELECT "name", "size" FROM $1 WHERE "state" = 'STARTED';
+```
+
 <!-- challenge -->
 
 Un `MERGE` falla con "Duplicate row detected during DML action". ¿Qué está mal en la fuente y cómo se arregla?
@@ -1104,6 +1158,7 @@ Varias filas de la fuente coinciden con la misma fila destino. Deduplica primero
 <!-- concept -->
 
 Snowflake acepta declaraciones de primary, unique y foreign key, pero en tablas estándar solo impone `NOT NULL`. Las demás documentan la intención y ayudan a las herramientas y al optimizador, así que la unicidad la deben garantizar y probar los pipelines.
+
 Las secuencias y columnas identity generan números únicos, no sin huecos. Las sentencias hacen autocommit salvo que se envuelvan en una transacción explícita, que corre con aislamiento read committed.
 
 <!-- example -->
@@ -1154,6 +1209,7 @@ Las primary keys no se imponen en tablas estándar. Haz idempotentes las cargas 
 <!-- concept -->
 
 Cuando el SQL solo no alcanza, Snowflake corre código junto a los datos. Las UDFs devuelven valores o tablas y se llaman desde consultas; los stored procedures corren secuencias de sentencias con control de flujo, para administración o lógica de varios pasos. Ambos se pueden escribir en SQL, Python, Java, Scala o JavaScript.
+
 Snowflake Scripting lleva variables, ciclos y manejo de errores al propio SQL, a menudo suficiente para procedimientos sin otro lenguaje.
 
 <!-- example -->
@@ -1210,6 +1266,7 @@ Expresa la regla en SQL (`CASE` y aritmética) para que corra de forma nativa, o
 <!-- concept -->
 
 Unos pocos comandos hacen más segura la gestión de objetos. `UNDROP` restaura desde Time Travel una tabla, esquema o base borrada recientemente. `SWAP WITH` intercambia dos tablas de forma atómica, así una tabla reconstruida puede reemplazar a la vieja sin que los consumidores vean nunca un estado a medio cargar.
+
 `CREATE OR ALTER` trae definiciones declarativas: describes el objeto que quieres y Snowflake lo crea o lo ajusta sin borrar datos.
 
 <!-- example -->
@@ -1266,6 +1323,7 @@ Construye la versión nueva en una tabla aparte, valídala y luego publica de fo
 <!-- concept -->
 
 Un stream es un marcador sobre el historial de cambios de una tabla. Consultarlo devuelve las filas insertadas, actualizadas o borradas desde la última vez que se consumió, y consumirlo en una sentencia DML adelanta el marcador. Eso convierte cualquier tabla en un feed de cambios para procesamiento incremental.
+
 Los streams append-only son más baratos cuando solo importan los inserts. Un stream que no se consume durante más tiempo que la retención de la tabla se vuelve stale y hay que recrearlo.
 
 <!-- example -->
@@ -1313,6 +1371,7 @@ Su offset quedó por fuera de la retención de datos de la tabla, así que los c
 <!-- concept -->
 
 Las tasks corren SQL o procedimientos según un horario, después de otras tasks o cuando un stream tiene datos nuevos. Encadenadas en grafos, forman pipelines dentro de Snowflake sin un orquestador externo. Las serverless tasks dejan que Snowflake dimensione el cómputo automáticamente.
+
 Como todo pipeline, los grafos de tasks necesitan monitoreo y limpieza: el historial de tasks muestra ejecuciones y fallas, y una finalizer task corre al final pase lo que pase, para avisos o limpieza.
 
 <!-- example -->
@@ -1359,6 +1418,10 @@ AS
 ALTER TASK load_orders RESUME;
 ```
 
+#### ¿Cómo haces que los grafos de tasks se recuperen de fallos?
+
+Configura `TASK_AUTO_RETRY_ATTEMPTS` en la task raíz para que una ejecución fallida del grafo se reintente sola, `SUSPEND_TASK_AFTER_NUM_FAILURES` para detener una task que falla una y otra vez, y una integración de errores o una task finalizadora para avisar a alguien. `EXECUTE TASK` ejecuta un grafo a mano, por ejemplo después de corregir la causa.
+
 <!-- challenge -->
 
 Una task programada cada minuto revisa un stream y casi nunca encuentra nada, y aun así el warehouse rara vez se suspende. ¿Qué cambias?
@@ -1383,6 +1446,7 @@ Vuélvela una triggered task (sin horario, corre solo cuando el stream tiene dat
 <!-- concept -->
 
 Las dynamic tables convierten los pipelines en definiciones: escribes la consulta y una meta de frescura, y Snowflake mantiene la tabla al día, de forma incremental cuando puede. Varias dynamic tables encadenadas forman un pipeline cuyos pasos de arriba se refrescan tan seguido como lo necesiten los de abajo.
+
 Las vistas materializadas resuelven un problema más estrecho: acelerar de forma transparente las consultas sobre una sola tabla. Streams y tasks siguen siendo la herramienta para control total, como lógica procedural o efectos secundarios.
 
 <!-- example -->
@@ -1418,6 +1482,10 @@ AS
 SELECT order_date, SUM(amount) AS sales FROM dw.orders GROUP BY order_date;
 ```
 
+#### ¿Cómo monitoreas las dynamic tables?
+
+Con el grafo de refrescos de Snowsight y `DYNAMIC_TABLE_REFRESH_HISTORY`, que muestra el modo, la duración, los errores de cada refresco y si se cumplió el target lag. Una tabla se puede refrescar a mano con `ALTER DYNAMIC TABLE ... REFRESH` o pausar con `SUSPEND`, y Snowflake la suspende automáticamente tras varios refrescos fallidos seguidos.
+
 #### Dynamic tables, vistas materializadas o streams y tasks: ¿cómo eliges?
 
 Dynamic tables para pipelines declarativos con joins y agregaciones a la frescura elegida. Vistas materializadas para acelerar consultas repetidas sobre una sola tabla (sin joins), siempre al día. Streams y tasks para lógica procedural, un manejo propio del `MERGE` o efectos secundarios.
@@ -1452,6 +1520,7 @@ Si su consulta usa construcciones que impiden el refresco incremental (algunas f
 <!-- concept -->
 
 Snowpark te deja escribir código de DataFrames en Python, Java o Scala que se compila a SQL y corre en Snowflake, así los datos nunca salen de la plataforma. Para lógica incómoda en SQL, como reglas de negocio complejas o feature engineering, suele ser más claro.
+
 pandas on Snowflake corre de la misma forma el código pandas conocido a escala. Los paquetes vienen de un canal curado o de tus propias cargas, y los notebooks mezclan SQL y Python sobre los mismos datos.
 
 <!-- example -->
@@ -1509,6 +1578,7 @@ Corre la misma lógica en Snowflake con Snowpark (o pandas on Snowflake), para q
 <!-- concept -->
 
 Snowflake sigue agregando formas de correr aplicaciones donde están los datos. Container Services aloja cualquier servicio o modelo en contenedor; las apps de Streamlit corren dentro de la cuenta con sus permisos; Snowflake ML ofrece features, registro y herramientas de entrenamiento.
+
 Cortex lleva los modelos de lenguaje al SQL: clasificación, extracción, resumen y completado como funciones, gobernadas como cualquier consulta.
 
 <!-- example -->
@@ -1528,6 +1598,14 @@ Con control de acceso basado en roles (RBAC) combinado con control discrecional:
 #### ¿Cuáles son los roles definidos por el sistema?
 
 ORGADMIN (organización), ACCOUNTADMIN (el rol más alto de la cuenta; úsalo con moderación), SECURITYADMIN (administra los permisos y puede administrar usuarios y roles), USERADMIN (crea usuarios y roles), SYSADMIN (crea warehouses y bases de datos; los roles propios deberían colgar de él) y PUBLIC (concedido a todos).
+
+#### ¿Qué son las semantic views?
+
+Objetos de esquema que definen conceptos de negocio sobre las tablas: tablas lógicas, relaciones, dimensiones, hechos y métricas como ingresos o clientes activos. Cortex Analyst y las herramientas de BI las usan para responder preguntas con definiciones coherentes, y SQL puede consultarlas con la cláusula `SEMANTIC_VIEW(...)`.
+
+#### ¿Qué son Cortex Agents y Snowflake Intelligence?
+
+Cortex Agents planifican y llaman herramientas, como Cortex Analyst sobre semantic views para datos estructurados y Cortex Search sobre documentos, para responder una pregunta en varios pasos. Snowflake Intelligence es la interfaz de chat donde los usuarios de negocio hablan con esos agentes, con respuestas limitadas por sus roles de Snowflake.
 
 #### ¿Cómo es una buena jerarquía de roles?
 
@@ -1563,6 +1641,7 @@ Una task programada (o una dynamic table) que corra una función de Cortex como 
 <!-- concept -->
 
 La potencia de Snowflake no vuelve obsoleto el modelado. El almacenamiento columnar y los joins rápidos hacen que los esquemas estrella corran bien y que las tablas anchas cuesten poco por las columnas sin usar, pero los modelos claros siguen haciendo los datos comprensibles y consistentes. Normaliza donde importan la integridad y la reutilización, desnormaliza para el consumo.
+
 La historia y los datos de referencia compartidos necesitan la misma disciplina que en cualquier lado: SCD tipo 2 con `MERGE` y dimensiones conformadas con un solo modelo dueño.
 
 <!-- example -->
@@ -1630,6 +1709,7 @@ Crea una `dim_customer` conformada con un solo modelo dueño (con historia SCD s
 <!-- concept -->
 
 La mayoría de plataformas Snowflake lo combinan con otras herramientas. dbt es la capa de transformación común: los modelos compilan a SQL que corre en un warehouse de Snowflake, con configs propias de Snowflake para clustering, tablas transient y warehouse por modelo.
+
 Spark se integra con un conector que lee y escribe tablas de Snowflake, empujando filtros y consultas hacia abajo, lo que sirve a equipos que procesan parte de los datos en Spark y los sirven desde Snowflake.
 
 <!-- example -->
@@ -1646,9 +1726,17 @@ select * from {{ ref('stg_orders') }}
 
 Una función que analiza las columnas para detectar datos sensibles (correos, nombres, teléfonos, documentos de identidad) y sugiere o aplica etiquetas del sistema, que luego pueden guiar las políticas de enmascaramiento.
 
+#### ¿Qué son los dbt Projects on Snowflake?
+
+Una forma de ejecutar dbt dentro de Snowflake: desarrollas el proyecto en un workspace o un repositorio Git, lo despliegas como un objeto `DBT PROJECT` (`CREATE DBT PROJECT` o `snow dbt deploy`) y lo ejecutas con `EXECUTE DBT PROJECT` en un warehouse, programado con tasks o un orquestador externo. Snowflake gestiona el runtime de dbt, así que no hay un servidor de dbt aparte que alojar.
+
 #### ¿Cómo se autentican los usuarios en Snowflake?
 
 Con contraseñas más MFA (que Snowflake está volviendo obligatorio para el inicio de sesión con contraseña), SSO mediante proveedores de identidad SAML 2.0 (Okta, Entra ID), OAuth (de Snowflake o externo), autenticación con par de claves para los servicios, federación de identidades de carga de trabajo y tokens de acceso programático. Los usuarios de servicio deberían usar pares de claves u OAuth, no contraseñas.
+
+#### ¿Qué es Snowflake Postgres?
+
+Instancias de PostgreSQL gestionadas que se crean y administran desde Snowflake, cada una en cómputo dedicado, a las que las aplicaciones se conectan con cualquier driver u ORM de Postgres. Sirve cargas transaccionales, como la base de datos de una aplicación, junto a los datos analíticos, en lugar de una instancia aparte de RDS o Cloud SQL. Está disponible de forma general en AWS y Azure.
 
 <!-- challenge -->
 
@@ -1678,6 +1766,7 @@ Pon `snowflake_warehouse` en la config de ese modelo apuntando al warehouse Larg
 <!-- concept -->
 
 Como las micro-particiones son inmutables, Snowflake puede guardar versiones viejas a bajo costo. Time Travel te deja consultar una tabla tal como estaba, restaurarla o hacerle undrop dentro de un periodo de retención que tú fijas. Después, el Fail-safe mantiene recuperables las tablas permanentes una semana más, pero solo el soporte de Snowflake puede usarlo, para desastres.
+
 La retención es una palanca de costo: una retención larga en tablas que cambian constantemente multiplica el almacenamiento.
 
 <!-- example -->
@@ -1733,6 +1822,7 @@ Existe un objeto con ese nombre, así que `UNDROP` no puede restaurar encima. Re
 <!-- concept -->
 
 Clonar crea una copia completa apuntando a las mismas micro-particiones en lugar de copiarlas. Es instantáneo y no cuesta almacenamiento hasta que cambian la copia o el original. Eso vuelve baratos y rápidos los ambientes de desarrollo y pruebas de tamaño completo.
+
 Los clones heredan datos y estructura, y a nivel de base o esquema sus objetos hijos, pero no todos los privilegios; y combinados con Time Travel pueden capturar una tabla tal como estaba antes de un problema.
 
 <!-- example -->
@@ -1785,6 +1875,7 @@ Políticas de enmascaramiento (idealmente basadas en tags) sobre las columnas PI
 <!-- concept -->
 
 En Snowflake los privilegios se otorgan a roles, los roles a usuarios, y los roles pueden contener otros roles. Cada objeto tiene un rol dueño con control total. Los roles del sistema dividen la administración: uno para seguridad, otro para usuarios, otro para todo. Usar el rol más alto a diario vuelve cada error un desastre potencial.
+
 Un diseño limpio separa los roles de acceso, que tienen privilegios sobre objetos, de los roles funcionales, que representan cargos y reciben los roles de acceso. Los roles secundarios dejan que una sesión use todos sus roles a la vez.
 
 <!-- example -->
@@ -1846,6 +1937,7 @@ Crea roles funcionales con solo los roles de acceso que necesitan, ponlos como r
 <!-- concept -->
 
 Otorgar objeto por objeto se rompe en cuanto aparecen tablas nuevas. Los future grants aplican privilegios automáticamente a los objetos creados después en un esquema o una base. Los database roles acotan el acceso dentro de una base, y así también viaja el acceso fino con los shares.
+
 Los managed access schemas centralizan quién puede otorgar: los dueños de objetos ya no pueden dar acceso por su cuenta, solo el dueño del esquema o un rol con gestión de grants.
 
 <!-- example -->
@@ -1905,6 +1997,7 @@ Future grants sobre el esquema (`GRANT SELECT ON FUTURE TABLES IN SCHEMA ... TO 
 <!-- concept -->
 
 Los grants a nivel de tabla son demasiado gruesos para los datos personales. Las políticas de enmascaramiento reescriben los valores de columna al consultar según quién pregunte; las row access policies deciden qué filas ve cada rol. Atar las políticas de enmascaramiento a tags escala la protección: etiquetas una columna como PII y queda enmascarada en todas partes.
+
 La clasificación encuentra automáticamente las columnas sensibles, y las secure views y funciones ocultan su definición a los consumidores, lo que importa al compartir.
 
 <!-- example -->
@@ -1939,6 +2032,10 @@ Una forma de construir y alojar aplicaciones de datos de Streamlit directamente 
 
 Snowflake ML incluye un feature store, un registro de modelos, entrenamiento e inferencia distribuidos en warehouses o contenedores y observabilidad de ML, para construir y servir los modelos donde están los datos.
 
+#### ¿Qué son las políticas de agregación y de proyección?
+
+Políticas de privacidad. Una política de agregación obliga a que las consultas sobre una tabla agrupen las filas en grupos de un tamaño mínimo, para que no se puedan devolver registros individuales. Una política de proyección permite usar una columna en filtros y joins pero no seleccionarla, por ejemplo para cruzar por un email con hash sin revelarlo. Ambas son comunes en clean rooms y shares.
+
 #### ¿Cuándo usarías Snowpark en lugar de SQL?
 
 Para lógica que es más fácil en Python (reglas complejas de texto o de negocio, ingeniería de features para ML, reutilizar librerías Python), para código de transformación con pruebas unitarias, o para equipos más cómodos con DataFrames. Para transformaciones sencillas, SQL suele ser más simple e igual de rápido.
@@ -1967,6 +2064,7 @@ Usa enmascaramiento basado en tags: ata la política a un tag `pii`, corre la cl
 <!-- concept -->
 
 Alrededor de los datos, Snowflake protege quién entra y qué sale. Los usuarios inician sesión con MFA, SSO o key pairs; las network policies limitan desde dónde llegan las conexiones; las external access integrations controlan a qué endpoints externos puede llamar el código.
+
 El cifrado está siempre activo, en reposo y en tránsito. El access history registra qué columnas leyó y escribió cada consulta, lo que responde con precisión preguntas de auditoría y linaje.
 
 <!-- example -->
@@ -1981,9 +2079,17 @@ WHERE ARRAY_CONTAINS('SALES.PUBLIC.CUSTOMERS'::VARIANT,
 ORDER BY query_start_time DESC LIMIT 20;
 ```
 
-#### ¿Cómo llegan los paquetes Python a Snowflake?
+#### ¿Cómo se autentican los usuarios en Snowflake?
 
-Desde el canal Anaconda de Snowflake (listados en `PACKAGES`), desde wheels o zips subidos a un stage (`IMPORTS`), o mediante repositorios de artefactos que traen paquetes de PyPI.
+Las personas inician sesión con SSO mediante proveedores de identidad SAML 2.0 (Okta, Entra ID) o con contraseña más MFA, ahora obligatoria para usuarios humanos. Los programas usan pares de claves, OAuth (de Snowflake o externo), workload identity federation o programmatic access tokens. Desde el despliegue de 2026, los usuarios de servicio ya no pueden iniciar sesión con contraseña.
+
+#### ¿Qué son los tipos de usuario y por qué importan?
+
+El `TYPE` de un usuario dice si es una persona o un programa. Los usuarios `PERSON` inician sesión de forma interactiva y deben usar MFA con contraseña. Los usuarios `SERVICE` no pueden usar contraseña y se autentican con pares de claves, OAuth, workload identity federation o programmatic access tokens. `LEGACY_SERVICE`, un tipo temporal para usuarios de servicio que aún tenían contraseña, se está migrando a `SERVICE`.
+
+#### ¿Qué son los programmatic access tokens y la workload identity federation?
+
+Dos formas de autenticar programas sin contraseña. Un programmatic access token es un secreto con vencimiento generado para un usuario, que drivers, la API REST o herramientas usan en lugar de una contraseña, restringido a un rol (y, para usuarios de servicio, a una network policy). La workload identity federation permite que el código que corre en AWS, Azure, Google Cloud o Kubernetes se autentique con su identidad de la nube, sin guardar ningún secreto.
 
 #### ¿Cómo averiguas por qué una consulta es lenta?
 
@@ -1997,9 +2103,17 @@ Cuando un warehouse no tiene memoria suficiente para una operación, derrama dat
 
 Un join sobre una clave que no es única, o condiciones de join incompletas, de modo que cada fila coincide con muchas y la salida se multiplica. Verifica la unicidad de las claves y que cada join tenga la condición completa.
 
+#### ¿Cómo ves el linaje de datos en Snowflake?
+
+La vista de linaje del catálogo de Snowsight muestra los objetos y columnas de origen y destino de una tabla o vista, construida a partir de las consultas ejecutadas (CTAS, `INSERT ... SELECT`, `MERGE`, vistas, dynamic tables). La función `SNOWFLAKE.CORE.GET_LINEAGE` devuelve el mismo grafo en SQL, útil para analizar el impacto antes de cambiar una columna.
+
 #### ¿Cómo se mejora el pruning?
 
 Filtrando por columnas correlacionadas con el orden de carga (fechas), añadiendo una clustering key en las tablas grandes filtradas por otras columnas, evitando envolver las columnas de filtro en funciones que impiden el pruning y filtrando lo antes posible.
+
+#### ¿Qué es el Trust Center?
+
+Un área de Snowsight que revisa la cuenta en busca de riesgos de seguridad con paquetes de controles como el CIS Snowflake Benchmark: usuarios sin MFA, permisos demasiado amplios, network policies ausentes. Lista los hallazgos por gravedad con pasos de corrección, y sus escáneres pueden ejecutarse de forma programada.
 
 <!-- challenge -->
 
@@ -2027,6 +2141,7 @@ En `ACCOUNT_USAGE.ACCESS_HISTORY`, que lista las columnas a las que accedió cad
 <!-- concept -->
 
 Compartir en Snowflake significa otorgar acceso, no enviar archivos. El proveedor agrega objetos a un share; el consumidor lo monta como una base de solo lectura y consulta datos en vivo con su propio cómputo. Sin copias, sin exportaciones, sin versiones desactualizadas.
+
 Los socios sin Snowflake pueden usar reader accounts que paga el proveedor. Los consumidores en otras regiones necesitan replicación o listings que la manejen. Los consumidores pueden consultar pero no modificar los datos compartidos.
 
 <!-- example -->
@@ -2085,6 +2200,7 @@ Replica la base a una cuenta en la región del socio y comparte desde ahí, o pu
 <!-- concept -->
 
 Compartir escala hasta volverse producto. Los listings empaquetan shares con descripciones, términos y analítica de uso, publicados en privado o en el Marketplace. Los clean rooms dejan que varias partes analicen datos combinados mientras cada una controla lo que se puede revelar, como el solapamiento de audiencias sin exponer listas de clientes.
+
 Las Native Apps van más lejos: distribuyen código y datos juntos, que corren dentro de la cuenta del consumidor.
 
 <!-- example -->
@@ -2140,6 +2256,7 @@ Un data clean room: cada parte aporta identificadores hasheados y solo pueden co
 <!-- concept -->
 
 El Query Profile muestra dónde gasta una consulta su tiempo y sus datos: los operadores más costosos, las particiones escaneadas frente al total, los bytes derramados y las filas producidas en cada paso. La mayoría de problemas se ven ahí de un vistazo.
+
 Tres patrones se repiten: spill cuando falta memoria, joins que explotan cuando una clave no es única y las filas se multiplican, y `DISTINCT` usado para esconder duplicados que creó un mal join.
 
 <!-- example -->
@@ -2203,6 +2320,7 @@ Las claves del join: un lado no es único en la clave (o falta una condición), 
 <!-- concept -->
 
 La mayor parte del rendimiento de Snowflake viene de leer menos. Los filtros sobre columnas que siguen el orden de carga, normalmente fechas, podan bien; los filtros envueltos en funciones o sobre columnas sin clustering, no. Las clustering keys y cargar los datos ordenados por las columnas de filtro principales mejoran la poda en tablas grandes.
+
 Para buscar una aguja en un pajar por un ID o un string, search optimization construye un camino de acceso que encuentra las pocas micro-particiones que coinciden sin reorganizar la tabla.
 
 <!-- example -->
@@ -2255,6 +2373,7 @@ Search optimization sobre la columna `email` (igualdad), que permite a las búsq
 <!-- concept -->
 
 Snowflake premia el trabajo por conjuntos y castiga los hábitos de las bases orientadas a filas. Leer todas las columnas de tablas anchas desperdicia la organización columnar; insertar filas una a una crea muchas micro-particiones diminutas; cruzar por tipos que no coinciden impide la poda.
+
 Los merges grandes necesitan la misma atención: limitar el destino con rangos de fechas o claves permite que Snowflake pode la mayor parte de la tabla. Las funciones aproximadas cambian un error mínimo por un ahorro enorme en conteos distintos y percentiles.
 
 <!-- example -->
@@ -2315,6 +2434,7 @@ Agrupa las filas: escribe archivos de micro-lote y carga con `COPY`/Snowpipe, o 
 <!-- concept -->
 
 En la mayoría de cuentas, el cómputo de los warehouses es la factura. Le siguen las funciones serverless, el almacenamiento y la transferencia de datos. El costo de cómputo depende menos del tamaño que del tiempo encendido: un warehouse más grande que termina antes puede costar lo mismo, mientras uno pequeño que se mantiene despierto con consultas diminutas frecuentes cuesta mucho más que su trabajo.
+
 Dos detalles de cobro explican muchas sorpresas: cada reanudación cobra al menos un minuto, y los cloud services son gratis solo hasta una proporción del cómputo diario.
 
 <!-- example -->
@@ -2365,6 +2485,7 @@ Córrelo en un warehouse existente que ya esté encendido, baja su frecuencia, u
 <!-- concept -->
 
 El control de costos empieza por la atribución. Las vistas de account usage muestran los créditos por warehouse y servicio serverless; el historial de consultas, con query tags, liga el gasto a jobs, equipos y herramientas. Resource monitors y budgets agregan límites: avisan y luego suspenden warehouses cuando se alcanzan las cuotas.
+
 Cuando los costos saltan, los mismos datos responden por qué: qué warehouse, qué servicio, qué consultas cambiaron.
 
 <!-- example -->
@@ -2424,6 +2545,7 @@ Fija query tags por equipo o herramienta (dbt, BI, notebooks) y reparte los cré
 <!-- concept -->
 
 El ahorro en cómputo viene de no pagar tiempo ocioso ni desperdicio: dimensiona por carga, suspende rápido, consolida las cargas diminutas, procesa de forma incremental en lugar de reconstruir y deja trabajar a la caché.
+
 El ahorro en almacenamiento viene más de la historia que de los datos: tablas transient para datos reconstruibles, Time Travel más corto en tablas muy cambiantes y borrar tablas sin uso y clones viejos que ya divergieron.
 
 <!-- example -->
@@ -2469,6 +2591,7 @@ Los bytes de Time Travel y Fail-safe por tabla (`TABLE_STORAGE_METRICS`): tablas
 <!-- concept -->
 
 Dos familias de vistas describen una cuenta: `INFORMATION_SCHEMA` por base, en tiempo real pero con poca historia; `ACCOUNT_USAGE` para toda la cuenta, un año de historia con algo de retraso. Las consultas de monitoreo eligen según frescura y alcance.
+
 La calidad de datos también corre dentro de Snowflake: las data metric functions miden frescura, nulos o duplicados según un horario, las alertas evalúan condiciones y avisan, y la event table junta los logs del código que corre en la cuenta.
 
 <!-- example -->
@@ -2522,6 +2645,7 @@ No: las vistas de `ACCOUNT_USAGE` tienen latencia (a menudo de hasta unas horas)
 <!-- concept -->
 
 Snowflake ya protege contra fallas de hardware y de zona, y el Time Travel cubre los errores recientes. Las caídas regionales y la protección de largo plazo necesitan más. La replicación copia bases, y con replication groups también usuarios, roles y warehouses, a cuentas en otras regiones o nubes; los failover groups y el client redirect permiten que las aplicaciones pasen a la secundaria.
+
 Para backups, los clones, las copias replicadas y las descargas a tu propio almacenamiento cubren lo que no alcanzan los periodos de retención.
 
 <!-- example -->
@@ -2572,6 +2696,7 @@ Guarda clones zero-copy mensuales (nombrados por mes) del esquema de finanzas, o
 <!-- concept -->
 
 Crear objetos a punta de clics no escala ni se audita bien. Los objetos de nivel de cuenta, como warehouses, roles y grants, encajan en Terraform; los objetos de base de datos, en dbt, herramientas de migración o scripts declarativos `CREATE OR ALTER`. Un objeto Git repository permite que Snowflake lea el código directo de tu repositorio.
+
 Los despliegues siguen entonces la práctica de software: cambios revisados en Git, aplicados por CI con un usuario de servicio y probados en un ambiente clonado antes de producción.
 
 <!-- example -->
@@ -2589,13 +2714,17 @@ resource "snowflake_grant_account_role" "analyst_to_sysadmin" {
 }
 ```
 
-#### ¿Cómo migrarías un data warehouse on-premises a Snowflake?
+#### ¿Cómo gestionas los objetos de Snowflake como código?
 
-Inventariando los objetos, las cargas y las dependencias; traduciendo el DDL y el SQL (SnowConvert ayuda); moviendo el histórico por almacenamiento en la nube y `COPY`; montando la carga incremental; reconstruyendo las transformaciones (a menudo en dbt); recreando la seguridad con roles y políticas; validando con conteos de filas, checksums y comparaciones de reportes; ejecutando ambos en paralelo antes del corte; y luego ajustando warehouses y costos.
+Con Terraform (el provider de Snowflake) para objetos de cuenta como warehouses, roles, permisos, bases de datos e integraciones; DCM Projects, dbt o schemachange para objetos de base de datos y transformaciones; y la Snowflake CLI o `EXECUTE IMMEDIATE FROM` con repositorios Git en Snowflake para desplegar archivos SQL.
 
 #### Un equipo quiere procesar 2 TB diarios de logs JSON. ¿Cómo los cargas y modelas?
 
 Dejo en S3 archivos comprimidos de unos 100–250 MB, los cargo con Snowpipe o con `COPY` programado en una columna `VARIANT` de una tabla raw transitoria, extraigo los campos más usados a columnas tipadas en una tabla limpia agrupada por fecha del evento, y agrego en marts. Mantengo los datos raw poco tiempo si se pueden volver a cargar desde S3.
+
+#### ¿Qué son los DCM Projects?
+
+La gestión declarativa de cambios de base de datos de Snowflake: describes bases de datos, esquemas, tablas, roles y permisos en archivos de definición, `EXECUTE DCM PROJECT` con `PLAN` muestra los cambios necesarios para llegar a ese estado y `DEPLOY` los aplica. Lleva a los objetos de base de datos un flujo de planificar y aplicar parecido al de Terraform, ejecutado desde Workspaces, la CLI o CI.
 
 #### ¿Cómo le explicas el valor de Snowflake a una persona de negocio?
 

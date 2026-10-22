@@ -549,5 +549,24 @@
         },
         "creation_date": "2026-10-17",
         "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "scala_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "scala_study_guide.md",
+                "title": "Scala Study Guide"
+            },
+            "es": {
+                "file_name": "scala_study_guide.md",
+                "title": "Guía de estudio de Scala"
+            },
+            "fr": {
+                "file_name": "scala_study_guide.md",
+                "title": "Fiche d'étude Scala"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
     }
 ]
