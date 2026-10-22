@@ -549,5 +549,81 @@
         },
         "creation_date": "2026-10-17",
         "publication_date": "2026-10-17"
+    },
+    {
+        "post_id": "scala_study_guide",
+        "languages": {
+            "en": {
+                "file_name": "scala_study_guide.md",
+                "title": "Scala Study Guide"
+            },
+            "es": {
+                "file_name": "scala_study_guide.md",
+                "title": "Guía de estudio de Scala"
+            },
+            "fr": {
+                "file_name": "scala_study_guide.md",
+                "title": "Fiche d'étude Scala"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
+    },
+    {
+        "post_id": "prompt_engineering_in_practice",
+        "languages": {
+            "en": {
+                "file_name": "prompt_engineering_in_practice.md",
+                "title": "Prompt Engineering in 2026: The Techniques That Still Matter, With Examples"
+            },
+            "es": {
+                "file_name": "prompt_engineering_in_practice.md",
+                "title": "Prompt engineering en 2026: las técnicas que siguen importando, con ejemplos"
+            },
+            "fr": {
+                "file_name": "prompt_engineering_in_practice.md",
+                "title": "Le prompt engineering en 2026 : les techniques qui comptent encore, avec des exemples"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
+    },
+    {
+        "post_id": "retrieval_augmented_generation_in_practice",
+        "languages": {
+            "en": {
+                "file_name": "retrieval_augmented_generation_in_practice.md",
+                "title": "Retrieval-Augmented Generation (RAG) in 2026: How It Works, What Improves It and How to Measure It"
+            },
+            "es": {
+                "file_name": "retrieval_augmented_generation_in_practice.md",
+                "title": "Generación aumentada por recuperación (RAG) en 2026: cómo funciona, qué la mejora y cómo medirla"
+            },
+            "fr": {
+                "file_name": "retrieval_augmented_generation_in_practice.md",
+                "title": "La génération augmentée par récupération (RAG) en 2026 : fonctionnement, améliorations et mesure"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
+    },
+    {
+        "post_id": "ai_agents_how_to_use_them",
+        "languages": {
+            "en": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "AI Agents in 2026: How They Work and How to Use Them Effectively, With Claude, Codex and Others"
+            },
+            "es": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "Agentes de IA en 2026: cómo funcionan y cómo usarlos bien, con Claude, Codex y otros"
+            },
+            "fr": {
+                "file_name": "ai_agents_how_to_use_them.md",
+                "title": "Les agents IA en 2026 : comment ils fonctionnent et comment bien les utiliser, avec Claude, Codex et les autres"
+            }
+        },
+        "creation_date": "2026-10-22",
+        "publication_date": "2026-10-22"
     }
 ]

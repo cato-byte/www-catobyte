@@ -3,9 +3,9 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Snowflake study guide: about 200 questions](../../images/snowflake_study_guide_title_img.png)
+![Snowflake study guide: about 225 questions](../../images/snowflake_study_guide_title_img.png)
 
-About 200 interview-style questions on Snowflake, from its architecture to virtual warehouses, micro-partitions, loading, semi-structured data, streams and tasks, dynamic tables, security, data sharing, performance and cost control. The answers reflect the platform as of 2026.
+About 225 interview-style questions on Snowflake, from its architecture to virtual warehouses, micro-partitions, loading, semi-structured data, streams and tasks, dynamic tables, security, data sharing, performance and cost control. The answers follow the Snowflake documentation as of October 2026.
 
 The guide follows a learning path in six stages. Each section is split into short units: learning goals, a concept explanation and a worked example, then questions (recall first, then application), a practical challenge and key takeaways. To **learn**, read each unit top to bottom. To **review**, switch to review mode or use "Skip to questions", mark answers you want to see again, and try a mixed review across sections.
 
@@ -125,6 +125,10 @@ The account identifier (organization name plus account name, or the legacy locat
 
 The current role, warehouse, database and schema of a session (`USE ROLE`, `USE WAREHOUSE`, `USE DATABASE`, `USE SCHEMA`). Queries run with the current role's privileges on the current warehouse, and unqualified names resolve against the current database and schema.
 
+#### What are parameters, and which value wins?
+
+Settings that control behavior, such as `STATEMENT_TIMEOUT_IN_SECONDS`, `TIMEZONE`, `QUERY_TAG` or `DATA_RETENTION_TIME_IN_DAYS`. Session parameters can be set on the account, the user or the session, and the most specific level wins; object parameters are inherited from the account down to databases, schemas and tables unless overridden. `SHOW PARAMETERS` shows each value and the level where it was set.
+
 <!-- challenge -->
 
 A query fails with "Object does not exist or not authorized", though a colleague sees the table. What do you check first?
@@ -220,9 +224,13 @@ Through Snowsight (the web UI), the Snowflake CLI and SnowSQL, drivers (JDBC, OD
 
 Snowflake's web interface for writing SQL and Python worksheets, notebooks, dashboards, exploring data, monitoring queries and costs, and administering the account.
 
+#### What are Workspaces in Snowsight?
+
+A file-based development environment in Snowsight: SQL and Python files, notebooks, and dbt or DCM projects organized in folders, optionally connected to a Git repository. They are the successor to worksheets for writing and versioning code inside Snowflake.
+
 #### What is Snowflake Horizon?
 
-Snowflake's built-in governance and catalog capabilities: access control, classification of sensitive data, masking and row access policies, tags, lineage, data quality monitoring, auditing and discovery, applied across tables, Iceberg tables and shared data.
+Snowflake's built-in governance and catalog layer, documented as Horizon Catalog: access control, classification of sensitive data, masking and row access policies, tags, lineage, data quality monitoring, auditing and discovery, applied across tables, Iceberg tables and shared data.
 
 <!-- challenge -->
 
@@ -230,7 +238,7 @@ A pipeline connects with a username and password stored in a config file. Which 
 
 <!-- solution -->
 
-Key-pair authentication (or OAuth/workload identity), with the private key in a secrets manager, so no password is stored or subject to MFA prompts for automation.
+A `SERVICE` user with key-pair authentication (or OAuth or workload identity federation), with the private key in a secrets manager. Service users can no longer sign in with passwords at all.
 
 <!-- takeaways -->
 
@@ -388,6 +396,10 @@ Permanent tables (Time Travel and 7-day Fail-safe), transient tables (Time Trave
 
 Tables stored in Apache Iceberg format in your own cloud storage (an external volume). With Snowflake as the catalog they behave almost like native tables; with an external catalog (AWS Glue, Snowflake Open Catalog/Apache Polaris and others) Snowflake can read and, in some cases, write them. Other engines (Spark, Trino) can work on the same data.
 
+#### What is a catalog-linked database?
+
+A Snowflake database connected to an external Iceberg REST catalog (such as AWS Glue or Snowflake Open Catalog) that discovers its namespaces and tables automatically and keeps them in sync, so you can query a whole external lakehouse without creating each Iceberg table by hand.
+
 #### What are hybrid tables?
 
 Tables optimized for low-latency, high-concurrency single-row reads and writes, with enforced primary keys and indexes, that can be joined with analytic tables in the same query. They target light transactional workloads (Unistore).
@@ -403,6 +415,10 @@ On the average compressed bytes per month across tables, Time Travel and Fail-sa
 #### How can you see how much storage Time Travel and Fail-safe use?
 
 In `ACCOUNT_USAGE.TABLE_STORAGE_METRICS`, which reports active bytes, Time Travel bytes, Fail-safe bytes and bytes retained for clones per table.
+
+#### What are storage lifecycle policies?
+
+Schema-level policies that archive or expire a table's rows automatically, based on a condition such as their age. Snowflake runs them daily: matching rows are deleted or moved to a cheaper archive tier (COOL, or COLD at about a quarter of the price but with retrieval taking up to 48 hours), from which they can be restored into a new table. They replace hand-written delete jobs for retention rules.
 
 <!-- challenge -->
 
@@ -574,7 +590,11 @@ A serverless feature that offloads parts of large scans and filters in eligible 
 
 #### What are Gen2 standard warehouses?
 
-A newer generation of standard warehouses with faster hardware and engine improvements, especially for DML and large scans, billed at a somewhat higher credit rate. They can be chosen per warehouse.
+A newer generation of standard warehouses with faster hardware and engine improvements, especially for DML and large scans, billed at a somewhat higher credit rate. They aren't the default and aren't available in every region; you choose them per warehouse with `RESOURCE_CONSTRAINT = STANDARD_GEN_2`.
+
+#### What are interactive tables and interactive warehouses?
+
+A table type and a warehouse type for low-latency, high-concurrency serving, such as customer-facing dashboards and data APIs. Interactive tables are created with `CREATE INTERACTIVE TABLE ... CLUSTER BY (...)` and can refresh from source tables with a target lag; interactive warehouses keep that data cached and are meant to stay running. Queries are limited to a few seconds, so heavy analytics stays on standard warehouses.
 
 <!-- challenge -->
 
@@ -753,6 +773,10 @@ Client commands (SnowSQL, CLI, drivers) to upload local files to an internal sta
 
 A function that reads staged Parquet, Avro, ORC, JSON or CSV files and returns column names and types; combined with `CREATE TABLE … USING TEMPLATE`, it creates a table from files' structure. Tables can also enable schema evolution so new columns are added during loads.
 
+#### What is a directory table?
+
+A catalog of the files in a stage (path, size, last modified time, URL), enabled with `DIRECTORY = (ENABLE = TRUE)` and queried with `SELECT * FROM DIRECTORY(@stage)`. It's the starting point for unstructured data: list new PDFs or images, then process them with Python code or AI functions such as `AI_PARSE_DOCUMENT`.
+
 <!-- challenge -->
 
 A stage was created with AWS access keys embedded in its definition. What do you replace it with?
@@ -818,6 +842,10 @@ Roughly 100–250 MB compressed per file. Many tiny files add overhead; a single
 
 Load metadata expires after 64 days, so for older files Snowflake may not know whether they were loaded. `LOAD_UNCERTAIN_FILES = TRUE` loads them anyway; to avoid ambiguity, move or delete files once loaded, or use Snowpipe, which keeps 14 days of history per pipe.
 
+#### How do you check what `COPY` and Snowpipe loaded?
+
+With the `COPY_HISTORY` table function (information schema, last 14 days) or the `ACCOUNT_USAGE.COPY_HISTORY` view (a year, with some latency), which list each file with its status, row counts and first error. For a single pipe, `SYSTEM$PIPE_STATUS` shows whether it's running and how many files are pending.
+
 #### How can you transform data during `COPY`?
 
 With a `SELECT` over the staged files in the `COPY` statement: reorder or omit columns, cast types, use `$1`, `$2` positions or `$1:field` for semi-structured data, and add `METADATA$FILENAME` or `METADATA$FILE_ROW_NUMBER` for lineage.
@@ -849,7 +877,7 @@ Split the input into files of about 100–250 MB compressed (at the producer or 
 
 <!-- concept -->
 
-When data arrives all day, waiting for a nightly `COPY` adds latency. Snowpipe runs the same `COPY` serverlessly as each file lands, notified by cloud events; small files raise its per-file overhead. Snowpipe Streaming skips files entirely, writing rows from Kafka or SDKs with seconds of latency.
+When data arrives all day, waiting for a nightly `COPY` adds latency. Snowpipe runs the same `COPY` serverlessly as each file lands, notified by cloud events, and bills per GB loaded. Snowpipe Streaming skips files entirely, writing rows from Kafka or SDKs with seconds of latency.
 
 Database changes usually arrive through CDC tools into raw tables, then are applied with `MERGE`. Duplicates come from producers resending data, not from Snowpipe itself, so pipelines deduplicate downstream.
 
@@ -871,9 +899,9 @@ CREATE PIPE raw.orders_pipe AUTO_INGEST = TRUE AS
 COPY INTO raw.orders FROM @raw_stage/orders/ FILE_FORMAT = (TYPE = 'JSON');
 ```
 
-#### How is Snowpipe billed, and why do file sizes matter?
+#### How is Snowpipe billed, and why do file sizes still matter?
 
-On serverless compute plus a small per-file overhead (in recent pricing, a fixed amount per GB ingested). Very small files make the overhead dominate, so producers should batch data into files of reasonable size, ideally sent every minute or so rather than per event.
+Since December 2025, by data volume: a fixed number of credits per GB loaded (uncompressed size for text files such as CSV and JSON, stored size for Parquet, Avro and ORC), whatever the number of files or the compute used. File size no longer drives the bill, but it still affects latency and throughput: files of about 100–250 MB, or one every minute or so, keep loads efficient.
 
 #### What is Snowpipe Streaming?
 
@@ -893,11 +921,11 @@ The same data arrived in different files (producer retries, renamed files), or f
 
 <!-- challenge -->
 
-A producer writes one tiny file per event, and Snowpipe costs grow faster than data volume. What do you change?
+A dashboard needs data within a minute of each event, but the producer writes one large file every hour, which Snowpipe loads in one go. What do you change?
 
 <!-- solution -->
 
-Batch files at the producer (for example Firehose buffering to ~100 MB or a few minutes), or switch to Snowpipe Streaming for row-level ingestion, avoiding per-file overhead.
+Shorten the hop: have the producer write smaller files every minute (for example Firehose with a short buffer interval) so Snowpipe loads continuously, or switch to Snowpipe Streaming, which writes rows within seconds without files.
 
 <!-- takeaways -->
 
@@ -1096,6 +1124,15 @@ Reading a random fraction of a table (`SELECT * FROM t SAMPLE (1)` for 1% of row
 #### What does `MATCH_RECOGNIZE` do?
 
 Pattern matching over ordered rows (for example a sequence of events in a session, such as view → cart → purchase), returning matches with measures, without writing complex self-joins.
+
+#### What is the pipe operator `->>`?
+
+A flow operator that chains SQL statements, each one reading the previous result as `$1`. It lets you post-process the output of `SHOW` or `DESCRIBE` commands with SQL in a single expression:
+
+```sql
+SHOW WAREHOUSES
+->> SELECT "name", "size" FROM $1 WHERE "state" = 'STARTED';
+```
 
 <!-- challenge -->
 
@@ -1375,6 +1412,10 @@ With `TASK_HISTORY` (information schema table function and account usage view), 
 
 A task attached to the root of a task graph that runs after all other tasks finish, whether they succeeded or failed, for cleanup or notifications.
 
+#### How do you make task graphs recover from failures?
+
+Set `TASK_AUTO_RETRY_ATTEMPTS` on the root task so a failed graph run retries automatically, `SUSPEND_TASK_AFTER_NUM_FAILURES` to stop a task that keeps failing, and an error integration or a finalizer task to notify someone. `EXECUTE TASK` runs a graph manually, for example after fixing the cause.
+
 <!-- challenge -->
 
 A task scheduled every minute checks a stream and usually finds nothing, yet the warehouse rarely suspends. What do you change?
@@ -1434,6 +1475,10 @@ Incremental refresh processes only changes in sources since the last refresh; fu
 #### Can dynamic tables be chained?
 
 Yes. A dynamic table can read other dynamic tables, forming a pipeline; `TARGET_LAG = DOWNSTREAM` means a table refreshes only as needed by the tables that depend on it.
+
+#### How do you monitor dynamic tables?
+
+With the refresh graph in Snowsight and `DYNAMIC_TABLE_REFRESH_HISTORY`, which shows each refresh's mode, duration, errors and whether the target lag was met. A table can be refreshed manually with `ALTER DYNAMIC TABLE ... REFRESH` or paused with `SUSPEND`, and Snowflake suspends it automatically after repeated failed refreshes.
 
 #### What is a materialized view in Snowflake?
 
@@ -1560,6 +1605,14 @@ A managed container runtime in Snowflake for running any containerized app, serv
 
 Snowflake's AI layer: LLM functions callable from SQL (`AI_COMPLETE`, `AI_CLASSIFY`, `AI_EXTRACT`, `AI_SENTIMENT`, summarization, translation), Cortex Search for retrieval, Cortex Analyst for natural-language questions over semantic models, and agents.
 
+#### What are semantic views?
+
+Schema objects that define business concepts on top of tables: logical tables, relationships, dimensions, facts and metrics such as revenue or active customers. Cortex Analyst and BI tools use them to answer questions with consistent definitions, and SQL can query them with the `SEMANTIC_VIEW(...)` clause.
+
+#### What are Cortex Agents and Snowflake Intelligence?
+
+Cortex Agents plan and call tools, such as Cortex Analyst over semantic views for structured data and Cortex Search over documents, to answer a question in several steps. Snowflake Intelligence is the chat interface where business users talk to those agents, with answers limited by their Snowflake roles.
+
 #### What is Streamlit in Snowflake?
 
 A way to build and host Streamlit data apps directly in Snowflake, running with the account's governance and sharing them through roles.
@@ -1672,9 +1725,17 @@ select * from {{ ref('stg_orders') }}
 
 dbt compiles models to SQL and runs them on a Snowflake warehouse through the dbt-snowflake adapter, supporting tables, views, incremental models (`merge`, `delete+insert`, `append`, `microbatch`), dynamic tables, transient tables, query tags and clustering configs.
 
+#### What are dbt Projects on Snowflake?
+
+A way to run dbt inside Snowflake: you develop the project in a workspace or a Git repository, deploy it as a `DBT PROJECT` object (`CREATE DBT PROJECT` or `snow dbt deploy`), and run it with `EXECUTE DBT PROJECT` on a warehouse, scheduled by tasks or an external orchestrator. Snowflake manages the dbt runtime, so there is no separate dbt server to host.
+
 #### How do Spark and Snowflake integrate?
 
 Through the Spark connector, which reads and writes Snowflake tables with query pushdown, or by sharing Iceberg tables through a catalog so Spark and Snowflake both work on the same files.
+
+#### What is Snowflake Postgres?
+
+Managed PostgreSQL instances created and administered from Snowflake, each on dedicated compute, that applications reach with any Postgres driver or ORM. It serves transactional workloads, such as an application's database, next to the analytical data, instead of a separate RDS or Cloud SQL instance. It is generally available on AWS and Azure.
 
 <!-- challenge -->
 
@@ -1971,6 +2032,10 @@ A feature that analyzes columns to detect sensitive data (emails, names, phone n
 
 Views and functions whose definition is hidden from non-owners and that disable some optimizations that could leak data through query behavior. They are required for objects in data shares.
 
+#### What are aggregation and projection policies?
+
+Privacy policies. An aggregation policy forces queries on a table to aggregate rows into groups of a minimum size, so individual records can't be returned. A projection policy lets a column be used in filters and joins but not selected, for example to match on a hashed email without revealing it. Both are common in clean rooms and shares.
+
 #### You must give analysts in each country access only to their rows and hide emails. How?
 
 A row access policy on the tables using a mapping table of roles to countries, and a masking policy (or tag-based masking) on email columns that reveals values only to a privileged role. Grant analysts functional roles mapped to their countries.
@@ -2016,7 +2081,15 @@ ORDER BY query_start_time DESC LIMIT 20;
 
 #### How do users authenticate to Snowflake?
 
-With passwords plus MFA (which Snowflake is making mandatory for password sign-ins), SSO through SAML 2.0 identity providers (Okta, Entra ID), OAuth (Snowflake or external), key-pair authentication for services, workload identity federation, and programmatic access tokens. Service users should use key pairs or OAuth, not passwords.
+People sign in through SSO with SAML 2.0 identity providers (Okta, Entra ID) or with a password plus MFA, now mandatory for human users. Programs use key pairs, OAuth (Snowflake or external), workload identity federation or programmatic access tokens. Since the 2026 rollout, service users can't sign in with passwords at all.
+
+#### What are user types, and why do they matter?
+
+A user's `TYPE` says whether it's a person or a program. `PERSON` users sign in interactively and must use MFA with passwords. `SERVICE` users can't use passwords and authenticate with key pairs, OAuth, workload identity federation or programmatic access tokens. `LEGACY_SERVICE`, a temporary type for service users that still had passwords, is being migrated to `SERVICE`.
+
+#### What are programmatic access tokens and workload identity federation?
+
+Two ways for programs to authenticate without a password. A programmatic access token is a time-limited secret generated for a user, used instead of a password by drivers, the REST API or tools, and restricted to a role (and, for service users, to a network policy). Workload identity federation lets code running in AWS, Azure, Google Cloud or Kubernetes authenticate with its cloud identity, so no secret is stored at all.
 
 #### What are network policies?
 
@@ -2030,9 +2103,17 @@ Always at rest (AES-256) and in transit (TLS), with a hierarchical key model and
 
 `SNOWFLAKE.ACCOUNT_USAGE.ACCESS_HISTORY` records which columns each query read and wrote, which helps auditing, lineage and finding unused data.
 
+#### How can you see data lineage in Snowflake?
+
+The lineage view in Snowsight's catalog shows the upstream and downstream objects and columns of a table or view, built from executed queries (CTAS, `INSERT ... SELECT`, `MERGE`, views, dynamic tables). The `SNOWFLAKE.CORE.GET_LINEAGE` function returns the same graph in SQL, which helps with impact analysis before changing a column.
+
 #### What are external access integrations?
 
 Objects that allow UDFs and procedures to call external network endpoints, controlled by network rules listing allowed hosts and secrets objects for credentials.
+
+#### What is the Trust Center?
+
+A Snowsight area that scans the account for security risks against packages of checks such as the CIS Snowflake Benchmark: users without MFA, overly broad grants, missing network policies. It lists findings by severity with remediation steps, and its scanners can run on a schedule.
 
 <!-- challenge -->
 
@@ -2635,11 +2716,15 @@ resource "snowflake_grant_account_role" "analyst_to_sysadmin" {
 
 #### How do you manage Snowflake objects as code?
 
-With Terraform (the Snowflake provider) for account objects such as warehouses, roles, grants, databases and integrations; dbt or schemachange for schema and transformation changes; and the Snowflake CLI or `EXECUTE IMMEDIATE FROM` with Git repositories in Snowflake for deploying SQL files.
+With Terraform (the Snowflake provider) for account objects such as warehouses, roles, grants, databases and integrations; DCM Projects, dbt or schemachange for database objects and transformations; and the Snowflake CLI or `EXECUTE IMMEDIATE FROM` with Git repositories in Snowflake for deploying SQL files.
 
 #### What is a Git repository object in Snowflake?
 
 An integration that clones a Git repository into Snowflake so you can run SQL and Python files from it, reference them in notebooks and procedures, and deploy from a branch or tag.
+
+#### What are DCM Projects?
+
+Snowflake's declarative database change management: you describe databases, schemas, tables, roles and grants in definition files, `EXECUTE DCM PROJECT` with `PLAN` shows the changes needed to reach that state, and `DEPLOY` applies them. It brings a Terraform-like plan-and-apply workflow to database objects, run from Workspaces, the CLI or CI.
 
 #### How do you run SQL deployments safely?
 

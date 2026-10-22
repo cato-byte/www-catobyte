@@ -3,9 +3,9 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Python study guide: about 200 questions](../../images/python_study_guide_title_img.png)
+![Python study guide: about 220 questions](../../images/python_study_guide_title_img.png)
 
-About 200 questions on Python for data engineering interviews: the language itself, the standard library, object-oriented programming, generators and decorators, concurrency, testing and packaging, Python for data work, and a set of coding problems with solutions. Examples target Python 3.12.
+About 220 questions on Python for data engineering interviews: the language itself, the standard library, object-oriented programming, generators and decorators, concurrency, testing and packaging, Python for data work, and a set of coding problems with solutions. Examples target Python 3.12 and later, and the answers cover what changed up to Python 3.15 (October 2026).
 
 The guide follows a learning path in four stages. Each section is split into short units: learning goals, a concept explanation and a worked example, then questions (recall first, then application), a practical challenge and key takeaways. To **learn**, read each unit top to bottom. To **review**, switch to review mode or use "Skip to questions", mark answers you want to see again, and try a mixed review across sections.
 
@@ -45,7 +45,7 @@ print(x == y, x is y)       # True, and identity is an implementation detail
 
 An interpreted, dynamically typed, strongly typed, garbage-collected language that supports procedural, object-oriented and functional styles. It favors readability (significant indentation) and has a large standard library and ecosystem.
 
-#### What does "dynamically typed" and "strongly typed" mean for Python?
+#### What do "dynamically typed" and "strongly typed" mean for Python?
 
 Dynamically typed: a variable's type is known at run time and a name can be rebound to an object of another type. Strongly typed: Python doesn't silently convert incompatible types, so `"1" + 1` raises `TypeError` instead of guessing.
 
@@ -261,6 +261,14 @@ A module is a single `.py` file. A package is a directory of modules, normally w
 
 Its block runs only when the file is executed as a script, not when it's imported as a module. It is used for command-line entry points.
 
+#### How does Python find a module when you import it?
+
+It first checks `sys.modules`: a module already imported is reused, so its top-level code runs only once per process. Otherwise it searches the directories in `sys.path`: the script's directory (or the current one), `PYTHONPATH`, the standard library and site-packages. A local file named `json.py` or `pandas.py` shadows the real module, and since 3.13 the error message points this out.
+
+#### What are lazy imports?
+
+Python 3.15 adds `lazy import json` and `lazy from pathlib import Path` (PEP 810): the module is loaded only when the name is first used, which shortens the start-up time of command-line tools and large applications. `lazy` is allowed only at module level, not inside functions, classes or `try` blocks. On older versions, the workaround is to import inside the function that needs the module.
+
 <!-- challenge -->
 
 Importing a helper module in a test starts a 10-minute data load. Why, and how do you fix it?
@@ -309,6 +317,17 @@ Prefix a string with `f` and put expressions in braces, with optional format spe
 total = 1234.5
 print(f"Total: {total:,.2f} EUR, items: {len(items)}")   # Total: 1,234.50 EUR
 print(f"{total=}")                                         # total=1234.5 (debugging)
+```
+
+#### What are template strings (t-strings)?
+
+Python 3.14 added `t"..."` literals (PEP 750). They look like f-strings but evaluate to a `string.templatelib.Template` object, not a `str`: the static parts and the interpolated values stay separate, so a library can escape or parameterize the values before combining them, for example to build safe SQL or HTML.
+
+```python
+name = "O'Brien"
+query = t"SELECT * FROM users WHERE name = {name}"
+query.strings   # ('SELECT * FROM users WHERE name = ', '')
+query.values    # ("O'Brien",)
 ```
 
 #### Why are strings immutable, and how do you build a long string efficiently?
@@ -410,6 +429,10 @@ A list comprehension builds the whole list in memory. A generator expression (pa
 
 `zip(a, b)` pairs items from several iterables (stopping at the shortest, or raising with `strict=True`). `enumerate(seq, start=0)` yields `(index, item)` pairs.
 
+#### How do you flatten a list of lists in a comprehension?
+
+`[x for row in rows for x in row]`, with the `for` clauses in the same order as nested loops. Python 3.15 adds unpacking in comprehensions (PEP 798): `[*row for row in rows]` does the same, and `{**d for d in dicts}` merges a list of dicts, later keys winning.
+
 <!-- challenge -->
 
 `sum([row["amount"] for row in read_rows(path)])` runs out of memory on a 40 GB file. What is the one-character fix, and why?
@@ -464,6 +487,10 @@ Indexing and `append` are O(1) (amortized for append), `insert(0, x)` and `pop(0
 #### How do you merge two dicts?
 
 `merged = a | b` (Python 3.9+), or `{**a, **b}`. Values from `b` win on duplicate keys. `a |= b` updates in place.
+
+#### What is `frozendict`?
+
+A built-in immutable mapping added in Python 3.15 (PEP 814). It can't change after creation and is hashable when its keys and values are, so it can be a dict key, a set member or a safe default value. It isn't a subclass of `dict`. On older versions, `types.MappingProxyType` gives a read-only view of a dict.
 
 #### How do you remove duplicates from a list while keeping order?
 
@@ -786,8 +813,7 @@ Logical operators share this flexibility: `and` and `or` return one of their ope
 
 ```python
 from functools import partial, reduce
-from datetime import datetime
-parse_fr = partial(datetime.strptime, format="%d/%m/%Y")   # wraps keyword use
+parse_bin = partial(int, base=2)                           # parse_bin("1010") == 10
 total = reduce(lambda acc, x: acc + x, [1, 2, 3], 0)
 has_errors = any(r["status"] == "error" for r in results)  # stops at the first error
 name = user_input or "anonymous"                           # returns an operand
@@ -962,6 +988,10 @@ A hint meaning `X | None`. Since Python 3.10 you can write `X | None` directly.
 #### What is the difference between a function and a method?
 
 A method is a function defined in a class and accessed through an instance or class, which binds the first argument (`self` or `cls`) automatically.
+
+#### When are annotations evaluated?
+
+Since Python 3.14 (PEPs 649 and 749), annotations of functions, classes and modules are evaluated lazily, only when something reads them. Forward references to classes defined later no longer need quotes or `from __future__ import annotations`. The new `annotationlib` module inspects them, and `typing.get_type_hints()` still works.
 
 <!-- challenge -->
 
@@ -1180,6 +1210,10 @@ class Snapshot:
     files: list[str] = field(default_factory=list)
 ```
 
+#### What does `copy.replace()` do?
+
+Added in Python 3.13, it returns a copy of an object with some fields changed: `copy.replace(order, status="paid")`. It works with dataclasses (like `dataclasses.replace`), named tuples and `datetime` objects, and any class can support it by defining `__replace__`. It's the idiomatic way to "modify" frozen objects.
+
 #### What are `__slots__`?
 
 A class attribute listing allowed instance attributes. It removes the per-instance `__dict__`, reducing memory use and speeding up attribute access for many small objects.
@@ -1239,6 +1273,10 @@ Python has no private members. By convention, `_name` is internal, and `__name` 
 #### What is a metaclass?
 
 The class of a class (by default `type`), which controls how classes are created. Rarely needed. Class decorators and `__init_subclass__` cover most use cases.
+
+#### What is a descriptor?
+
+An object stored as a class attribute that defines `__get__` (and optionally `__set__` or `__delete__`), so it controls what happens when that attribute is accessed on instances. Properties, methods, `classmethod`, `staticmethod` and `__slots__` are all built on descriptors; you write your own for reusable field validation.
 
 <!-- challenge -->
 
@@ -1407,7 +1445,7 @@ Computing values only when needed. Generators, `range`, `map`, `zip` and diction
 
 #### What is `itertools`, and name a few useful functions?
 
-A module of fast iterator building blocks: `chain`, `islice`, `groupby`, `product`, `permutations`, `combinations`, `accumulate`, `count`, `cycle`, `tee`, `zip_longest` and `batched` (Python 3.12).
+A module of fast iterator building blocks: `chain`, `islice`, `groupby`, `product`, `permutations`, `combinations`, `accumulate`, `count`, `cycle`, `tee`, `zip_longest`, `pairwise` (3.10, consecutive pairs) and `batched` (3.12; since 3.13, `strict=True` rejects a short last batch).
 
 #### How does `itertools.groupby` work, and what's the catch?
 
@@ -1689,6 +1727,10 @@ class SchemaDriftError(PipelineError):
 
 Python 3.11 added `ExceptionGroup` to raise several exceptions at once (for example from concurrent tasks) and `except*` to handle them by type.
 
+#### How do you catch several exception types in one clause?
+
+List them in a tuple: `except (ConnectionError, TimeoutError) as exc:`. Since Python 3.14 (PEP 758), the parentheses can be dropped when there is no `as` clause: `except ConnectionError, TimeoutError:`. Across clauses, the first matching `except` wins, so put specific exceptions before general ones.
+
 #### What is EAFP versus LBYL?
 
 "Easier to ask forgiveness than permission" (try the operation and catch the error) versus "Look before you leap" (check first). EAFP is idiomatic in Python and avoids race conditions between the check and the action.
@@ -1868,6 +1910,10 @@ datetime.now(timezone.utc)                     # timezone-aware
 
 A naive datetime has no time zone, an aware one has `tzinfo`. Mixing them raises errors. Store and compute in UTC with aware datetimes, and convert only for display.
 
+#### Why is `datetime.utcnow()` deprecated?
+
+It returns a naive datetime that only looks like UTC, so code that later treats it as local time shifts values silently. It's deprecated since Python 3.12 (with `utcfromtimestamp()`): use `datetime.now(timezone.utc)` or `datetime.fromtimestamp(ts, tz=timezone.utc)`, which return aware datetimes. `datetime.UTC` (3.11) is a shorter alias for `timezone.utc`.
+
 #### Read a CSV of transactions and compute the total amount per user and the cities whose average exceeds 8,000.
 
 ```python
@@ -1957,6 +2003,20 @@ result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=
 
 With `hashlib`: `hashlib.sha256(data).hexdigest()`. For files, read in chunks and call `update()` to keep memory constant.
 
+#### What is the `enum` module used for?
+
+Defining a fixed set of named constants, which beats string literals scattered through the code: members are typed, iterable and compared by identity. `StrEnum` (3.11) members are also strings, convenient for JSON and databases; `IntEnum` and `Flag` cover integers and bit flags.
+
+```python
+from enum import StrEnum
+
+class Status(StrEnum):
+    PENDING = "pending"
+    DONE = "done"
+
+Status("done") is Status.DONE   # True
+```
+
 <!-- challenge -->
 
 A script runs `subprocess.run(f"rm -rf {folder}", shell=True)` with a folder name from user input. What is the risk, and the fix?
@@ -1978,11 +2038,11 @@ Shell injection: a crafted name could run arbitrary commands. Pass a list of arg
 <!-- goals -->
 
 - Explain the GIL and compare threading, multiprocessing and asyncio.
-- Use concurrent.futures and avoid race conditions and pickling pitfalls.
+- Use concurrent.futures, avoid race conditions and pickling pitfalls, and know the free-threaded build and subinterpreters.
 
 <!-- concept -->
 
-In CPython, only one thread runs Python bytecode at a time. Threads still help when work waits on networks or disks, because waiting releases the lock; CPU-heavy work needs processes, each with its own interpreter. Asyncio handles many waits in a single thread.
+In the default CPython build, only one thread runs Python bytecode at a time. Threads still help when work waits on networks or disks, because waiting releases the lock; CPU-heavy work needs processes, each with its own interpreter. Asyncio handles many waits in a single thread.
 
 Each model has its traps: threads sharing data need locks to avoid race conditions; processes need picklable functions and data; daemon threads die abruptly at exit.
 
@@ -2001,7 +2061,15 @@ with ProcessPoolExecutor() as pool:                       # CPU-bound: parsing
 
 #### What is the GIL?
 
-The Global Interpreter Lock in CPython lets only one thread execute Python bytecode at a time. Threads still help for I/O-bound work, because the GIL is released while waiting, but not for CPU-bound pure-Python code. Python 3.13 introduced an optional free-threaded build without the GIL.
+The Global Interpreter Lock in CPython lets only one thread execute Python bytecode at a time. Threads still help for I/O-bound work, because the GIL is released while waiting, but not for CPU-bound pure-Python code. A free-threaded build without the GIL exists since 3.13 and is officially supported since 3.14, but the default build still has the GIL.
+
+#### What is free-threaded Python?
+
+A CPython build without the GIL (PEP 703), where threads run Python code in parallel on several cores. It was experimental in 3.13 and is officially supported since 3.14 (PEP 779), installed as a separate interpreter such as `python3.14t`. Single-threaded code runs somewhat slower, and C extensions must be built for it, otherwise importing them re-enables the GIL.
+
+#### What are subinterpreters?
+
+Several isolated interpreters in one process, each with its own GIL, exposed by the `concurrent.interpreters` module in Python 3.14 (PEP 734) and by `InterpreterPoolExecutor` in `concurrent.futures`. They give CPU parallelism with less overhead than processes, but objects aren't shared: data passes through queues or is copied.
 
 #### What is the difference between threading, multiprocessing and asyncio?
 
@@ -2031,6 +2099,10 @@ A background thread that doesn't prevent the program from exiting. It is killed 
 #### Why can't a lambda be sent to a process pool?
 
 `ProcessPoolExecutor` pickles the function to send it to workers, and lambdas and nested functions can't be pickled by reference. Use module-level functions.
+
+#### Which start method does multiprocessing use?
+
+`spawn` on Windows and macOS, and since Python 3.14 `forkserver` on Linux and other Unix systems (it used to be `fork`). With both, workers start from a fresh interpreter, so functions and arguments must be picklable and the script needs the `if __name__ == "__main__":` guard. Code that relied on inherited globals can request `multiprocessing.get_context("fork")` explicitly.
 
 #### What is pickling, and what are its risks?
 
@@ -2090,13 +2162,24 @@ A function defined with `async def`, which can pause at `await` points. It runs 
 An event loop runs coroutines. At each `await` on an I/O operation, the coroutine yields control so others can run. `asyncio.gather` runs several at once:
 
 ```python
-import asyncio
+import asyncio, httpx
 
 async def main(urls):
-    async with aiohttp.ClientSession() as session:
-        return await asyncio.gather(*(fetch(session, u) for u in urls))
+    async with httpx.AsyncClient(timeout=30) as client:
+        return await asyncio.gather(*(client.get(u) for u in urls))
 
 asyncio.run(main(urls))
+```
+
+#### What is `asyncio.TaskGroup`?
+
+A context manager (3.11+) for structured concurrency: the block waits for every task created in the group, and if one fails, the others are cancelled and the errors are raised together as an `ExceptionGroup`. It's safer than `gather`, which by default lets the other tasks keep running after a failure.
+
+```python
+async with asyncio.TaskGroup() as tg:
+    orders = tg.create_task(fetch_orders())
+    users = tg.create_task(fetch_users())
+print(orders.result(), users.result())
 ```
 
 #### How does `asyncio.run` differ from calling a coroutine directly?
@@ -2107,9 +2190,9 @@ Calling an `async def` function only creates a coroutine object. `asyncio.run(co
 
 Bound the worker pool size, or use `asyncio.Semaphore`, and add backoff with retries on 429 responses.
 
-#### How do you set a timeout on a blocking network call?
+#### How do you set a timeout on a network call?
 
-Pass a timeout to the library (`requests.get(url, timeout=30)`). Never call external services without one: a hung connection otherwise blocks forever.
+Pass a timeout to the library (`requests.get(url, timeout=30)`, `httpx.AsyncClient(timeout=30)`), and in async code bound a block of awaits with `async with asyncio.timeout(10):` (3.11+) or a single one with `asyncio.wait_for`. Never call external services without one: a hung connection otherwise blocks forever.
 
 #### What is backpressure, and how do you handle it in Python pipelines?
 
@@ -2156,7 +2239,7 @@ df["total"] = df["price"] * df["qty"]
 
 #### How do you profile Python code?
 
-`cProfile` (`python -m cProfile -s cumtime script.py`) for function-level time, `timeit` for small snippets, `tracemalloc` for memory, and sampling profilers such as py-spy for running processes.
+`cProfile` (`python -m cProfile -s cumtime script.py`) for function-level time, `timeit` for small snippets, `tracemalloc` for memory, and sampling profilers for running processes. Python 3.15 adds a `profiling` package: `profiling.sampling` attaches to a running process with very low overhead and produces flame graphs, and `profiling.tracing` is the new home of `cProfile`. On older versions, py-spy fills that role.
 
 #### What makes Python code faster in practice?
 
@@ -2169,6 +2252,10 @@ Each row becomes a Python object and the work happens in the interpreter. Vector
 #### What is the difference between CPython and PyPy?
 
 CPython is the reference interpreter, written in C. PyPy is an alternative implementation with a JIT compiler that speeds up long-running pure-Python code but is less compatible with C extensions.
+
+#### Does CPython have a JIT compiler?
+
+An experimental one, added in 3.13 (PEP 744) and shipped in the Windows and macOS installers since 3.14, but off by default (`PYTHON_JIT=1` turns it on). Its gains are still modest; most of CPython's speedups since 3.11 come from the specializing adaptive interpreter. For large wins on numeric code, vectorized libraries or PyPy remain the options.
 
 #### When would you use multiprocessing over Spark?
 
@@ -2223,6 +2310,10 @@ Reference counting frees most objects immediately when their count drops to zero
 #### What is `__pycache__`?
 
 The folder where Python caches compiled bytecode (`.pyc` files) of imported modules, to speed up later imports.
+
+#### What are weak references?
+
+References that don't keep an object alive (`weakref.ref`, `WeakValueDictionary`, `WeakKeyDictionary`): once no strong reference remains, the object is freed and the weak reference returns `None`. They suit caches and registries that shouldn't keep objects in memory on their own.
 
 <!-- challenge -->
 
@@ -2299,6 +2390,10 @@ A console script declared in `pyproject.toml` that installs a command which call
 [project.scripts]
 registry-lakehouse = "registry_lakehouse.cli:main"
 ```
+
+#### Which Python version should a new project target?
+
+A recent one with years of support left. A new version ships every October, gets about two years of bug fixes, then security fixes until five years after release (PEP 602). In late 2026 that means 3.13 to 3.15, limited by what your platform supports (Databricks runtimes, Lambda, Airflow images). Declare it in `requires-python` and test it in CI.
 
 <!-- challenge -->
 
@@ -2417,15 +2512,14 @@ Type hints become more useful with richer types: `TypedDict` describes dict-shap
 <!-- example -->
 
 ```python
-from typing import TypedDict, TypeVar
+from typing import TypedDict
 
 class OrderRow(TypedDict):
     order_id: int
     amount: float
     country: str
 
-T = TypeVar("T")
-def first_or_none(items: list[T]) -> T | None:
+def first_or_none[T](items: list[T]) -> T | None:     # Python 3.12 generics syntax
     return items[0] if items else None
 ```
 ```bash
@@ -2447,6 +2541,10 @@ A typing construct that describes dictionaries with a fixed set of keys and valu
 #### What are generics in type hints?
 
 Parameterized types such as `list[int]` or `dict[str, float]`, and your own generic classes and functions. Python 3.12 has a compact syntax: `def first[T](xs: list[T]) -> T: ...`.
+
+#### What does the `type` statement do?
+
+It declares a type alias (Python 3.12, PEP 695): `type Row = dict[str, str | int]`. Aliases are evaluated lazily and can be generic: `type Pair[T] = tuple[T, T]`. The same PEP lets classes and functions declare type parameters in brackets (`class Box[T]: ...`), which replaces most uses of `TypeVar`.
 
 <!-- challenge -->
 
@@ -2500,6 +2598,16 @@ Read them from environment variables or a secrets manager at start-up, validate 
 #### What is pydantic?
 
 A data validation library that parses data into typed models and raises clear errors for invalid input. It is used for API payloads, configuration and contracts.
+
+#### How do you read TOML configuration?
+
+With `tomllib`, in the standard library since 3.11. It only reads, and the file must be opened in binary mode; writing needs a package such as `tomli-w`. Python 3.15 updates it to TOML 1.1.
+
+```python
+import tomllib
+with open("settings.toml", "rb") as f:
+    config = tomllib.load(f)
+```
 
 #### How do you structure a Python project for a data pipeline?
 
@@ -2627,7 +2735,7 @@ A standard in-memory columnar format. It lets pandas, Polars, DuckDB, Spark and 
 
 #### What is Polars, and when would you use it instead of pandas?
 
-A DataFrame library written in Rust, multi-threaded, with a lazy query optimiser. It's often much faster and more memory-efficient than pandas for large single-machine workloads.
+A DataFrame library written in Rust, multi-threaded, with a lazy query optimizer. It's often much faster and more memory-efficient than pandas for large single-machine workloads.
 
 #### What is DuckDB?
 
@@ -2780,7 +2888,7 @@ Check the schema (columns and types), nulls in required fields, value ranges, un
 
 #### How do you handle encoding problems when reading files?
 
-Pass the right `encoding` explicitly, use `errors="replace"` only knowingly, detect a BOM with `encoding="utf-8-sig"`, and repair mojibake (`'TravesÃ­a'.encode('latin-1').decode('utf-8')`) with a guard for strings where the round trip fails.
+Pass the right `encoding` explicitly, use `errors="replace"` only knowingly, detect a BOM with `encoding="utf-8-sig"`, and repair mojibake (`'TravesÃ­a'.encode('latin-1').decode('utf-8')`) with a guard for strings where the round trip fails. Since Python 3.15, `open()` defaults to UTF-8 instead of the locale encoding (PEP 686), which removes many Windows surprises, but naming the encoding stays the portable choice.
 
 #### How do you process a JSON file that is too large to load at once?
 

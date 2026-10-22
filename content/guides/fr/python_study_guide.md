@@ -3,9 +3,9 @@
 ##### Published on {{PUBLISH_DATE}}
 <!-- TITLE_IMAGE -->
 
-![Fiche d'étude Python : environ 200 questions](../../images/python_study_guide_title_img.png)
+![Fiche d'étude Python : environ 220 questions](../../images/python_study_guide_title_img.png)
 
-Environ 200 questions Python pour les entretiens de data engineer : le langage, la bibliothèque standard, la programmation orientée objet, les générateurs et décorateurs, la concurrence, les tests et le packaging, Python pour le travail sur les données, et une série d'exercices de code avec leurs solutions. Les exemples ciblent Python 3.12.
+Environ 220 questions Python pour les entretiens de data engineer : le langage, la bibliothèque standard, la programmation orientée objet, les générateurs et décorateurs, la concurrence, les tests et le packaging, Python pour le travail sur les données, et une série d'exercices de code avec leurs solutions. Les exemples ciblent Python 3.12 et versions ultérieures, et les réponses couvrent ce qui a changé jusqu'à Python 3.15 (octobre 2026).
 
 La fiche suit un parcours d'apprentissage en quatre étapes. Chaque section est découpée en unités courtes : objectifs d'apprentissage, explication du concept et exemple commenté, puis questions (d'abord de mémorisation, ensuite d'application), un exercice pratique et les points à retenir. Pour **apprendre**, lisez chaque unité du début à la fin. Pour **réviser**, passez en mode révision ou utilisez « Aller aux questions », marquez les réponses à revoir et essayez une révision mixte entre les sections.
 
@@ -24,6 +24,7 @@ La fiche suit un parcours d'apprentissage en quatre étapes. Chaque section est 
 <!-- concept -->
 
 En Python, les noms sont des étiquettes sur des objets, pas des boîtes à valeurs. Un nom peut être réassigné à un objet de n'importe quel type (typage dynamique), mais un objet ne change jamais de type en silence (typage fort). Chaque objet a une identité, un type et une valeur.
+
 La mutabilité décide de ce qui se passe quand deux noms partagent un objet. Modifier un objet mutable par un nom se voit par l'autre ; un objet immuable ne peut qu'être remplacé. Les arguments suivent la même règle : le paramètre est une étiquette de plus sur l'objet de l'appelant.
 
 <!-- example -->
@@ -92,6 +93,7 @@ La fonction a modifié le dict de l'appelant, partagé par tous. Le copier avant
 <!-- concept -->
 
 Les types intégrés de Python couvrent l'essentiel des besoins sans import : nombres, texte, séquences, dictionnaires et ensembles. Chaque objet a aussi une valeur de vérité, ce qui rend les conditions concises mais peut cacher des bugs, car zéro et les collections vides sont faux tout comme `None`.
+
 Les nombres ont leurs pièges. La division vraie donne toujours un flottant ; la division entière arrondit vers le bas, même pour les négatifs. Les flottants sont des approximations binaires : l'argent exige `Decimal`, tandis que les entiers grandissent autant que la mémoire le permet.
 
 <!-- example -->
@@ -150,6 +152,7 @@ Tester explicitement l'absence : `if discount is None: discount = 0.10`, pour qu
 <!-- concept -->
 
 Les versions récentes de Python ont ajouté une syntaxe qui supprime du code répétitif courant. L'opérateur walrus assigne dans une expression, ce qui allège les boucles « lire et tester ». Le pattern matching vérifie une structure et en extrait des valeurs en même temps, utile pour des messages de formes différentes.
+
 Deux choix plus anciens comptent toujours au quotidien : listes pour les collections qui changent, tuples pour les enregistrements fixes, et copies qui dupliquent seulement le conteneur extérieur ou toute la structure imbriquée.
 
 <!-- example -->
@@ -224,6 +227,7 @@ Un test copie une config imbriquée avec `dict(config)` et modifie une liste imb
 <!-- concept -->
 
 Quand Python rencontre un nom, il le cherche à quatre endroits dans l'ordre : la fonction locale, les fonctions englobantes, le module, puis les built-ins. Assigner un nom dans une fonction le rend local sauf déclaration contraire, d'où la classique erreur « referenced before assignment ».
+
 Le code s'organise en modules (fichiers) et paquets (répertoires de modules). La garde `__main__` permet à un fichier de servir à la fois de module importable et de script, sans exécuter le code du script à l'import.
 
 <!-- example -->
@@ -257,6 +261,14 @@ Un module est un fichier `.py` unique. Un package est un répertoire de modules,
 
 Son bloc ne s'exécute que lorsque le fichier est lancé comme script, pas lorsqu'il est importé comme module. Il sert aux points d'entrée en ligne de commande.
 
+#### Comment Python trouve-t-il un module lors d'un import ?
+
+Il consulte d'abord `sys.modules` : un module déjà importé est réutilisé, si bien que son code de premier niveau ne s'exécute qu'une fois par processus. Sinon, il cherche dans les répertoires de `sys.path` : celui du script (ou le répertoire courant), `PYTHONPATH`, la bibliothèque standard et site-packages. Un fichier local nommé `json.py` ou `pandas.py` masque le vrai module, et depuis 3.13 le message d'erreur le signale.
+
+#### Que sont les imports paresseux (lazy imports) ?
+
+Python 3.15 ajoute `lazy import json` et `lazy from pathlib import Path` (PEP 810) : le module n'est chargé qu'à la première utilisation du nom, ce qui raccourcit le démarrage des outils en ligne de commande et des grosses applications. `lazy` n'est autorisé qu'au niveau du module, pas dans une fonction, une classe ou un bloc `try`. Dans les versions antérieures, on contourne le problème en important dans la fonction qui a besoin du module.
+
 <!-- challenge -->
 
 Importer un module utilitaire dans un test lance un chargement de données de 10 minutes. Pourquoi, et comment corriger ?
@@ -283,6 +295,7 @@ Le module lance son chargement au niveau supérieur, exécuté à l'import. Le d
 <!-- concept -->
 
 Les chaînes sont des séquences immuables de caractères Unicode. L'immuabilité les rend sûres à partager et utilisables comme clés de dict, mais chaque modification crée une nouvelle chaîne : construire un long texte par concaténations répétées est lent, et l'idiome est de joindre une liste.
+
 Le texte devient des octets quand il quitte le programme, par fichiers ou réseau : l'encodage est donc explicite. Le slicing, avec sa borne de fin exclue et ses indices négatifs, résout beaucoup de problèmes d'entretien en une ligne.
 
 <!-- example -->
@@ -304,6 +317,17 @@ On préfixe une chaîne par `f` et on met des expressions entre accolades, avec 
 total = 1234.5
 print(f"Total: {total:,.2f} EUR, items: {len(items)}")   # Total: 1,234.50 EUR
 print(f"{total=}")                                         # total=1234.5 (débogage)
+```
+
+#### Que sont les chaînes de gabarit (t-strings) ?
+
+Python 3.14 a ajouté les littéraux `t"..."` (PEP 750). Ils ressemblent aux f-strings mais produisent un objet `string.templatelib.Template`, pas un `str` : les parties fixes et les valeurs interpolées restent séparées, si bien qu'une bibliothèque peut échapper ou paramétrer les valeurs avant de les combiner, par exemple pour construire du SQL ou du HTML sûrs.
+
+```python
+name = "O'Brien"
+query = t"SELECT * FROM users WHERE name = {name}"
+query.strings   # ('SELECT * FROM users WHERE name = ', '')
+query.values    # ("O'Brien",)
 ```
 
 #### Pourquoi les chaînes sont-elles immuables, et comment construire efficacement une longue chaîne ?
@@ -357,6 +381,7 @@ Accumuler les lignes dans une liste et faire `"".join(lines)` une fois à la fin
 <!-- concept -->
 
 Les compréhensions construisent des collections à partir d'itérables en une expression lisible, avec filtre optionnel. Elles existent pour listes, dicts et ensembles. Remplacer les crochets par des parenthèses donne une expression génératrice, qui produit les éléments paresseusement au lieu de tout construire en mémoire, idéal quand on ne parcourt qu'une fois.
+
 Deux outils les accompagnent naturellement : `enumerate` donne les positions sans compteur manuel, et `zip` parcourt plusieurs séquences ensemble.
 
 <!-- example -->
@@ -387,6 +412,10 @@ L'accès par indice et `append` sont en O(1) (amorti pour append), `insert(0, x)
 
 `d[key]` lève `KeyError` si la clé est absente. `d.get(key, default)` renvoie alors `default` (ou `None`).
 
+#### Comment aplatir une liste de listes dans une compréhension ?
+
+`[x for row in rows for x in row]`, avec les clauses `for` dans le même ordre que des boucles imbriquées. Python 3.15 ajoute le dépaquetage dans les compréhensions (PEP 798) : `[*row for row in rows]` fait la même chose, et `{**d for d in dicts}` fusionne une liste de dicts, les dernières clés l'emportant.
+
 <!-- challenge -->
 
 `sum([row["amount"] for row in read_rows(path)])` manque de mémoire sur un fichier de 40 Go. Quelle est la correction d'un seul caractère, et pourquoi ?
@@ -411,6 +440,7 @@ Supprimer les crochets : `sum(row["amount"] for row in read_rows(path))`. L'expr
 <!-- concept -->
 
 Choisir le bon conteneur est la principale décision de performance en Python courant. Dicts et ensembles sont des tables de hachage : appartenance et recherche se font en temps constant ; les listes sont des tableaux, rapides en fin mais lentes à parcourir ou à modifier en tête. Beaucoup de boucles lentes deviennent rapides en remplaçant une recherche dans une liste par un ensemble ou un dict.
+
 Les dicts conservent aussi l'ordre d'insertion, ce qui simplifie la déduplication qui préserve l'ordre et les problèmes « dernier par clé ».
 
 <!-- example -->
@@ -452,6 +482,10 @@ Counter("mississippi").most_common(2)   # [('i', 4), ('s', 4)]
 #### Qu'est-ce que `collections.deque` ?
 
 Une file à double extrémité avec ajouts et retraits en O(1) des deux côtés, et un `maxlen` facultatif pour des tampons bornés.
+
+#### Qu'est-ce que `frozendict` ?
+
+Un mapping immuable intégré, ajouté dans Python 3.15 (PEP 814). Il ne peut plus changer après sa création et il est hachable quand ses clés et valeurs le sont : il peut servir de clé de dict, d'élément de set ou de valeur par défaut sûre. Ce n'est pas une sous-classe de `dict`. Dans les versions antérieures, `types.MappingProxyType` offre une vue en lecture seule d'un dict.
 
 #### Comment trier une liste de dictionnaires selon une clé ?
 
@@ -498,6 +532,7 @@ Faire de `processed_ids` un ensemble : l'appartenance passe en O(1) au lieu de p
 <!-- concept -->
 
 Le module `collections` fournit des motifs qu'on écrirait sinon à la main. `defaultdict` crée automatiquement les valeurs manquantes, parfait pour regrouper. `Counter` compte et classe. `namedtuple` donne aux tuples des noms de champs lisibles. `deque` ajoute et retire aux deux extrémités en temps constant : file, pile ou fenêtre glissante.
+
 Beaucoup de problèmes d'entretien sont l'un de ces motifs déguisé.
 
 <!-- example -->
@@ -599,6 +634,7 @@ Un `deque(maxlen=1000)` : l'ajout supprime automatiquement l'élément le plus a
 <!-- concept -->
 
 Python trie avec une fonction clé : on lui dit quoi comparer, il gère le reste, de façon stable et efficace. Des tuples comme clés trient sur plusieurs champs à la fois ; nier un nombre inverse un champ. `sort()` modifie une liste sur place et renvoie `None`, un bug fréquent quand on l'assigne ; `sorted()` renvoie une nouvelle liste depuis n'importe quel itérable.
+
 Le tri est aussi une étape de résolution : une fois les intervalles triés par début, les chevauchements deviennent des voisins.
 
 <!-- example -->
@@ -650,6 +686,7 @@ Elle crée une nouvelle fonction dont certains arguments sont fixés : `parse_fr
 <!-- concept -->
 
 Les signatures de fonctions sont une interface, et Python offre un contrôle fin : collecter des arguments supplémentaires, imposer que certains soient nommés pour la lisibilité, ou que d'autres soient positionnels pour pouvoir les renommer plus tard. Le dépaquetage renvoie naturellement plusieurs valeurs.
+
 Un piège attrape tout le monde une fois : les valeurs par défaut sont créées à la définition de la fonction, pas à l'appel, donc une valeur par défaut mutable est partagée par tous les appels.
 
 <!-- example -->
@@ -723,14 +760,14 @@ Utiliser `basket=None` et créer la liste à l'intérieur : `if basket is None: 
 <!-- concept -->
 
 Les fonctions sont des objets : on peut les passer, les renvoyer et les stocker comme n'importe quelle valeur. C'est ce qui rend possibles le tri par clé, les callbacks et les décorateurs. Les petites fonctions jetables peuvent être des lambdas ; l'application partielle fixe certains arguments pour construire des versions spécialisées.
+
 Les opérateurs logiques partagent cette souplesse : `and` et `or` renvoient l'un de leurs opérandes plutôt qu'un booléen, et `any`/`all` s'arrêtent dès que la réponse est connue.
 
 <!-- example -->
 
 ```python
 from functools import partial, reduce
-from datetime import datetime
-parse_fr = partial(datetime.strptime, format="%d/%m/%Y")   # wraps keyword use
+parse_bin = partial(int, base=2)                           # parse_bin("1010") == 10
 total = reduce(lambda acc, x: acc + x, [1, 2, 3], 0)
 has_errors = any(r["status"] == "error" for r in results)  # stops at the first error
 name = user_input or "anonymous"                           # returns an operand
@@ -788,6 +825,7 @@ Une classe est un modèle qui définit attributs et méthodes. Une instance est 
 <!-- concept -->
 
 Une fonction définie dans une autre se souvient des variables qui l'entourent, même après le retour de la fonction externe. C'est une closure, le mécanisme derrière les décorateurs et les fonctions fabriques. Elle lit ces variables à l'appel, pas à la définition, ce qui surprend dans les boucles.
+
 La récursion convient aux structures naturellement récursives, mais elle a une limite de profondeur et refait du travail. Mettre en cache les résultats par argument supprime les répétitions.
 
 <!-- example -->
@@ -853,6 +891,7 @@ La réécrire de façon itérative avec une pile explicite (liste ou deque) des 
 <!-- concept -->
 
 La signature d'une fonction dit à l'appelant comment l'utiliser ; docstrings et type hints lui disent ce qu'elle signifie. Les hints ne sont pas imposés à l'exécution, mais éditeurs et vérificateurs de types s'en servent pour détecter les erreurs avant l'exécution, et ils documentent l'intention mieux que les noms seuls.
+
 Les méthodes sont des fonctions attachées à des classes, l'instance étant passée automatiquement. Le savoir aide quand on passe des méthodes comme callbacks.
 
 <!-- example -->
@@ -889,6 +928,10 @@ L'ordre dans lequel Python cherche un attribut parmi les classes en cas d'hérit
 
 Des méthodes entourées de doubles tirets bas qui s'insèrent dans le comportement du langage : `__repr__`, `__str__`, `__len__`, `__eq__`, `__hash__`, `__lt__`, `__iter__`, `__getitem__`, `__enter__`, `__call__`, `__add__`.
 
+#### Quand les annotations sont-elles évaluées ?
+
+Depuis Python 3.14 (PEP 649 et 749), les annotations des fonctions, classes et modules sont évaluées paresseusement, seulement quand quelque chose les lit. Les références vers des classes définies plus loin n'ont plus besoin de guillemets ni de `from __future__ import annotations`. Le nouveau module `annotationlib` permet de les inspecter, et `typing.get_type_hints()` fonctionne toujours.
+
 <!-- challenge -->
 
 Une fonction est annotée `-> float` mais renvoie `None` sur une mauvaise entrée, et les appelants plantent sur `None + 1`. En quoi les hints aident-ils à l'éviter ?
@@ -915,6 +958,7 @@ L'annoter honnêtement `-> float | None` et lancer un vérificateur de types (my
 <!-- concept -->
 
 Une classe regroupe des données et le comportement qui agit dessus. Les instances reçoivent leurs propres attributs dans `__init__`, tandis que les attributs de classe sont partagés par toutes les instances, utile pour des constantes et dangereux pour des données mutables.
+
 Les décorateurs façonnent l'interface : les class methods servent de constructeurs alternatifs, les static methods regroupent des utilitaires, et les properties exposent des valeurs calculées ou de la validation derrière une simple syntaxe d'attribut.
 
 <!-- example -->
@@ -993,6 +1037,7 @@ Créer la liste par instance dans `__init__` (`self.items = []`). Les attributs 
 <!-- concept -->
 
 L'héritage permet à une classe de réutiliser et spécialiser le comportement d'une autre, `super()` appelant la version du parent. Avec l'héritage multiple, l'ordre de résolution des méthodes décide quelle implémentation l'emporte. Les classes de base abstraites définissent des méthodes que les sous-classes doivent implémenter.
+
 Les hiérarchies profondes deviennent rigides, cependant. La composition, construire des objets à partir d'autres objets, donne souvent la même réutilisation avec moins de couplage : un pipeline qui a un lecteur et un écrivain se modifie plus facilement qu'un pipeline qui est un cas particulier des deux.
 
 <!-- example -->
@@ -1052,6 +1097,7 @@ Composer : un `Pipeline` qui prend en paramètres un `Reader` (CSV, JSON) et un 
 <!-- concept -->
 
 La syntaxe de Python repose sur des méthodes spéciales. Définir `__repr__` donne une sortie de débogage lisible ; `__eq__` et `__hash__` décident de l'égalité et de la possibilité d'utiliser des objets comme clés de dict ; `__call__` fait se comporter les instances comme des fonctions. Les implémenter rend vos classes aussi naturelles que les types intégrés.
+
 Les dataclasses génèrent les plus courantes à partir des déclarations de champs, et `__slots__` réduit la mémoire des classes à millions d'instances.
 
 <!-- example -->
@@ -1102,6 +1148,10 @@ Ils traitent les données en flux, avec une mémoire constante, quelle que soit 
 
 Il délègue à un sous-itérateur et en produit tous les éléments : `yield from read_batches(path)`.
 
+#### Que fait `copy.replace()` ?
+
+Ajoutée dans Python 3.13, elle renvoie une copie d'un objet avec certains champs modifiés : `copy.replace(order, status="paid")`. Elle fonctionne avec les dataclasses (comme `dataclasses.replace`), les named tuples et les objets `datetime`, et toute classe peut la prendre en charge en définissant `__replace__`. C'est la manière idiomatique de « modifier » des objets figés.
+
 #### Qu'est-ce qu'`itertools`, et citez quelques fonctions utiles ?
 
 Un module de briques rapides pour les itérateurs : `chain`, `islice`, `groupby`, `product`, `permutations`, `combinations`, `accumulate`, `count`, `cycle`, `tee`, `zip_longest` et `batched` (Python 3.12).
@@ -1130,6 +1180,7 @@ Le hash dépend des champs ; changer un champ change le hash, et le dict cherche
 <!-- concept -->
 
 Python s'intéresse à ce qu'un objet sait faire, pas à ce qu'il est. Tout objet doté d'une méthode `read` peut être traité comme un fichier : c'est le duck typing. Les Protocols permettent aux vérificateurs de types de le contrôler structurellement, sans héritage.
+
 La confidentialité est affaire de convention : un tiret bas initial signifie « interne », deux tirets bas transforment le nom pour éviter les collisions. Les métaclasses, qui personnalisent la création des classes elles-mêmes, existent mais sont rarement le bon outil dans du code applicatif.
 
 <!-- example -->
@@ -1196,6 +1247,10 @@ def retry(times=3):
     return decorator
 ```
 
+#### Qu'est-ce qu'un descripteur ?
+
+Un objet placé en attribut de classe qui définit `__get__` (et éventuellement `__set__` ou `__delete__`), et contrôle ainsi ce qui se passe quand on accède à cet attribut depuis les instances. Les propriétés, les méthodes, `classmethod`, `staticmethod` et `__slots__` reposent tous sur des descripteurs ; on écrit les siens pour valider des champs de façon réutilisable.
+
 <!-- challenge -->
 
 Une fonction exige `isinstance(f, io.FileIO)` et rejette des flux S3 et des objets `BytesIO` qui fonctionneraient très bien. Comment les accepter ?
@@ -1222,6 +1277,7 @@ Supprimer la vérification `isinstance` et se fier au comportement (appeler `rea
 <!-- concept -->
 
 Tout ce qu'on peut parcourir est un itérable ; le parcourir lui demande un itérateur, qui livre les éléments un par un jusqu'à épuisement. Les générateurs sont la façon simple d'écrire des itérateurs : une fonction avec `yield` se met en pause après chaque élément et reprend à la demande suivante.
+
 Comme les itérateurs se consomment au fil du parcours, un générateur ne se parcourt qu'une fois. C'est le prix de leur avantage : ils produisent des séquences infinies ou énormes avec presque aucune mémoire.
 
 <!-- example -->
@@ -1313,6 +1369,7 @@ Le validateur a épuisé le générateur. Soit appeler deux fois la fonction gé
 <!-- concept -->
 
 Chaîner des générateurs crée des pipelines qui traitent les données en flux : lire une ligne, l'analyser, la filtrer, l'écrire, sans jamais garder tout le fichier. `itertools` fournit les raccords : concaténer, découper, regrouper, faire des lots et accumuler sur n'importe quel itérateur.
+
 Un raccord surprend : `groupby` ne regroupe que les éléments consécutifs de même clé, donc l'entrée doit déjà être triée par cette clé.
 
 <!-- example -->
@@ -1338,9 +1395,9 @@ print(list(accumulate([3, 5, 2])))                    # [3, 8, 10]
 
 `itertools.batched(iterable, n)` en Python 3.12+, ou avec `islice` dans une boucle pour les versions antérieures.
 
-#### Quelle est la différence entre `return` et `yield` dans une fonction ?
+#### Qu'est-ce qu'`itertools` ? Citez quelques fonctions utiles.
 
-`return` termine la fonction et renvoie une valeur. `yield` transforme la fonction en générateur qui produit une série de valeurs au fil du temps, en reprenant là où il s'était arrêté.
+Un module de briques rapides pour itérateurs : `chain`, `islice`, `groupby`, `product`, `permutations`, `combinations`, `accumulate`, `count`, `cycle`, `tee`, `zip_longest`, `pairwise` (3.10, paires consécutives) et `batched` (3.12 ; depuis 3.13, `strict=True` refuse un dernier lot incomplet).
 
 #### Comment fonctionne la gestion des exceptions en Python ?
 
@@ -1404,6 +1461,7 @@ Python 3.11 a ajouté `ExceptionGroup` pour lever plusieurs exceptions à la foi
 <!-- concept -->
 
 Un décorateur enveloppe une fonction pour ajouter un comportement autour, comme la mesure du temps, les relances, le cache ou la journalisation, sans modifier son code. La syntaxe `@` est un raccourci pour remplacer la fonction par sa version enveloppée.
+
 Deux détails rendent les décorateurs prêts pour la production : copier le nom et la docstring de la fonction d'origine avec `functools.wraps`, et un niveau d'imbrication supplémentaire quand le décorateur lui-même a besoin de paramètres.
 
 <!-- example -->
@@ -1471,6 +1529,7 @@ Après avoir décoré des fonctions avec un `@timed` maison, toutes apparaissent
 <!-- concept -->
 
 Fichiers, connexions, verrous et transactions doivent être nettoyés même en cas d'erreur. Les context managers le garantissent : la mise en place s'exécute à l'entrée du bloc `with`, le nettoyage à la sortie, quelle que soit la façon d'en sortir.
+
 `contextlib` transforme un générateur en context manager en quelques lignes. `__exit__` décide si une exception se propage, et `ExitStack` gère un nombre variable de ressources à la fois.
 
 <!-- example -->
@@ -1554,6 +1613,7 @@ Renvoyer une valeur vraie depuis `__exit__` supprime l'exception. Renvoyer `None
 <!-- concept -->
 
 Une bonne gestion d'erreurs n'attrape que ce qu'elle sait traiter et laisse remonter le reste. Des clauses `except` précises, le nettoyage dans `finally` et un `else` pour le code qui ne doit s'exécuter qu'en cas de succès gardent l'intention claire. Un `except` nu cache les bugs et bloque même Ctrl+C.
+
 Les exceptions personnalisées offrent aux appelants des types significatifs à attraper, le chaînage garde la cause d'origine dans les tracebacks, et les exception groups signalent plusieurs échecs à la fois.
 
 <!-- example -->
@@ -1598,6 +1658,10 @@ Avec `subprocess.run`, en passant une liste d'arguments (sans shell) et en véri
 result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
 ```
 
+#### Comment intercepter plusieurs types d'exception dans une seule clause ?
+
+En les listant dans un tuple : `except (ConnectionError, TimeoutError) as exc:`. Depuis Python 3.14 (PEP 758), on peut omettre les parenthèses quand il n'y a pas de clause `as` : `except ConnectionError, TimeoutError:`. Entre plusieurs clauses, le premier `except` qui correspond l'emporte : placez les exceptions spécifiques avant les générales.
+
 #### Comment calculer l'empreinte de données ou de fichiers en Python ?
 
 Avec `hashlib` : `hashlib.sha256(data).hexdigest()`. Pour les fichiers, lisez par blocs et appelez `update()` pour garder une mémoire constante.
@@ -1626,6 +1690,7 @@ N'attraper que les erreurs attendues (par exemple `ValueError` pour les enregist
 <!-- concept -->
 
 Les fichiers sont l'entrée la plus courante du travail sur les données, et deux habitudes évitent la plupart des problèmes. Les ouvrir avec `with`, pour qu'ils soient fermés même en cas d'erreur. Les parcourir ligne par ligne, pour que la mémoire reste constante quelle que soit la taille.
+
 `pathlib` fait des chemins des objets qu'on peut joindre, inspecter et filtrer avec glob ; les modules de compression lisent et écrivent des fichiers compressés comme s'ils étaient bruts ; et les fichiers temporaires se nettoient seuls.
 
 <!-- example -->
@@ -1708,6 +1773,7 @@ Un script appelle `open(path).read().splitlines()` sur des journaux de 30 Go et 
 <!-- concept -->
 
 La bibliothèque standard gère les formats courants. Le module `csv` traite guillemets et délimiteurs qu'un découpage naïf gère mal ; `json` convertit entre texte et dicts, avec des points d'accroche pour les types qu'il ne connaît pas.
+
 Les dates demandent du soin : analyser avec des formats explicites, et garder des heures conscientes de leur fuseau, de préférence en UTC, car mélanger datetimes naïfs et conscients provoque des erreurs et des décalages silencieux.
 
 <!-- example -->
@@ -1738,6 +1804,10 @@ En bornant la taille du pool de workers, ou avec `asyncio.Semaphore`, et en ajou
 
 De meilleurs algorithmes et structures de données (ensembles et dictionnaires pour les recherches), les fonctions intégrées et les compréhensions plutôt que des boucles manuelles, des bibliothèques vectorisées (NumPy, pandas, Polars) pour les calculs en masse, éviter les calculs répétés (cache), et déporter le travail lourd vers du code compilé ou un moteur distribué.
 
+#### Pourquoi `datetime.utcnow()` est-il déprécié ?
+
+Il renvoie un datetime naïf qui a seulement l'air d'être en UTC : du code qui le traite ensuite comme une heure locale décale les valeurs sans prévenir. Il est déprécié depuis Python 3.12 (avec `utcfromtimestamp()`) : utilisez `datetime.now(timezone.utc)` ou `datetime.fromtimestamp(ts, tz=timezone.utc)`, qui renvoient des datetimes conscients du fuseau. `datetime.UTC` (3.11) est un alias plus court de `timezone.utc`.
+
 #### Pourquoi parcourir un DataFrame pandas ligne par ligne est-il lent ?
 
 Chaque ligne devient un objet Python et le travail se fait dans l'interpréteur. Les opérations vectorisées s'exécutent en code C optimisé sur des colonnes entières à la fois.
@@ -1766,6 +1836,7 @@ Des champs comme `"Pérez, Ana"` contiennent des virgules entre guillemets. Util
 <!-- concept -->
 
 « Piles incluses » : la plupart des utilitaires sont déjà là. `logging` offre niveaux, formatage et handlers, pour envoyer les messages vers la console en développement et vers des fichiers ou collecteurs en production. `argparse` transforme les scripts en véritables outils en ligne de commande.
+
 Les expressions régulières extraient la structure du texte ; `subprocess` exécute des commandes externes en sécurité sans shell ; `hashlib` calcule des sommes de contrôle de fichiers et des clés pseudonymisées.
 
 <!-- example -->
@@ -1803,6 +1874,20 @@ CPython est l'interpréteur de référence, écrit en C. PyPy est une implément
 
 Pour du travail limité par le CPU qui tient sur une machine et en mémoire. Utilisez Spark quand les données ou les calculs dépassent une machine, ou quand la plateforme tourne déjà sous Spark.
 
+#### À quoi sert le module `enum` ?
+
+À définir un ensemble fixe de constantes nommées, mieux que des littéraux de texte éparpillés dans le code : les membres sont typés, itérables et comparés par identité. Les membres de `StrEnum` (3.11) sont aussi des chaînes, pratiques pour le JSON et les bases de données ; `IntEnum` et `Flag` couvrent les entiers et les drapeaux binaires.
+
+```python
+from enum import StrEnum
+
+class Status(StrEnum):
+    PENDING = "pending"
+    DONE = "done"
+
+Status("done") is Status.DONE   # True
+```
+
 <!-- challenge -->
 
 Un script exécute `subprocess.run(f"rm -rf {folder}", shell=True)` avec un nom de dossier saisi par l'utilisateur. Quel est le risque, et la correction ?
@@ -1824,11 +1909,12 @@ L'injection shell : un nom piégé pourrait exécuter des commandes arbitraires.
 <!-- goals -->
 
 - Expliquer le GIL et comparer threading, multiprocessing et asyncio.
-- Utiliser concurrent.futures et éviter conditions de course et pièges du pickling.
+- Utiliser concurrent.futures, éviter conditions de course et pièges du pickling, et connaître la version free-threaded et les sous-interpréteurs.
 
 <!-- concept -->
 
-Dans CPython, un seul thread exécute du bytecode Python à la fois. Les threads aident tout de même quand le travail attend réseau ou disque, car l'attente libère le verrou ; le travail gourmand en CPU exige des processus, chacun avec son interpréteur. Asyncio gère de nombreuses attentes dans un seul thread.
+Dans la version standard de CPython, un seul thread exécute du bytecode Python à la fois. Les threads aident tout de même quand le travail attend réseau ou disque, car l'attente libère le verrou ; le travail gourmand en CPU exige des processus, chacun avec son interpréteur. Asyncio gère de nombreuses attentes dans un seul thread.
+
 Chaque modèle a ses pièges : des threads qui partagent des données ont besoin de verrous pour éviter les conditions de course ; les processus exigent des fonctions et données sérialisables par pickle ; les threads daemon meurent brutalement à la sortie.
 
 <!-- example -->
@@ -1844,9 +1930,17 @@ with ProcessPoolExecutor() as pool:                       # CPU-bound: parsing
     results = list(pool.map(heavy, chunks))
 ```
 
-#### Qu'est-ce que pickle, et quels en sont les risques ?
+#### Qu'est-ce que le GIL ?
 
-La sérialisation d'objets Python en octets avec `pickle`. Ne désérialisez jamais des données non fiables : cela peut exécuter du code arbitraire. Utilisez JSON ou Parquet pour l'échange de données.
+Le Global Interpreter Lock de CPython ne laisse qu'un seul thread exécuter du bytecode Python à la fois. Les threads restent utiles pour le travail limité par les E/S, car le GIL est relâché pendant l'attente, mais pas pour du code Python pur limité par le CPU. Une version free-threaded sans GIL existe depuis 3.13 et est officiellement prise en charge depuis 3.14, mais la version par défaut garde le GIL.
+
+#### Qu'est-ce que Python free-threaded ?
+
+Une version de CPython sans GIL (PEP 703), où les threads exécutent du code Python en parallèle sur plusieurs cœurs. Expérimentale en 3.13, elle est officiellement prise en charge depuis 3.14 (PEP 779) et s'installe comme un interpréteur distinct, par exemple `python3.14t`. Le code monothread y tourne un peu plus lentement, et les extensions C doivent être compilées pour elle ; sinon, les importer réactive le GIL.
+
+#### Que sont les sous-interpréteurs ?
+
+Plusieurs interpréteurs isolés dans un même processus, chacun avec son propre GIL, exposés par le module `concurrent.interpreters` de Python 3.14 (PEP 734) et par `InterpreterPoolExecutor` dans `concurrent.futures`. Ils offrent du parallélisme CPU avec moins de surcoût que des processus, mais les objets ne sont pas partagés : les données passent par des files ou sont copiées.
 
 #### Pourquoi ne peut-on pas envoyer une lambda à un pool de processus ?
 
@@ -1867,6 +1961,10 @@ Appeler une fonction `async def` crée seulement un objet coroutine. `asyncio.ru
 #### Qu'est-ce que la contre-pression (backpressure), et comment la gérer dans des pipelines Python ?
 
 Quand les producteurs vont plus vite que les consommateurs, la mémoire grossit jusqu'à la panne. Utilisez des files bornées (`queue.Queue(maxsize=...)`, `asyncio.Queue(maxsize=...)`) pour que les producteurs attendent.
+
+#### Quelle méthode de démarrage multiprocessing utilise-t-il ?
+
+`spawn` sous Windows et macOS, et depuis Python 3.14 `forkserver` sous Linux et les autres Unix (c'était `fork` auparavant). Dans les deux cas, les workers partent d'un interpréteur neuf : fonctions et arguments doivent être sérialisables par pickle et le script a besoin de la garde `if __name__ == "__main__":`. Le code qui dépendait de variables globales héritées peut demander `multiprocessing.get_context("fork")` explicitement.
 
 #### Qu'est-ce qu'un environnement virtuel, et pourquoi en utiliser un ?
 
@@ -1896,6 +1994,7 @@ Le GIL ne laisse qu'un thread exécuter du code Python à la fois, donc les thre
 <!-- concept -->
 
 Le code asynchrone exécute de nombreuses tâches d'E/S dans un seul thread. Les coroutines se mettent en pause à chaque `await`, laissant l'event loop en exécuter d'autres pendant l'attente. Appeler une fonction async ne fait que créer une coroutine ; la boucle doit l'exécuter, ce que fait `asyncio.run` au niveau supérieur.
+
 La concurrence a besoin de limites. Les API à débit limité exigent sémaphores et backoff, chaque appel réseau exige un timeout, et les producteurs rapides exigent des files bornées pour que la mémoire ne croisse pas sans fin.
 
 <!-- example -->
@@ -1920,9 +2019,30 @@ results = asyncio.run(fetch_all(urls))
 
 Le fichier de configuration standard des projets Python : système de build, métadonnées, dépendances, points d'entrée et réglages des outils (pytest, ruff, mypy).
 
-#### Comment rendre l'installation des dépendances reproductible ?
+#### Comment fonctionne asyncio ?
 
-Figer les versions exactes dans un fichier de verrouillage (`uv lock`, `pip-tools`, Poetry), installer à partir de lui en CI et en production, et mettre à jour les dépendances délibérément.
+Une boucle d'événements exécute des coroutines. À chaque `await` sur une opération d'E/S, la coroutine rend la main pour que d'autres avancent. `asyncio.gather` en lance plusieurs à la fois :
+
+```python
+import asyncio, httpx
+
+async def main(urls):
+    async with httpx.AsyncClient(timeout=30) as client:
+        return await asyncio.gather(*(client.get(u) for u in urls))
+
+asyncio.run(main(urls))
+```
+
+#### Qu'est-ce que `asyncio.TaskGroup` ?
+
+Un gestionnaire de contexte (3.11+) pour la concurrence structurée : le bloc attend toutes les tâches créées dans le groupe, et si l'une échoue, les autres sont annulées et les erreurs sont levées ensemble dans un `ExceptionGroup`. C'est plus sûr que `gather`, qui par défaut laisse les autres tâches continuer après un échec.
+
+```python
+async with asyncio.TaskGroup() as tg:
+    orders = tg.create_task(fetch_orders())
+    users = tg.create_task(fetch_users())
+print(orders.result(), users.result())
+```
 
 #### Qu'est-ce que `uv` ?
 
@@ -1932,14 +2052,9 @@ Un gestionnaire de paquets et de projets Python très rapide, écrit en Rust, qu
 
 Un format de distribution précompilé (`.whl`) qui s'installe sans étape de build. Les jobs Databricks, par exemple, exécutent du code empaqueté en wheels.
 
-#### Qu'est-ce qu'un point d'entrée (entry point) ?
+#### Comment mettre un timeout sur un appel réseau ?
 
-Un script console déclaré dans `pyproject.toml` qui installe une commande appelant une fonction Python :
-
-```toml
-[project.scripts]
-registry-lakehouse = "registry_lakehouse.cli:main"
-```
+Passez un timeout à la bibliothèque (`requests.get(url, timeout=30)`, `httpx.AsyncClient(timeout=30)`) et, en code asynchrone, bornez un bloc d'awaits avec `async with asyncio.timeout(10):` (3.11+) ou un seul avec `asyncio.wait_for`. N'appelez jamais un service externe sans timeout : une connexion bloquée attendrait indéfiniment.
 
 #### Qu'est-ce que pytest, et pourquoi le préfère-t-on à unittest ?
 
@@ -1969,6 +2084,7 @@ Limiter la concurrence avec un `asyncio.Semaphore` (ou un pool de workers borné
 <!-- concept -->
 
 La vitesse vient de la mesure, puis de la modification de la partie la plus lente. Les profileurs montrent où passe le temps, souvent à un endroit inattendu. La plupart des gains viennent de meilleurs algorithmes et structures de données, et du transfert des boucles vers du C : built-ins, NumPy, opérations vectorisées de pandas ou Polars.
+
 D'autres interpréteurs et le parallélisme aident dans des cas précis. Spark sert aux données qui dépassent une machine, pas à accélérer de petits jobs.
 
 <!-- example -->
@@ -1983,17 +2099,9 @@ df["total"] = [r.price * r.qty for r in df.itertuples()]
 df["total"] = df["price"] * df["qty"]
 ```
 
-#### Que sont les fixtures pytest ?
+#### Comment profiler du code Python ?
 
-Des fonctions qui fournissent les dépendances des tests (données, connexions, une session Spark), injectées par nom d'argument, avec des portées (fonction, module, session) et un nettoyage après le `yield` :
-
-```python
-@pytest.fixture(scope="session")
-def spark():
-    session = SparkSession.builder.master("local[2]").getOrCreate()
-    yield session
-    session.stop()
-```
+`cProfile` (`python -m cProfile -s cumtime script.py`) pour le temps par fonction, `timeit` pour les petits extraits, `tracemalloc` pour la mémoire, et des profileurs par échantillonnage pour les processus en cours. Python 3.15 ajoute le paquet `profiling` : `profiling.sampling` s'attache à un processus en cours avec un surcoût très faible et produit des flame graphs, et `profiling.tracing` est le nouvel emplacement de `cProfile`. Dans les versions antérieures, py-spy joue ce rôle.
 
 #### Qu'est-ce que la paramétrisation dans pytest ?
 
@@ -2012,6 +2120,10 @@ Remplacer une dépendance par un faux objet dans un test, pour isoler le code et
 #### Qu'est-ce que le test par propriétés ?
 
 Générer de nombreuses entrées aléatoires pour vérifier qu'une propriété est toujours vraie, au lieu d'écrire des exemples à la main. Hypothesis est la bibliothèque Python dédiée, et elle réduit les échecs à un exemple minimal.
+
+#### CPython a-t-il un compilateur JIT ?
+
+Un compilateur expérimental, ajouté en 3.13 (PEP 744) et inclus dans les installeurs Windows et macOS depuis 3.14, mais désactivé par défaut (`PYTHON_JIT=1` l'active). Ses gains restent modestes ; l'essentiel des accélérations de CPython depuis 3.11 vient de l'interpréteur adaptatif spécialisé. Pour de gros gains sur du code numérique, les bibliothèques vectorisées ou PyPy restent les options.
 
 #### Qu'est-ce que la couverture de tests, et viser 100 % est-il un bon objectif ?
 
@@ -2041,6 +2153,7 @@ Réécrire `func` avec des opérations vectorisées sur les colonnes (arithméti
 <!-- concept -->
 
 CPython libère la plupart des objets dès que plus rien n'y fait référence, par comptage de références, et un collecteur de cycles nettoie les groupes d'objets qui ne se référencent qu'entre eux. Les problèmes de mémoire des programmes de longue durée sont donc presque toujours des références maintenues en vie : caches globaux, listes qui grandissent, closures qui retiennent de gros objets.
+
 Les trouver suppose de mesurer les allocations dans le temps. Les caches de bytecode n'ont rien à voir, même si on les confond souvent avec la mémoire : ils ne font qu'accélérer les imports.
 
 <!-- example -->
@@ -2065,6 +2178,10 @@ Un formateur et un linter (ruff, ou black et flake8), un vérificateur de types 
 #### Comment vérifier les types avec mypy ?
 
 Ajouter des annotations de type et lancer `mypy src/`. Il signale les incohérences de types de façon statique, avant l'exécution. On l'adopte progressivement avec des réglages par module.
+
+#### Que sont les références faibles ?
+
+Des références qui ne maintiennent pas un objet en vie (`weakref.ref`, `WeakValueDictionary`, `WeakKeyDictionary`) : dès qu'il ne reste aucune référence forte, l'objet est libéré et la référence faible renvoie `None`. Elles conviennent aux caches et registres qui ne doivent pas garder des objets en mémoire à eux seuls.
 
 <!-- challenge -->
 
@@ -2094,6 +2211,7 @@ Borner le cache : utiliser `functools.lru_cache(maxsize=...)` ou un cache limit�
 <!-- concept -->
 
 Chaque projet a besoin de son propre ensemble de paquets, sinon les mises à jour de l'un cassent l'autre. Les environnements virtuels les isolent ; `pyproject.toml` déclare en un seul endroit le projet, ses dépendances et ses outils.
+
 La reproductibilité vient des lock files qui figent la version de chaque paquet, installés de la même façon en développement, en CI et en production. Les wheels empaquettent votre code pour le déploiement, et les entry points transforment des fonctions en commandes.
 
 <!-- example -->
@@ -2141,6 +2259,10 @@ for chunk in pd.read_csv("big.csv", usecols=["id", "amount"], dtype={"id": "int6
     process(chunk)
 ```
 
+#### Quelle version de Python un nouveau projet doit-il cibler ?
+
+Une version récente qui a encore des années de support. Une nouvelle version sort chaque mois d'octobre, reçoit environ deux ans de corrections de bugs, puis des correctifs de sécurité jusqu'à cinq ans après sa sortie (PEP 602). Fin 2026, cela veut dire de 3.13 à 3.15, selon ce que votre plateforme prend en charge (runtimes Databricks, Lambda, images Airflow). Déclarez-la dans `requires-python` et testez-la en CI.
+
 <!-- challenge -->
 
 Un job fonctionne sur le portable d'un développeur mais échoue en production après la sortie d'une nouvelle version majeure d'une bibliothèque. Que mettez-vous en place ?
@@ -2165,6 +2287,7 @@ Un lock file (uv, pip-tools ou Poetry) figeant toutes les versions, installé av
 <!-- concept -->
 
 pytest garde les tests simples : des fonctions ordinaires avec des `assert` ordinaires et des messages d'échec utiles. Les fixtures fournissent ce dont les tests ont besoin, des données d'exemple aux répertoires temporaires ; le paramétrage exécute un test sur de nombreuses entrées ; les mocks remplacent les dépendances lentes ou externes.
+
 Une suite équilibrée a beaucoup de tests unitaires rapides, quelques tests d'intégration et peu de tests de bout en bout. La couverture montre les zones non testées ; les tests par propriétés trouvent des cas limites auxquels on n'avait pas pensé.
 
 <!-- example -->
@@ -2240,20 +2363,20 @@ Simuler la couche HTTP dans les tests unitaires (pytest-mock, respx ou responses
 <!-- concept -->
 
 Les vérifications automatiques détectent les erreurs avant l'exécution des tests. Un formateur met fin aux débats de style, un linter signale bugs et mauvais motifs, et un vérificateur de types trouve, grâce à vos hints, les mauvais arguments et les `None` non gérés. Les lancer en pre-commit et en CI en fait une routine.
+
 Les type hints gagnent en utilité avec des types plus riches : `TypedDict` décrit des enregistrements en forme de dict, et les génériques décrivent conteneurs et fonctions qui travaillent avec n'importe quel type de façon cohérente.
 
 <!-- example -->
 
 ```python
-from typing import TypedDict, TypeVar
+from typing import TypedDict
 
 class OrderRow(TypedDict):
     order_id: int
     amount: float
     country: str
 
-T = TypeVar("T")
-def first_or_none(items: list[T]) -> T | None:
+def first_or_none[T](items: list[T]) -> T | None:     # syntaxe des génériques de Python 3.12
     return items[0] if items else None
 ```
 ```bash
@@ -2296,6 +2419,10 @@ with requests.get(url, stream=True, timeout=60) as r:
             f.write(chunk)
 ```
 
+#### Que fait l'instruction `type` ?
+
+Elle déclare un alias de type (Python 3.12, PEP 695) : `type Row = dict[str, str | int]`. Les alias sont évalués paresseusement et peuvent être génériques : `type Pair[T] = tuple[T, T]`. La même PEP permet aux classes et fonctions de déclarer leurs paramètres de type entre crochets (`class Box[T]: ...`), ce qui remplace la plupart des usages de `TypeVar`.
+
 <!-- challenge -->
 
 Une fonction reçoit des lignes sous forme de dicts, et des fautes de frappe comme `row["ammount"]` atteignent la production. Comment le typage peut-il les attraper ?
@@ -2320,6 +2447,7 @@ Décrire les lignes avec un `TypedDict` (ou une dataclass ou un modèle pydantic
 <!-- concept -->
 
 Le même code doit tourner en développement, en CI et en production avec des réglages différents : la configuration vient donc de l'environnement, jamais de valeurs codées en dur, et les secrets d'un gestionnaire de secrets. La valider au démarrage, avec des erreurs claires, vaut mieux que découvrir une variable manquante au milieu d'un job.
+
 La structure du projet suit les responsabilités : un paquet `src` découpé en ingestion, transformations et sorties, des points d'entrée minces, et les tests à côté du code qu'ils couvrent.
 
 <!-- example -->
@@ -2352,6 +2480,16 @@ cur.execute("select * from companies where country = %s", (country,))
 
 Utiliser `COPY` (le `cursor.copy()` de psycopg) plutôt que des insertions ligne à ligne, ou des insertions par lots avec `executemany` et des tailles de page. Faire le chargement dans une seule transaction.
 
+#### Comment lire une configuration TOML ?
+
+Avec `tomllib`, dans la bibliothèque standard depuis 3.11. Il ne fait que lire, et le fichier doit être ouvert en mode binaire ; pour écrire, il faut un paquet comme `tomli-w`. Python 3.15 le met à jour vers TOML 1.1.
+
+```python
+import tomllib
+with open("settings.toml", "rb") as f:
+    config = tomllib.load(f)
+```
+
 #### Qu'est-ce que SQLAlchemy ?
 
 Une boîte à outils pour bases de données avec une couche Core (langage d'expressions SQL, pool de connexions, engines) et un ORM. pandas utilise des engines SQLAlchemy pour `read_sql` et `to_sql`.
@@ -2382,6 +2520,7 @@ Charger et valider toute la configuration une fois au démarrage (settings pydan
 <!-- concept -->
 
 pandas est l'outil quotidien pour les données qui tiennent en mémoire. Ses gestes de base : sélectionner (par étiquette ou position), grouper avec des agrégations nommées, fusionner comme des jointures SQL, et traiter délibérément les valeurs manquantes.
+
 La mémoire est la limite habituelle : ne lire que les colonnes utiles avec des types compacts, ou par morceaux, la repousse loin. L'indexation chaînée déclenche le fameux avertissement parce que pandas ne peut pas savoir si vous modifiez une copie ou l'original.
 
 <!-- example -->
@@ -2443,6 +2582,7 @@ Indiquer explicitement le bon `encoding`, n'utiliser `errors="replace"` qu'en co
 <!-- concept -->
 
 Le CSV est un mauvais format pour l'analytique : non typé, non compressé, lu en entier. Parquet stocke les données par colonne avec types et statistiques, pour que les outils ne lisent que le nécessaire. Arrow est le format en mémoire correspondant, qui permet à pandas, Polars, DuckDB et Spark d'échanger des données sans copie.
+
 Par-dessus, de nouveaux moteurs changent ce qu'une machine peut faire : Polars tourne en multithread avec un optimiseur de requêtes, et DuckDB exécute du SQL directement sur des fichiers Parquet et des DataFrames.
 
 <!-- example -->
@@ -2538,6 +2678,7 @@ Convertir une fois les fichiers en Parquet, puis les interroger avec DuckDB (ou 
 <!-- concept -->
 
 Les pipelines passent une grande partie de leur temps à dialoguer avec d'autres systèmes, et chaque échange peut échouer. Les appels d'API exigent sessions, timeouts, relances avec backoff et pagination. Les gros téléchargements doivent être écrits en flux sur disque au lieu de remplir la mémoire.
+
 Les bases de données exigent des requêtes paramétrées pour la sécurité et des voies de masse comme `COPY` pour la vitesse ; SQLAlchemy ajoute pooling et portabilité. Le stockage objet a ses propres clients, ou un accès de type fichier via fsspec.
 
 <!-- example -->
@@ -2649,6 +2790,7 @@ L'injection SQL (une valeur piégée peut modifier la requête) et les bugs de g
 <!-- concept -->
 
 Une étape de pipeline sera relancée, réexécutée et nourrie de données surprenantes. Des étapes idempotentes, qui donnent le même résultat exécutées deux fois, rendent les relances sûres ; valider avant de charger arrête les mauvaises données à l'entrée. Encodage et taille des fichiers figurent parmi les surprises courantes.
+
 Planification, dépendances et alertes relèvent d'un orchestrateur, pas de cron et de l'espoir. Que Python transforme lui-même les données (ETL) ou les déplace surtout pour qu'un entrepôt les transforme (ELT) détermine la quantité de code à écrire.
 
 <!-- example -->
@@ -2689,12 +2831,9 @@ def balanced(s: str) -> bool:
     return not stack
 ```
 
-#### Écrire une fonction qui découpe une liste en morceaux de taille n.
+#### Comment gérer les problèmes d'encodage à la lecture de fichiers ?
 
-```python
-def chunks(items: list, n: int) -> list[list]:
-    return [items[i:i + n] for i in range(0, len(items), n)]
-```
+Passez explicitement le bon `encoding`, n'utilisez `errors="replace"` qu'en connaissance de cause, détectez un BOM avec `encoding="utf-8-sig"` et réparez le mojibake (`'TravesÃ­a'.encode('latin-1').decode('utf-8')`) avec une protection pour les chaînes où l'aller-retour échoue. Depuis Python 3.15, `open()` utilise UTF-8 par défaut au lieu de l'encodage de la locale (PEP 686), ce qui évite bien des surprises sous Windows, mais indiquer l'encodage reste le choix portable.
 
 #### Trouver le premier caractère non répété d'une chaîne.
 
@@ -2757,6 +2896,7 @@ Remplacer la tranche du jour dans une transaction (supprimer la date puis insér
 <!-- concept -->
 
 PySpark permet à Python de décrire des calculs distribués, mais le travail s'exécute dans le moteur JVM de Spark. Le code Python construit le plan ; les lignes touchent rarement l'interpréteur Python, et c'est pourquoi PySpark passe à l'échelle.
+
 L'exception, ce sont les UDF Python : chaque ligne est envoyée à un processus Python puis renvoyée, avec perte de vitesse et d'optimisation. Les fonctions intégrées, ou les pandas UDF vectorisées quand Python est inévitable, gardent le travail là où Spark est rapide.
 
 <!-- example -->
